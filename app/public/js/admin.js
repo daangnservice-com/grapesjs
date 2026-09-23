@@ -360,34 +360,62 @@ function registerSeedBlocks(editor) {
     `
   });
 
-  bm.add('daangn-official-mosaic', {
-    label: '🎨 팀 몰입 모자이크 Grid',
+  bm.add('daangn-culture-section', {
+    label: '🏢 일하는 방식 전체 섹션 (CULTURE)',
     category: '당근서비스 공식 프로덕션 컴포넌트',
     content: `
-      <section style="background-color: #131B19; padding: 60px 0; color: #fff;">
-        <div style="max-width: 1100px; margin: 0 auto; padding: 0 24px;">
-          <h2 style="font-size: 42px; font-weight: 800; text-align: center; margin-bottom: 16px;">소수정예 팀의 경계 없는 몰입</h2>
-          <p style="font-size: 18px; color: #aaa; text-align: center; max-width: 800px; margin: 0 auto 60px;">
-            동네를 개발거리로 보는 빌더의 상상력은 100m 앞 현장까지 뻗어 나갑니다.<br/>
-            한 사람이 직무의 경계를 넘어 문제를 직접 해결하고,<br/>
-            그 변화는 수천만의 일상에 가장 빠르게 닿습니다. 당근서비스가 일하는 방식입니다.
-          </p>
-          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;">
-            <div style="position: relative; border-radius: 20px; overflow: hidden; height: 320px;">
-              <img src="https://careers-prismic-image-proxy.krrt.io/karrot/ai_1Fo1P9HI4Ug1L_%E1%84%89%E1%85%B5%E1%86%AB%E1%84%85%E1%85%AC%E1%84%8B%E1%85%AA%E1%84%8E%E1%85%AE%E1%86%BC%E1%84%83%E1%85%A9%E1%86%AF_F.png?auto=compress&w=800&fit=max&fm=webp" style="width:100%; height:100%; object-fit:cover;" />
-              <div style="position:absolute; bottom:0; left:0; right:0; padding:24px; background:linear-gradient(transparent, rgba(0,0,0,0.8)); font-size:22px; font-weight:800;">신뢰와 충돌</div>
+      <section id="culture" class="daangn-culture-section">
+        <div class="daangn-culture-container">
+          <div class="daangn-culture-header">
+            <span class="daangn-culture-header-badge">DAANGN CULTURE</span>
+            <h2 class="daangn-culture-header-title">소수정예 팀의 경계 없는 몰입</h2>
+            <p class="daangn-culture-header-desc">
+              동네를 개발거리로 보는 빌더의 상상력은 100m 앞 현장까지 뻗어 나갑니다.<br/>
+              한 사람이 직무의 경계를 넘어 문제를 직접 해결하고,<br/>
+              그 변화는 수천만의 일상에 가장 빠르게 닿습니다. 당근서비스가 일하는 방식입니다.
+            </p>
+          </div>
+          <div class="daangn-culture-list">
+            <div class="daangn-culture-item">
+              <div class="daangn-culture-item-content">
+                <span class="daangn-culture-item-badge">01 · 일하는 방식</span>
+                <h3 class="daangn-culture-item-title">신뢰와 충돌</h3>
+                <p class="daangn-culture-item-desc">서로 다른 관점이 충돌할 때 더 나은 답이 탄생합니다. 치열하게 의견을 나누고, 결정된 방향에는 전적으로 몰입하여 최고의 결과를 만들어냅니다.</p>
+              </div>
+              <div class="daangn-culture-item-media">
+                <img src="https://careers-prismic-image-proxy.krrt.io/karrot/ai_1Fo1P9HI4Ug1L_%E1%84%89%E1%85%B5%E1%86%AB%E1%84%85%E1%85%AC%E1%84%8B%E1%85%AA%E1%84%8E%E1%85%AE%E1%86%BC%E1%84%83%E1%85%A9%E1%86%AF_F.png?auto=compress&w=900&fit=max&fm=webp" alt="신뢰와 충돌" class="daangn-culture-item-img" />
+              </div>
             </div>
-            <div style="position: relative; border-radius: 20px; overflow: hidden; height: 320px;">
-              <img src="/images/builder-spirit.webp" style="width:100%; height:100%; object-fit:cover;" />
-              <div style="position:absolute; bottom:0; left:0; right:0; padding:24px; background:linear-gradient(transparent, rgba(0,0,0,0.8)); font-size:22px; font-weight:800;">빌더십</div>
-            </div>
-            <div style="position: relative; border-radius: 20px; overflow: hidden; height: 320px;">
-              <img src="https://careers-prismic-image-proxy.krrt.io/karrot/ahhmCrK9tuLqEO1Y_%E1%84%89%E1%85%B5%E1%86%AF%E1%84%92%E1%85%A2%E1%86%BC%E1%84%85%E1%85%A7%E1%86%A8_F.png?auto=compress&w=800&fit=max&fm=webp" style="width:100%; height:100%; object-fit:cover;" />
-              <div style="position:absolute; bottom:0; left:0; right:0; padding:24px; background:linear-gradient(transparent, rgba(0,0,0,0.8)); font-size:22px; font-weight:800;">실행력</div>
+            <div class="daangn-culture-item">
+              <div class="daangn-culture-item-content">
+                <span class="daangn-culture-item-badge">02 · 일하는 방식</span>
+                <h3 class="daangn-culture-item-title">빌더십</h3>
+                <p class="daangn-culture-item-desc">직무의 경계를 넘어 문제를 직접 발견하고 해결하는 사람들이 있습니다. 시키는 일에 머물지 않고, 스스로 주인이 되어 프로덕트와 서비스를 직접 만들어갑니다.</p>
+              </div>
+              <div class="daangn-culture-item-media">
+                <img src="/images/builder-spirit.webp" alt="빌더십" class="daangn-culture-item-img" />
+              </div>
             </div>
           </div>
         </div>
       </section>
+    `
+  });
+
+  bm.add('daangn-culture-item', {
+    label: '🌱 일하는 방식 섹션 (이미지 1개 + 글)',
+    category: '당근서비스 공식 프로덕션 컴포넌트',
+    content: `
+      <div class="daangn-culture-item">
+        <div class="daangn-culture-item-content">
+          <span class="daangn-culture-item-badge">06 · 일하는 방식</span>
+          <h3 class="daangn-culture-item-title">새로운 일하는 방식</h3>
+          <p class="daangn-culture-item-desc">당근서비스 팀이 함께 만들어가는 가치와 일하는 방식을 소개하는 문구를 여기에 작성하세요. 1개의 이미지와 글을 자유롭게 편집할 수 있습니다.</p>
+        </div>
+        <div class="daangn-culture-item-media">
+          <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=900&q=80" alt="새로운 일하는 방식" class="daangn-culture-item-img" />
+        </div>
+      </div>
     `
   });
 

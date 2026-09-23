@@ -172,3 +172,27 @@
   color: #FF6F0F !important;
 }
 
+/* ── Culture Section Builder Canvas Helpers ────────────────── */
+.daangn-culture-item {
+  position: relative !important;
+  cursor: pointer !important;
+}
+
+.daangn-culture-item:hover {
+  outline: 2px dashed rgba(255, 111, 15, 0.4) !important;
+}
+
+.daangn-culture-item-title,
+.daangn-culture-item-desc,
+.daangn-culture-item-badge {
+  cursor: text !important;
+  pointer-events: auto !important;
+}
+
+.daangn-culture-item-media,
+.daangn-culture-item-img {
+  cursor: pointer !important;
+  pointer-events: auto !important;
+}
+
+
