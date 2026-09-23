@@ -1,8 +1,9 @@
 let editor;
 let currentPageData = {
   id: null,
-  seoTitle: '당근서비스 채용 - 이웃과 함께하는 커뮤니티',
-  seoDescription: '당근서비스에서 새로운 도전을 함께할 멋진 동료를 찾습니다.',
+  seoTitle: '당근서비스 채용 - 당근다운 경험이 완성되는 당근서비스',
+  seoDescription: '당근서비스에 합류하세요. 당근다운 경험이 완성되는 여정을 함께할 동료를 찾습니다.',
+  faviconUrl: '/images/daangn-service-logo.png',
   isPublished: 0
 };
 
@@ -106,7 +107,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   });
 
-  // Register Custom SEED Recruitment Blocks
+  // Register Custom Blocks for Daangn Recruitment
   registerSeedBlocks(editor);
 
   // Canvas 준비 후 페이지 로드 (CSS 주입 타이밍 보장)
@@ -121,6 +122,72 @@ function registerSeedBlocks(editor) {
   const bm = editor.BlockManager;
 
   // Category 0: 당근서비스 공식 프로덕션 컴포넌트
+  bm.add('daangn-header', {
+    label: '🧭 상단 헤더 (GNB 내비게이션)',
+    category: '당근서비스 공식 프로덕션 컴포넌트',
+    content: `
+      <header id="daangnHeader" class="header__HeaderContainer-sc-bdd24b93-1 base-header-styles__CustomHeader-sc-eefa7522-0">
+        <div class="header__HeaderInnerContainer-sc-bdd24b93-2">
+          <a href="/" class="header-link-wrapper">
+            <div class="header__LogoWrapper-sc-bdd24b93-3">
+              <img alt="당근서비스 로고" src="/images/daangn-service-logo.png" />
+            </div>
+          </a>
+          <div class="mobile-view__MobileView-sc-bb2ed92c-0 hossQr">
+            <button data-testid="모바일_메뉴_버튼" type="button" aria-label="모바일 메뉴 열기" class="header__MobileMenuButtonStyled-sc-bdd24b93-4" onclick="var m = document.querySelector('.mobile-view__MobileView-sc-bb2ed92c-0.gJVwBD'); if (m) m.classList.toggle('is-open');">
+              <svg fill="none" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+                <path clip-rule="evenodd" d="M3 5.5H21V7.5H3V5.5ZM3 11H21V13H3V11ZM21 16.5H3V18.5H21V16.5Z" fill="#222222" fill-rule="evenodd"></path>
+              </svg>
+            </button>
+          </div>
+          <div class="mobile-view__MobileView-sc-bb2ed92c-0 gJVwBD">
+            <div class="kCDZmt" style="display: flex; align-items: center; gap: 16px;">
+              <a rel="noreferrer" href="/" class="header-link-wrapper">
+                <button type="button" class="header__MenuItemContainer-sc-bdd24b93-0 cIuITU" name="홈">
+                  <span class="sc-aYaIB gigtVE">홈</span>
+                </button>
+              </a>
+              <a rel="noreferrer" href="#team" class="header-link-wrapper">
+                <button type="button" class="header__MenuItemContainer-sc-bdd24b93-0 cIuITU" name="팀 소개">
+                  <span class="sc-aYaIB gigtVE">팀 소개</span>
+                </button>
+              </a>
+              <a rel="noreferrer" href="#inside" class="header-link-wrapper">
+                <button type="button" class="header__MenuItemContainer-sc-bdd24b93-0 cIuITU" name="인사이드">
+                  <span class="sc-aYaIB gigtVE">인사이드</span>
+                </button>
+              </a>
+              <a rel="noreferrer" href="#process" class="header-link-wrapper">
+                <button type="button" class="header__MenuItemContainer-sc-bdd24b93-0 cIuITU" name="채용 절차">
+                  <span class="sc-aYaIB gigtVE">채용 절차</span>
+                </button>
+              </a>
+              <a rel="noreferrer" href="https://daangnservice.career.greetinghr.com/" target="_blank" class="header-link-wrapper">
+                <button type="button" class="header__MenuItemContainer-sc-bdd24b93-0 cbRJON" name="채용공고">
+                  <span class="sc-aYaIB gigtVE">채용공고</span>
+                </button>
+              </a>
+            </div>
+          </div>
+        </div>
+      </header>
+    `
+  });
+
+  bm.add('daangn-footer', {
+    label: '🏢 하단 푸터 (Footer 정보)',
+    category: '당근서비스 공식 프로덕션 컴포넌트',
+    content: `
+      <footer id="daangnFooter" class="daangn-global-footer">
+        <div class="daangn-footer-logo-wrapper">
+          <img src="/images/daangn-service-logo.png" alt="당근서비스" class="daangn-footer-logo" />
+        </div>
+        <p class="daangn-footer-company">(주) 당근서비스</p>
+        <p class="daangn-footer-address">서울특별시 서초구 강남대로 327, 대륭서초타워 14층 | careers.daangnservice.com</p>
+      </footer>
+    `
+  });
+
   bm.add('daangn-official-hero', {
     label: '🔥 메인 비디오 Hero 배너',
     category: '당근서비스 공식 프로덕션 컴포넌트',
@@ -639,6 +706,11 @@ async function loadCurrentPage() {
       document.getElementById('seoTitleInput').value = data.page.seo_title || '';
       document.getElementById('seoDescInput').value = data.page.seo_description || '';
       
+      const faviconUrl = data.page.favicon_url || '/images/daangn-service-logo.png';
+      const favInput = document.getElementById('seoFaviconInput');
+      if (favInput) favInput.value = faviconUrl;
+      updateFaviconPreview(faviconUrl);
+      
       updateStatusBadge(data.page.is_published, data.page.version_name);
     }
   } catch (err) {
@@ -685,6 +757,7 @@ async function saveDraft() {
   const componentsJson = JSON.stringify(editor.getComponents());
   const seoTitle = document.getElementById('seoTitleInput').value;
   const seoDescription = document.getElementById('seoDescInput').value;
+  const faviconUrl = document.getElementById('seoFaviconInput') ? document.getElementById('seoFaviconInput').value.trim() : (currentPageData.favicon_url || '/images/daangn-service-logo.png');
 
   try {
     const res = await apiFetch('/api/admin/save', {
@@ -696,6 +769,7 @@ async function saveDraft() {
         componentsJson,
         seoTitle,
         seoDescription,
+        faviconUrl,
         versionName: `수정본 (${new Date().toLocaleTimeString('ko-KR')})`
       })
     });
@@ -723,6 +797,7 @@ async function publishPage() {
   const componentsJson = JSON.stringify(editor.getComponents());
   const seoTitle = document.getElementById('seoTitleInput').value;
   const seoDescription = document.getElementById('seoDescInput').value;
+  const faviconUrl = document.getElementById('seoFaviconInput') ? document.getElementById('seoFaviconInput').value.trim() : (currentPageData.favicon_url || '/images/daangn-service-logo.png');
 
   try {
     // Save draft first
@@ -735,6 +810,7 @@ async function publishPage() {
         componentsJson,
         seoTitle,
         seoDescription,
+        faviconUrl,
         versionName: `정식 배포 (${new Date().toLocaleDateString('ko-KR')} ${new Date().toLocaleTimeString('ko-KR')})`
       })
     });
@@ -850,9 +926,29 @@ function toggleSEOModal() {
   modal.style.display = modal.style.display === 'flex' ? 'none' : 'flex';
 }
 
+function updateFaviconPreview(url) {
+  const preview = document.getElementById('seoFaviconPreview');
+  if (preview) {
+    preview.src = url || '/images/daangn-service-logo.png';
+  }
+}
+
+function setFaviconPreset(url) {
+  const input = document.getElementById('seoFaviconInput');
+  if (input) {
+    input.value = url;
+    updateFaviconPreview(url);
+  }
+}
+
 function saveSEOMeta() {
+  const favInput = document.getElementById('seoFaviconInput');
+  if (favInput) {
+    currentPageData.favicon_url = favInput.value.trim() || '/images/daangn-service-logo.png';
+    updateFaviconPreview(currentPageData.favicon_url);
+  }
   toggleSEOModal();
-  alert('SEO 메타태그 설정이 업데이트되었습니다. 임시 저장/배포 시 적용됩니다.');
+  alert('✅ SEO 메타태그 및 파비콘 설정이 반영되었습니다.\n[임시 저장] 또는 [즉시 배포하기]를 누르면 최종 저장 및 배포됩니다.');
 }
 
 function togglePromoDelayModal() {

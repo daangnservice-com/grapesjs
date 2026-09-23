@@ -24,20 +24,24 @@ function initDb() {
           components_json TEXT,
           seo_title TEXT,
           seo_description TEXT,
+          favicon_url TEXT DEFAULT '/images/daangn-service-logo.png',
           is_published INTEGER DEFAULT 0,
           created_at DATETIME DEFAULT CURRENT_TIMESTAMP
         )
       `, (err) => {
         if (err) return reject(err);
         
-        // Check if there is at least one initial seed page
-        db.get('SELECT COUNT(*) as count FROM pages', (err, row) => {
-          if (err) return reject(err);
-          if (row.count === 0) {
-            seedDefaultPage().then(resolve).catch(reject);
-          } else {
-            resolve();
-          }
+        // Add favicon_url column to existing database if missing
+        db.run(`ALTER TABLE pages ADD COLUMN favicon_url TEXT DEFAULT '/images/daangn-service-logo.png'`, () => {
+          // Check if there is at least one initial seed page
+          db.get('SELECT COUNT(*) as count FROM pages', (err, row) => {
+            if (err) return reject(err);
+            if (row.count === 0) {
+              seedDefaultPage().then(resolve).catch(reject);
+            } else {
+              resolve();
+            }
+          });
         });
       });
     });
@@ -51,8 +55,8 @@ function seedDefaultPage() {
 
   return new Promise((resolve, reject) => {
     const stmt = db.prepare(`
-      INSERT INTO pages (version_name, html, css, components_json, seo_title, seo_description, is_published)
-      VALUES (?, ?, ?, ?, ?, ?, 1)
+      INSERT INTO pages (version_name, html, css, components_json, seo_title, seo_description, favicon_url, is_published)
+      VALUES (?, ?, ?, ?, ?, ?, ?, 1)
     `);
     stmt.run(
       '당근서비스 공식 채용 사이트 풀 템플릿 (v3.0)',
@@ -61,6 +65,7 @@ function seedDefaultPage() {
       '{}',
       '당근서비스 채용 - 당근다운 경험이 완성되는 당근서비스',
       '당근서비스에 합류하세요. 당근다운 경험이 완성되는 여정을 함께할 동료를 찾습니다.',
+      '/images/daangn-service-logo.png',
       (err) => {
         if (err) reject(err);
         else resolve();
@@ -96,6 +101,53 @@ body {
 
 function getOfficialHtml() {
   return `<div class="daangn-official-wrapper" style="background-color: #ffffff; color: #212124; font-family: 'KarrotSans', 'Pretendard', sans-serif;">
+
+  <!-- GLOBAL HEADER (상단 내비게이션 - GrapesJS 빌더에서 직접 로고, 메뉴 텍스트 및 링크 수정 가능) -->
+  <header id="daangnHeader" class="header__HeaderContainer-sc-bdd24b93-1 base-header-styles__CustomHeader-sc-eefa7522-0">
+    <div class="header__HeaderInnerContainer-sc-bdd24b93-2">
+      <a href="/" class="header-link-wrapper">
+        <div class="header__LogoWrapper-sc-bdd24b93-3">
+          <img alt="당근서비스 로고" src="/images/daangn-service-logo.png" />
+        </div>
+      </a>
+      <div class="mobile-view__MobileView-sc-bb2ed92c-0 hossQr">
+        <button data-testid="모바일_메뉴_버튼" type="button" aria-label="모바일 메뉴 열기" class="header__MobileMenuButtonStyled-sc-bdd24b93-4" onclick="var m = document.querySelector('.mobile-view__MobileView-sc-bb2ed92c-0.gJVwBD'); if (m) m.classList.toggle('is-open');">
+          <svg fill="none" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+            <path clip-rule="evenodd" d="M3 5.5H21V7.5H3V5.5ZM3 11H21V13H3V11ZM21 16.5H3V18.5H21V16.5Z" fill="#222222" fill-rule="evenodd"></path>
+          </svg>
+        </button>
+      </div>
+      <div class="mobile-view__MobileView-sc-bb2ed92c-0 gJVwBD">
+        <div class="kCDZmt" style="display: flex; align-items: center; gap: 16px;">
+          <a rel="noreferrer" href="/" class="header-link-wrapper">
+            <button type="button" class="header__MenuItemContainer-sc-bdd24b93-0 cIuITU" name="홈">
+              <span class="sc-aYaIB gigtVE">홈</span>
+            </button>
+          </a>
+          <a rel="noreferrer" href="#team" class="header-link-wrapper">
+            <button type="button" class="header__MenuItemContainer-sc-bdd24b93-0 cIuITU" name="팀 소개">
+              <span class="sc-aYaIB gigtVE">팀 소개</span>
+            </button>
+          </a>
+          <a rel="noreferrer" href="#inside" class="header-link-wrapper">
+            <button type="button" class="header__MenuItemContainer-sc-bdd24b93-0 cIuITU" name="인사이드">
+              <span class="sc-aYaIB gigtVE">인사이드</span>
+            </button>
+          </a>
+          <a rel="noreferrer" href="#process" class="header-link-wrapper">
+            <button type="button" class="header__MenuItemContainer-sc-bdd24b93-0 cIuITU" name="채용 절차">
+              <span class="sc-aYaIB gigtVE">채용 절차</span>
+            </button>
+          </a>
+          <a rel="noreferrer" href="https://daangnservice.career.greetinghr.com/" target="_blank" class="header-link-wrapper">
+            <button type="button" class="header__MenuItemContainer-sc-bdd24b93-0 cbRJON" name="채용공고">
+              <span class="sc-aYaIB gigtVE">채용공고</span>
+            </button>
+          </a>
+        </div>
+      </div>
+    </div>
+  </header>
 
   <!-- HERO STICKY SCROLL SECTION (about.daangn.com 스타일) -->
   <section class="daangn-hero-track" id="daangnHeroTrack">
@@ -458,6 +510,15 @@ function getOfficialHtml() {
       </form>
     </div>
   </section>
+
+  <!-- GLOBAL FOOTER (빌더에서 로고 이미지, 회사 정보, 주소, 저작권 문구 직접 수정 가능) -->
+  <footer id="daangnFooter" class="daangn-global-footer">
+    <div class="daangn-footer-logo-wrapper">
+      <img src="/images/daangn-service-logo.png" alt="당근서비스" class="daangn-footer-logo" />
+    </div>
+    <p class="daangn-footer-company">(주) 당근서비스</p>
+    <p class="daangn-footer-address">서울특별시 서초구 강남대로 327, 대륭서초타워 14층 | careers.daangnservice.com</p>
+  </footer>
 
   <!-- FLOATING CAMPAIGN PROMO STICKER (하단 플로팅 스티커 배너) -->
   <div class="daangn-floating-promo" id="daangnFloatingPromo" data-delay-seconds="5">
@@ -896,11 +957,11 @@ function getOfficialHtml() {
 </script>`.trim();
 }
 
-function savePageDraft({ versionName, html, css, componentsJson, seoTitle, seoDescription }) {
+function savePageDraft({ versionName, html, css, componentsJson, seoTitle, seoDescription, faviconUrl }) {
   return new Promise((resolve, reject) => {
     const stmt = db.prepare(`
-      INSERT INTO pages (version_name, html, css, components_json, seo_title, seo_description, is_published)
-      VALUES (?, ?, ?, ?, ?, ?, 0)
+      INSERT INTO pages (version_name, html, css, components_json, seo_title, seo_description, favicon_url, is_published)
+      VALUES (?, ?, ?, ?, ?, ?, ?, 0)
     `);
     stmt.run(
       versionName || `임시 저장 (${new Date().toLocaleString('ko-KR')})`,
@@ -909,6 +970,7 @@ function savePageDraft({ versionName, html, css, componentsJson, seoTitle, seoDe
       componentsJson || '{}',
       seoTitle || '당근서비스 채용',
       seoDescription || '당근서비스에 합류하세요.',
+      faviconUrl || '/images/daangn-service-logo.png',
       function (err) {
         if (err) reject(err);
         else resolve({ id: this.lastID });
@@ -951,7 +1013,7 @@ function getLatestPage() {
 
 function getAllVersions() {
   return new Promise((resolve, reject) => {
-    db.all('SELECT id, version_name, seo_title, is_published, created_at FROM pages ORDER BY id DESC', (err, rows) => {
+    db.all('SELECT id, version_name, seo_title, favicon_url, is_published, created_at FROM pages ORDER BY id DESC', (err, rows) => {
       if (err) reject(err);
       else resolve(rows);
     });

@@ -1242,3 +1242,67 @@ body {
   }
 }
 
+/* ── Global Footer Component Styles ─────────────────────────── */
+.daangn-global-footer {
+  padding: 56px 24px 48px;
+  border-top: 1px solid #EAEBEE;
+  text-align: center;
+  color: #868B94;
+  font-size: 14px;
+  background-color: #F7F9FA;
+  position: relative;
+  z-index: 10;
+}
+
+.daangn-footer-logo-wrapper {
+  margin-bottom: 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.daangn-footer-logo {
+  height: 24px;
+  width: auto;
+  opacity: 0.9;
+  object-fit: contain;
+  transition: opacity 0.2s ease;
+}
+
+.daangn-footer-logo:hover {
+  opacity: 1;
+}
+
+.daangn-footer-company {
+  margin: 0 0 8px;
+  font-weight: 700;
+  color: #212124;
+  font-size: 15px;
+}
+
+.daangn-footer-address {
+  margin: 0;
+  color: #868B94;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.daangn-footer-links {
+  margin-top: 16px;
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+.daangn-footer-link {
+  color: #868B94;
+  text-decoration: none;
+  font-size: 13px;
+  transition: color 0.15s ease;
+}
+
+.daangn-footer-link:hover {
+  color: #212124;
+}
+
+

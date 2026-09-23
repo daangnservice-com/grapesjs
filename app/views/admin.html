@@ -59,25 +59,45 @@
     </div>
   </div>
 
-  <!-- SEO / Meta Tags Modal -->
+  <!-- SEO / Meta Tags & Favicon Modal -->
   <div id="seoModal" class="modal">
-    <div class="modal-content">
+    <div class="modal-content" style="max-width: 540px;">
       <div class="modal-header">
-        <h3>SEO / 공유 메타태그 설정</h3>
+        <h3>SEO / 메타태그 & 파비콘 설정</h3>
         <button class="modal-close" onclick="toggleSEOModal()">&times;</button>
       </div>
       <div class="modal-body">
         <div class="form-group">
           <label>페이지 제목 (SEO Title)</label>
-          <input type="text" id="seoTitleInput" placeholder="당근서비스 채용 - 이웃과 함께하는 커뮤니티" />
+          <input type="text" id="seoTitleInput" placeholder="당근서비스 채용 - 당근다운 경험이 완성되는 당근서비스" />
         </div>
         <div class="form-group">
           <label>페이지 설명 (SEO Description)</label>
-          <textarea id="seoDescInput" rows="4" placeholder="당근서비스에서 새로운 도전을 함께할 멋진 동료를 찾습니다."></textarea>
+          <textarea id="seoDescInput" rows="3" placeholder="당근서비스에 합류하세요. 당근다운 경험이 완성되는 여정을 함께할 동료를 찾습니다."></textarea>
+        </div>
+        <div class="form-group" style="margin-bottom: 8px;">
+          <label style="display: flex; align-items: center; justify-content: space-between;">
+            <span>🌐 파비콘 설정 (Favicon URL)</span>
+            <span style="font-weight: 400; font-size: 12px; color: #868B94;">.ico, .png, .svg 지원</span>
+          </label>
+          <div style="display: flex; gap: 12px; align-items: center; margin-top: 6px;">
+            <div id="seoFaviconPreviewBox" style="width: 44px; height: 44px; border: 1px solid #EAEBEE; border-radius: 8px; display: flex; align-items: center; justify-content: center; background: #f7f9fa; flex-shrink: 0; overflow: hidden;" title="현재 파비콘 미리보기">
+              <img id="seoFaviconPreview" src="/images/daangn-service-logo.png" alt="파비콘 미리보기" style="max-width: 28px; max-height: 28px; object-fit: contain;" onerror="this.src='/images/daangn-service-logo.png'" />
+            </div>
+            <input type="text" id="seoFaviconInput" placeholder="/images/daangn-service-logo.png" style="flex: 1;" oninput="updateFaviconPreview(this.value)" />
+          </div>
+          <div style="display: flex; gap: 6px; margin-top: 10px; flex-wrap: wrap;">
+            <button type="button" class="btn-preset" onclick="setFaviconPreset('/images/daangn-service-logo.png')">🥕 당근서비스 기본 로고</button>
+            <button type="button" class="btn-preset" onclick="setFaviconPreset('https://d1unjqcospf8gs.cloudfront.net/assets/home/base/header/logo-basic-2445e99f257d195977981316047232d8c1caef811722f8310096113b9c46fc3d.png')">🥕 당근 심볼</button>
+            <button type="button" class="btn-preset" onclick="setFaviconPreset('https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f955.png')">🥕 당근 이모지</button>
+          </div>
+          <p style="font-size: 12px; color: #868B94; margin-top: 6px; margin-bottom: 0;">
+            브라우저 탭 상단에 표시되는 파비콘 아이콘 이미지 URL 또는 로컬 경로를 설정합니다.
+          </p>
         </div>
       </div>
       <div class="modal-footer">
-        <button class="btn-admin btn-primary" onclick="saveSEOMeta()">저장하기</button>
+        <button class="btn-admin btn-primary" onclick="saveSEOMeta()">설정 적용하기</button>
       </div>
     </div>
   </div>

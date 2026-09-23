@@ -88,8 +88,8 @@ app.get('/api/admin/current-page', requireAuth, async (req, res) => {
 
 app.post('/api/admin/save', requireAuth, async (req, res) => {
   try {
-    const { html, css, componentsJson, seoTitle, seoDescription, versionName } = req.body;
-    const result = await db.savePageDraft({ html, css, componentsJson, seoTitle, seoDescription, versionName });
+    const { html, css, componentsJson, seoTitle, seoDescription, faviconUrl, versionName } = req.body;
+    const result = await db.savePageDraft({ html, css, componentsJson, seoTitle, seoDescription, faviconUrl, versionName });
     res.json({ success: true, id: result.id });
   } catch (err) {
     res.status(500).json({ error: '저장 실패' });
@@ -147,9 +147,11 @@ app.get('/', async (req, res) => {
       return res.send('<h1>페이지 준비 중입니다.</h1>');
     }
 
+    const faviconUrl = publishedPage.favicon_url || '/images/daangn-service-logo.png';
     const rendered = template
       .replace(/<%= seoTitle %>/g, publishedPage.seo_title || '당근서비스 채용')
       .replace(/<%= seoDescription %>/g, publishedPage.seo_description || '당근서비스에서 새로운 동료를 찾습니다.')
+      .replace(/<%= faviconUrl %>/g, faviconUrl)
       .replace(/<%- pageCss %>/g, publishedPage.css || '')
       .replace(/<%- pageHtml %>/g, publishedPage.html || '');
 

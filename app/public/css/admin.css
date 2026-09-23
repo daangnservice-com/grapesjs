@@ -340,3 +340,27 @@ body {
   border: none;
   border-radius: 0 0 12px 12px;
 }
+
+/* Preset buttons for Favicon picker */
+.btn-preset {
+  background: #f1f3f5;
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
+  padding: 5px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #495057;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.btn-preset:hover {
+  background: #fff;
+  color: var(--seed-orange);
+  border-color: var(--seed-orange);
+  box-shadow: 0 2px 4px rgba(255, 111, 15, 0.15);
+}
+
