@@ -1,0 +1,152 @@
+/* GrapesJS Builder Canvas Styles */
+
+/* Hero Section: In builder mode, lay out elements cleanly for intuitive editing */
+.daangn-hero-track {
+  height: auto !important;
+  min-height: 0 !important;
+  padding: 48px 0 60px !important;
+  background-color: #ffffff !important;
+}
+
+.daangn-hero-sticky {
+  position: static !important;
+  height: auto !important;
+  overflow: visible !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+}
+
+/* Ensure Top Hero Title is interactive, visible, and directly editable */
+.daangn-hero-title-container {
+  position: static !important;
+  pointer-events: auto !important;
+  opacity: 1 !important;
+  transform: none !important;
+  margin-bottom: 24px !important;
+  padding: 0 20px !important;
+  width: 100% !important;
+  text-align: center !important;
+}
+
+.daangn-hero-title-container * {
+  pointer-events: auto !important;
+  cursor: text !important;
+}
+
+/* Video Box in Builder */
+.daangn-hero-video-box {
+  position: relative !important;
+  margin-top: 0 !important;
+  width: min(1040px, 92%) !important;
+  height: 480px !important;
+  pointer-events: auto !important;
+}
+
+.daangn-hero-scrim {
+  display: none !important;
+}
+
+/* Quote Box in Builder: Displayed cleanly directly beneath the video */
+.daangn-hero-text-overlay {
+  position: static !important;
+  opacity: 1 !important;
+  transform: none !important;
+  pointer-events: auto !important;
+  margin: 28px auto 0 !important;
+  width: min(1040px, 92%) !important;
+  box-sizing: border-box !important;
+  background-color: #FFF9F5 !important;
+  border: 2px dashed #FF6F0F !important;
+  border-radius: 16px !important;
+  padding: 24px 32px !important;
+  text-align: center !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+/* Guide badge for the quote box */
+.daangn-hero-quote-badge {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  background-color: #FF6F0F !important;
+  color: #ffffff !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  padding: 5px 14px !important;
+  border-radius: 20px !important;
+  margin-bottom: 14px !important;
+  letter-spacing: -0.2px !important;
+  pointer-events: none !important;
+  user-select: none !important;
+  box-shadow: 0 2px 6px rgba(255, 111, 15, 0.25) !important;
+}
+
+/* Quote text in builder mode */
+.daangn-hero-fullscreen-quote {
+  color: #212124 !important;
+  font-family: 'KarrotSans', 'Pretendard', sans-serif !important;
+  font-size: 22px !important;
+  font-weight: 700 !important;
+  line-height: 1.5 !important;
+  text-shadow: none !important;
+  margin: 0 !important;
+  word-break: keep-all !important;
+  pointer-events: auto !important;
+  cursor: text !important;
+}
+
+/* Floating Campaign Promo in Builder Canvas */
+.daangn-floating-promo {
+  position: fixed !important;
+  bottom: 24px !important;
+  right: 24px !important;
+  z-index: 1000 !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  transform: none !important;
+  pointer-events: auto !important;
+}
+
+.daangn-promo-delay-badge {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  background: rgba(255, 255, 255, 0.12) !important;
+  color: #FFB37C !important;
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  padding: 3px 8px !important;
+  border-radius: 6px !important;
+  margin-bottom: 6px !important;
+  user-select: none !important;
+  pointer-events: none !important;
+}
+
+.daangn-promo-card {
+  outline: 1px dashed rgba(255, 111, 15, 0.5) !important;
+  cursor: pointer !important;
+}
+
+.daangn-promo-card:hover {
+  outline: 2px solid #FF6F0F !important;
+}
+
+.daangn-promo-title,
+.daangn-promo-desc {
+  cursor: text !important;
+  pointer-events: auto !important;
+}
+
+.daangn-promo-cta {
+  cursor: pointer !important;
+  pointer-events: auto !important;
+}
+
+.daangn-promo-img {
+  cursor: pointer !important;
+  pointer-events: auto !important;
+}

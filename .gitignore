@@ -22,3 +22,7 @@ grapesjs-*.tgz
 _index.html
 docs/.vuepress/dist
 dist/
+.env
+data/*.sqlite
+data/*.sqlite-journal
+data/*.db

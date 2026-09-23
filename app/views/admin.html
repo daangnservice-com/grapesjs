@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>당근서비스 채용 페이지 빌더 Admin</title>
+
+  <!-- KarrotSans & Pretendard Fonts & Favicon -->
+  <link rel="icon" type="image/png" href="/images/daangn-service-logo.png" />
+  <link rel="stylesheet" href="/css/fonts.css" />
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+
+  <!-- GrapesJS Library -->
+  <link rel="stylesheet" href="https://unpkg.com/grapesjs/dist/css/grapes.min.css">
+  <script src="https://unpkg.com/grapesjs"></script>
+
+  <!-- Admin Custom Stylesheet -->
+  <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body>
+
+  <!-- Top Admin Toolbar -->
+  <header class="admin-header">
+    <div class="admin-brand">
+      <img src="/images/daangn-service-logo.png" alt="당근서비스" class="brand-logo-img" />
+      <span class="brand-title">채용 페이지 빌더</span>
+    </div>
+
+    <div class="admin-status">
+      <span id="statusBadge" class="status-badge status-published">불러오는 중...</span>
+    </div>
+
+    <div class="admin-actions">
+      <button id="btnResetTemplate" class="btn-admin btn-secondary" onclick="resetToRichTemplate()" title="당근서비스 공식 영상/이미지 풀 템플릿으로 캔버스 초기화">🍊 당근서비스 풀 템플릿 적용</button>
+      <button id="btnSEO" class="btn-admin btn-secondary" onclick="toggleSEOModal()">SEO / 메타태그 설정</button>
+      <button id="btnPromoDelay" class="btn-admin btn-secondary" onclick="togglePromoDelayModal()" title="하단 플로팅 팝업 배너의 노출 지연 시간 설정">⏱️ 팝업 시간 설정</button>
+      <button id="btnPreview" class="btn-admin btn-secondary" onclick="openPreviewModal()">미리보기</button>
+      <button id="btnHistory" class="btn-admin btn-secondary" onclick="toggleHistoryDrawer()">버전 히스토리</button>
+      <button id="btnSave" class="btn-admin btn-secondary" onclick="saveDraft()">임시 저장</button>
+      <button id="btnPublish" class="btn-admin btn-primary" onclick="publishPage()">🚀 즉시 배포하기</button>
+      <button id="btnLogout" class="btn-admin btn-danger" onclick="logout()">로그아웃</button>
+    </div>
+  </header>
+
+  <!-- Main GrapesJS Editor Workspace -->
+  <div id="gjs"></div>
+
+  <!-- Version History Drawer -->
+  <div id="historyDrawer" class="drawer">
+    <div class="drawer-header">
+      <h3>버전 히스토리 & 롤백</h3>
+      <button class="drawer-close" onclick="toggleHistoryDrawer()">&times;</button>
+    </div>
+    <div class="drawer-body">
+      <p class="drawer-sub">이전 저장 및 배포 버전으로 한 번의 클릭으로 롤백할 수 있습니다.</p>
+      <div id="versionList" class="version-list">
+        <!-- Dynamically rendered version cards -->
+      </div>
+    </div>
+  </div>
+
+  <!-- SEO / Meta Tags Modal -->
+  <div id="seoModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>SEO / 공유 메타태그 설정</h3>
+        <button class="modal-close" onclick="toggleSEOModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>페이지 제목 (SEO Title)</label>
+          <input type="text" id="seoTitleInput" placeholder="당근서비스 채용 - 이웃과 함께하는 커뮤니티" />
+        </div>
+        <div class="form-group">
+          <label>페이지 설명 (SEO Description)</label>
+          <textarea id="seoDescInput" rows="4" placeholder="당근서비스에서 새로운 도전을 함께할 멋진 동료를 찾습니다."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-admin btn-primary" onclick="saveSEOMeta()">저장하기</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Floating Promo Delay Setting Modal -->
+  <div id="promoDelayModal" class="modal">
+    <div class="modal-content" style="max-width: 480px;">
+      <div class="modal-header">
+        <h3>⏱️ 하단 스티커 팝업 노출 시간 설정</h3>
+        <button class="modal-close" onclick="togglePromoDelayModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size: 14px; color: #555; margin-bottom: 20px; line-height: 1.5;">
+          방문자가 페이지에 접속한 후, <strong>몇 초 뒤에</strong> 하단 스티커 팝업 배너가 나타날지 설정합니다.
+        </p>
+        <div class="form-group">
+          <label style="font-weight: 700; color: #212124;">노출 지연 시간 (초)</label>
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <input type="number" id="promoDelayInput" min="0" max="60" step="1" value="5" style="width: 120px; font-size: 18px; font-weight: 700; padding: 8px 12px; border-radius: 8px; border: 1px solid #ddd;" />
+            <span style="font-size: 16px; font-weight: 600; color: #333;">초 후 자동 등장</span>
+          </div>
+          <p style="font-size: 13px; color: #888; margin-top: 8px;">
+            💡 <code>0</code>으로 설정하면 페이지 접속 즉시 나타납니다. (기본값: 5초)
+          </p>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-admin btn-primary" onclick="savePromoDelaySetting()">설정 적용하기</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Live Preview Modal -->
+  <div id="previewModal" class="modal preview-modal">
+    <div class="modal-content preview-modal-content">
+      <div class="modal-header">
+        <h3>퍼블릭 화면 미리보기 (Preview)</h3>
+        <button class="modal-close" onclick="closePreviewModal()">&times;</button>
+      </div>
+      <div class="modal-body preview-body">
+        <iframe id="previewFrame" title="미리보기 화면"></iframe>
+      </div>
+    </div>
+  </div>
+
+  <!-- Admin JS logic -->
+  <script src="/js/admin.js"></script>
+</body>
+</html>

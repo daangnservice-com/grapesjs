@@ -1,0 +1,342 @@
+:root {
+  --seed-orange: #FF6F0F;
+  --seed-orange-hover: #E55E00;
+  --seed-dark: #111111;
+  --seed-gray-bg: #F8F9FA;
+  --seed-border: #E9ECEF;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+  overflow: hidden;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Header Navbar */
+.admin-header {
+  height: 60px;
+  background: #ffffff;
+  border-bottom: 1px solid var(--seed-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  z-index: 100;
+}
+
+.admin-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.brand-logo-img {
+  height: 24px;
+  width: auto;
+  object-fit: contain;
+  display: block;
+}
+
+.brand-logo {
+  font-weight: 800;
+  font-size: 18px;
+  color: var(--seed-orange);
+}
+
+.brand-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #333333;
+  border-left: 1px solid #ddd;
+  padding-left: 10px;
+}
+
+.status-badge {
+  font-size: 13px;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 14px;
+}
+
+.status-published {
+  background-color: #E6F4EA;
+  color: #137333;
+}
+
+.status-draft {
+  background-color: #FEF7E0;
+  color: #B06000;
+}
+
+.admin-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-admin {
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s;
+}
+
+.btn-primary {
+  background-color: var(--seed-orange);
+  color: #ffffff;
+}
+
+.btn-primary:hover {
+  background-color: var(--seed-orange-hover);
+}
+
+.btn-secondary {
+  background-color: #F1F3F5;
+  color: #333333;
+}
+
+.btn-secondary:hover {
+  background-color: #E9ECEF;
+}
+
+.btn-danger {
+  background-color: #FFF0F0;
+  color: #E03131;
+}
+
+.btn-danger:hover {
+  background-color: #FFE3E3;
+}
+
+/* Main GrapesJS Canvas Container */
+#gjs {
+  flex: 1;
+  height: calc(100vh - 60px);
+}
+
+/* Customizing GrapesJS UI elements */
+.gjs-one-bg {
+  background-color: #26282B;
+}
+
+.gjs-two-color {
+  color: #E9ECEF;
+}
+
+.gjs-four-color,
+.gjs-four-color-h:hover {
+  color: var(--seed-orange);
+}
+
+.gjs-block {
+  border-radius: 6px;
+  border: 1px solid #3A3D42;
+  transition: all 0.2s ease;
+}
+
+.gjs-block:hover {
+  border-color: var(--seed-orange);
+  color: var(--seed-orange);
+}
+
+/* Drawer Component for Version History */
+.drawer {
+  position: fixed;
+  top: 60px;
+  right: -400px;
+  width: 400px;
+  height: calc(100vh - 60px);
+  background: #ffffff;
+  border-left: 1px solid var(--seed-border);
+  box-shadow: -4px 0 15px rgba(0, 0, 0, 0.08);
+  transition: right 0.3s ease;
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+}
+
+.drawer.open {
+  right: 0;
+}
+
+.drawer-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--seed-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.drawer-header h3 {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.drawer-close {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #666;
+}
+
+.drawer-body {
+  padding: 20px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.drawer-sub {
+  font-size: 13px;
+  color: #666;
+  margin-top: 0;
+  margin-bottom: 20px;
+}
+
+.version-item {
+  border: 1px solid var(--seed-border);
+  border-radius: 8px;
+  padding: 14px 16px;
+  margin-bottom: 12px;
+  background: #FAFDFB;
+  transition: border-color 0.2s;
+}
+
+.version-item.active-version {
+  border-color: var(--seed-orange);
+  background: #FFF9F5;
+}
+
+.version-item-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.version-title {
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.version-date {
+  font-size: 12px;
+  color: #888;
+}
+
+.version-actions {
+  margin-top: 10px;
+  display: flex;
+  gap: 8px;
+}
+
+.btn-rollback {
+  font-size: 12px;
+  padding: 4px 10px;
+  background-color: var(--seed-orange);
+  color: #fff;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+}
+
+/* Modal styling */
+.modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 500;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-content {
+  background: #ffffff;
+  border-radius: 12px;
+  width: 500px;
+  max-width: 90%;
+  padding: 24px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.modal-header h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  font-size: 22px;
+  cursor: pointer;
+}
+
+.modal-body .form-group {
+  margin-bottom: 16px;
+}
+
+.modal-body label {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.modal-body input,
+.modal-body textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--seed-border);
+  border-radius: 6px;
+  font-size: 14px;
+  font-family: inherit;
+}
+
+.modal-footer {
+  text-align: right;
+  margin-top: 20px;
+}
+
+/* Preview Modal Specifics */
+.preview-modal-content {
+  width: 90vw;
+  height: 85vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.preview-body {
+  flex: 1;
+  padding: 0;
+}
+
+#previewFrame {
+  width: 100%;
+  height: 100%;
+  border: none;
+  border-radius: 0 0 12px 12px;
+}

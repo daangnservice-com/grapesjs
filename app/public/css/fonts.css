@@ -1,0 +1,30 @@
+/* 당근 공식 서체 KarrotSans @font-face 정의 */
+@font-face {
+  font-family: 'KarrotSans';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/KarrotSans-Regular.woff2') format('woff2'),
+       url('/fonts/KarrotSans-Regular.woff') format('woff'),
+       url('/fonts/KarrotSans-Regular.otf') format('opentype');
+}
+
+@font-face {
+  font-family: 'KarrotSans';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('/fonts/KarrotSans-Bold.woff2') format('woff2'),
+       url('/fonts/KarrotSans-Bold.woff') format('woff'),
+       url('/fonts/KarrotSans-Bold.otf') format('opentype');
+}
+
+@font-face {
+  font-family: 'KarrotSans';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url('/fonts/KarrotSans-Heavy.woff2') format('woff2'),
+       url('/fonts/KarrotSans-Heavy.woff') format('woff'),
+       url('/fonts/KarrotSans-Heavy.otf') format('opentype');
+}

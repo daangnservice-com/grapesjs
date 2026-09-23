@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- SEO Dynamic Meta Tags -->
+  <title><%= seoTitle %></title>
+  <meta name="description" content="<%= seoDescription %>">
+  <meta property="og:title" content="<%= seoTitle %>">
+  <meta property="og:description" content="<%= seoDescription %>">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="당근서비스 채용">
+
+  <!-- KarrotSans & Pretendard Fonts -->
+  <link rel="icon" type="image/png" href="/images/daangn-service-logo.png" />
+  <link rel="stylesheet" href="/css/fonts.css" />
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+  <link rel="stylesheet" href="/css/daangn-theme.css" />
+
+  <style>
+    /* SEED & Daangn Theme Color Mappings */
+    .bg-surface-dark { background-color: #ffffff !important; }
+    .text-fg-neutral-inverted { color: #212124 !important; }
+    .text-fg-neutral { color: #212124 !important; }
+    .text-fg-brand { color: #FF6F0F !important; }
+    .text-fg-neutral-subtle { color: #868B94 !important; }
+    .bg-bg-layer-default { background-color: #f7f9fa !important; }
+    .text-palette-gray-600 { color: #6b7280 !important; }
+
+    /* Default Base CSS reset for Public Page */
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'KarrotSans', 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+      color: #212124;
+      background-color: #ffffff;
+      -webkit-font-smoothing: antialiased;
+    }
+    
+    /* White Background Global Header */
+    .header__HeaderContainer-sc-bdd24b93-1 {
+      background-color: #ffffff;
+      border-bottom: 1px solid #f2f3f7;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      width: 100%;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    }
+    .header__HeaderInnerContainer-sc-bdd24b93-2 {
+      max-width: 1240px;
+      margin: 0 auto;
+      height: 68px;
+      padding: 0 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .header__LogoWrapper-sc-bdd24b93-3 img {
+      height: 32px;
+      width: auto;
+      display: block;
+      object-fit: contain;
+    }
+    .mobile-view__MobileView-sc-bb2ed92c-0.hossQr {
+      display: none;
+    }
+    .mobile-view__MobileView-sc-bb2ed92c-0.gJVwBD .kCDZmt {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+    }
+    .header__MenuItemContainer-sc-bdd24b93-0 {
+      background: transparent;
+      border: none;
+      outline: none;
+      cursor: pointer;
+      font-size: 15px;
+      font-weight: 600;
+      color: #212124;
+      padding: 8px 14px;
+      border-radius: 6px;
+      transition: color 0.15s ease, background-color 0.15s ease;
+      font-family: inherit;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+    }
+    .header__MenuItemContainer-sc-bdd24b93-0.cIuITU:hover {
+      color: #ff6f0f;
+      background-color: #f7f9fa;
+    }
+    .header__MenuItemContainer-sc-bdd24b93-0.cbRJON {
+      background-color: #ff6f0f;
+      color: #ffffff;
+      font-weight: 700;
+      padding: 9px 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(255, 111, 15, 0.2);
+    }
+    .header__MenuItemContainer-sc-bdd24b93-0.cbRJON:hover {
+      background-color: #e55e00;
+    }
+    .header__MobileMenuButtonStyled-sc-bdd24b93-4 {
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      padding: 6px;
+      display: flex;
+      align-items: center;
+      border-radius: 6px;
+    }
+    .header__MobileMenuButtonStyled-sc-bdd24b93-4:hover {
+      background: #f2f3f7;
+    }
+    .header-link-wrapper {
+      text-decoration: none;
+    }
+
+    @media (max-width: 768px) {
+      .mobile-view__MobileView-sc-bb2ed92c-0.hossQr {
+        display: block;
+      }
+      .mobile-view__MobileView-sc-bb2ed92c-0.gJVwBD {
+        display: none;
+      }
+      .mobile-view__MobileView-sc-bb2ed92c-0.gJVwBD.is-open {
+        display: block;
+        position: absolute;
+        top: 68px;
+        left: 0;
+        right: 0;
+        background: #ffffff;
+        border-bottom: 1px solid #f2f3f7;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        padding: 16px 24px;
+      }
+      .mobile-view__MobileView-sc-bb2ed92c-0.gJVwBD.is-open .kCDZmt {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+      }
+      .mobile-view__MobileView-sc-bb2ed92c-0.gJVwBD.is-open .header__MenuItemContainer-sc-bdd24b93-0 {
+        width: 100%;
+        justify-content: flex-start;
+      }
+    }
+
+    /* Injected Dynamic Page CSS from DB */
+    <%- pageCss %>
+  </style>
+</head>
+<body>
+
+  <header id="f75e17af-3481-4ea7-9f0f-cb81b66e2530" companyname="" logourl="/images/daangn-service-logo.png" language="[object Object]" account="[object Object]" menus="[object Object],[object Object],[object Object],[object Object],[object Object]" class="header__HeaderContainer-sc-bdd24b93-1 rrLaa base-header-styles__CustomHeader-sc-eefa7522-0 kIDajx">
+    <div class="sc-gFVuLS jHBHuO header__HeaderInnerContainer-sc-bdd24b93-2 hiJxcg">
+      <a href="/" class="header-link-wrapper">
+        <div class="header__LogoWrapper-sc-bdd24b93-3 CZiYo">
+          <img alt="logo" src="/images/daangn-service-logo.png">
+        </div>
+      </a>
+      <div class="mobile-view__MobileView-sc-bb2ed92c-0 hossQr">
+        <button data-testid="모바일_메뉴_버튼" class="header__MobileMenuButtonStyled-sc-bdd24b93-4 dizhcu" onclick="document.querySelector('.mobile-view__MobileView-sc-bb2ed92c-0.gJVwBD').classList.toggle('is-open')">
+          <svg fill="none" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+            <path clip-rule="evenodd" d="M3 5.5H21V7.5H3V5.5ZM3 11H21V13H3V11ZM21 16.5H3V18.5H21V16.5Z" fill="#222222" fill-rule="evenodd"></path>
+          </svg>
+        </button>
+      </div>
+      <div class="mobile-view__MobileView-sc-bb2ed92c-0 gJVwBD">
+        <div class="sc-gFVuLS kCDZmt">
+          <div class="sc-eZjPq ixwCyJ">
+            <a rel="noreferrer" data-track-event="header-menu-clicked" href="/" class="header-link-wrapper">
+              <button background="[object Object]" brandcolor="#ff6f0f" text="[object Object]" id="ed6a3f4e-678e-4ccb-a335-2aca724f78b9" submenus="" radius="[object Object]" shape="square" link="[object Object]" class="header__MenuItemContainer-sc-bdd24b93-0 cIuITU" name="홈">
+                <span class="sc-aYaIB gigtVE">홈</span>
+              </button>
+            </a>
+          </div>
+          <div class="sc-eZjPq ixwCyJ">
+            <a rel="noreferrer" data-track-event="header-menu-clicked" href="#team" class="header-link-wrapper">
+              <button background="[object Object]" brandcolor="#ff6f0f" text="[object Object]" id="6bbe87ca-1585-4b02-8717-1cd77d736717" submenus="" radius="[object Object]" shape="square" link="[object Object]" class="header__MenuItemContainer-sc-bdd24b93-0 cIuITU" name="팀 소개">
+                <span class="sc-aYaIB gigtVE">팀 소개</span>
+              </button>
+            </a>
+          </div>
+          <div class="sc-eZjPq ixwCyJ">
+            <a rel="noreferrer" data-track-event="header-menu-clicked" href="#inside" class="header-link-wrapper">
+              <button background="[object Object]" brandcolor="#ff6f0f" text="[object Object]" id="7bfb92a2-0383-4f40-9b2b-977bed272002" submenus="" radius="[object Object]" shape="square" link="[object Object]" class="header__MenuItemContainer-sc-bdd24b93-0 cIuITU" name="인사이드">
+                <span class="sc-aYaIB gigtVE">인사이드</span>
+              </button>
+            </a>
+          </div>
+          <div class="sc-eZjPq ixwCyJ">
+            <a rel="noreferrer" data-track-event="header-menu-clicked" href="#process" class="header-link-wrapper">
+              <button background="[object Object]" brandcolor="#ff6f0f" text="[object Object]" id="2c28d3eb-ed3e-4dab-a968-0dd1f4be382b" submenus="" radius="[object Object]" shape="square" link="[object Object]" class="header__MenuItemContainer-sc-bdd24b93-0 cIuITU" name="채용 절차">
+                <span class="sc-aYaIB gigtVE">채용 절차</span>
+              </button>
+            </a>
+          </div>
+          <div class="sc-eZjPq ixwCyJ">
+            <a rel="noreferrer" data-track-event="header-menu-clicked" href="#jobs" class="header-link-wrapper">
+              <button background="[object Object]" brandcolor="#ff6f0f" text="[object Object]" id="f3a513c5-f5d6-4586-b16a-21cdae248f79" submenus="" radius="[object Object]" shape="square" link="[object Object]" class="header__MenuItemContainer-sc-bdd24b93-0 cbRJON" name="채용공고">
+                <span class="sc-aYaIB gigtVE">채용공고</span>
+              </button>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Injected Dynamic Page HTML from DB -->
+  <main id="app-root">
+    <%- pageHtml %>
+  </main>
+
+  <footer style="padding: 48px 24px; border-top: 1px solid #EAEBEE; text-align: center; color: #868B94; font-size: 14px; background: #F7F9FA;">
+    <div style="margin-bottom: 16px; display: flex; justify-content: center; align-items: center;">
+      <img src="/images/daangn-service-logo.png" alt="당근서비스" style="height: 24px; width: auto; opacity: 0.9;" />
+    </div>
+    <p style="margin: 0 0 8px; font-weight: 700; color: #212124;">(주) 당근서비스</p>
+    <p style="margin: 0; color: #868B94;">서울특별시 서초구 강남대로 327, 대륭서초타워 14층 | careers.daangnservice.com</p>
+  </footer>
+
+</body>
+</html>
