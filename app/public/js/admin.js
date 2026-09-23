@@ -402,6 +402,23 @@ function registerSeedBlocks(editor) {
     `
   });
 
+  bm.add('daangn-sticky-card', {
+    label: '🌱 일하는 방식 스티키 카드 (이미지 1개 + 글)',
+    category: '당근서비스 공식 프로덕션 컴포넌트',
+    content: `
+      <div class="daangn-sticky-card" data-label="새로운 가치">
+        <div class="daangn-sticky-card-media">
+          <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=900&q=80" alt="새로운 가치" class="daangn-sticky-card-img" />
+        </div>
+        <div class="daangn-sticky-card-caption">
+          <span class="daangn-sticky-card-tag">06 · 일하는 방식</span>
+          <h3 class="daangn-sticky-card-title">새로운 가치</h3>
+          <p class="daangn-sticky-card-desc">당근서비스 팀이 함께 만들어가는 가치와 일하는 방식을 소개하는 문구를 여기에 작성하세요. 1개의 이미지와 글을 자유롭게 편집할 수 있습니다.</p>
+        </div>
+      </div>
+    `
+  });
+
   bm.add('daangn-culture-item', {
     label: '🌱 일하는 방식 섹션 (이미지 1개 + 글)',
     category: '당근서비스 공식 프로덕션 컴포넌트',

@@ -277,78 +277,91 @@ function getOfficialHtml() {
     </div>
   </section>
 
-  <!-- CULTURE SECTION (당근서비스가 일하는 방식: 1섹션당 이미지 1개 + 글 직접 수정 및 추가 구조) -->
-  <section id="culture" class="daangn-culture-section">
-    <div class="daangn-culture-container">
-      <div class="daangn-culture-header">
-        <span class="daangn-culture-header-badge">DAANGN CULTURE</span>
-        <h2 class="daangn-culture-header-title">소수정예 팀의 경계 없는 몰입</h2>
-        <p class="daangn-culture-header-desc">
-          동네를 개발거리로 보는 빌더의 상상력은 100m 앞 현장까지 뻗어 나갑니다.<br/>
-          한 사람이 직무의 경계를 넘어 문제를 직접 해결하고,<br/>
-          그 변화는 수천만의 일상에 가장 빠르게 닿습니다. 당근서비스가 일하는 방식입니다.
-        </p>
-      </div>
-
-      <!-- Culture Cards List: 각 섹션(아이템)당 1개 이미지 + 글 수정 및 자유로운 추가 가능 -->
-      <div class="daangn-culture-list" id="cultureCardList">
-        <!-- Culture Item 1: 신뢰와 충돌 -->
-        <div class="daangn-culture-item">
-          <div class="daangn-culture-item-content">
-            <span class="daangn-culture-item-badge">01 · 일하는 방식</span>
-            <h3 class="daangn-culture-item-title">신뢰와 충돌</h3>
-            <p class="daangn-culture-item-desc">서로 다른 관점이 충돌할 때 더 나은 답이 탄생합니다. 치열하게 의견을 나누고, 결정된 방향에는 전적으로 몰입하여 최고의 결과를 만들어냅니다.</p>
+  <!-- CULTURE STICKY SCROLL SECTION (당근서비스가 일하는 방식: 좌측 고정 네비 + 우측 스티키 카드 스택) -->
+  <section id="culture" style="background-color: #ffffff; padding: 80px 0 140px;">
+    <div style="max-width: 1120px; margin: 0 auto; padding: 0 24px;">
+      <h2 style="font-size: 44px; font-weight: 800; text-align: center; color: #212124; margin-bottom: 16px;">소수정예 팀의 경계 없는 몰입</h2>
+      <p style="font-size: 18px; color: #868B94; text-align: center; max-width: 760px; margin: 0 auto 72px; line-height: 1.6;">
+        동네를 개발거리로 보는 빌더의 상상력은 100m 앞 현장까지 뻗어 나갑니다.<br/>
+        한 사람이 직무의 경계를 넘어 문제를 직접 해결하고,<br/>
+        그 변화는 수천만의 일상에 가장 빠르게 닿습니다. 당근서비스가 일하는 방식입니다.
+      </p>
+      <!-- Sticky container: left interactive sticky list + right sticky cards stack -->
+      <div class="daangn-sticky-stack-container">
+        <!-- Left sticky list -->
+        <div class="daangn-sticky-left">
+          <span style="font-size: 14px; font-weight: 800; color: #FF6F0F; letter-spacing: 0.5px;">당근서비스가 일하는 방식</span>
+          <div class="sticky-value-list" id="stickyValueList">
+            <div class="sticky-value-item is-active" data-index="0" onclick="scrollToStickyCard(0)">신뢰와 충돌</div>
+            <div class="sticky-value-item" data-index="1" onclick="scrollToStickyCard(1)">빌더십</div>
+            <div class="sticky-value-item" data-index="2" onclick="scrollToStickyCard(2)">실행력</div>
+            <div class="sticky-value-item" data-index="3" onclick="scrollToStickyCard(3)">유저 임팩트</div>
+            <div class="sticky-value-item" data-index="4" onclick="scrollToStickyCard(4)">공개와 공유</div>
           </div>
-          <div class="daangn-culture-item-media">
-            <img src="https://careers-prismic-image-proxy.krrt.io/karrot/ai_1Fo1P9HI4Ug1L_%E1%84%89%E1%85%B5%E1%86%AB%E1%84%85%E1%85%AC%E1%84%8B%E1%85%AA%E1%84%8E%E1%85%AE%E1%86%BC%E1%84%83%E1%85%A9%E1%86%AF_F.png?auto=compress&w=900&fit=max&fm=webp" alt="신뢰와 충돌" class="daangn-culture-item-img" />
-          </div>
-        </div>
-
-        <!-- Culture Item 2: 빌더십 -->
-        <div class="daangn-culture-item">
-          <div class="daangn-culture-item-content">
-            <span class="daangn-culture-item-badge">02 · 일하는 방식</span>
-            <h3 class="daangn-culture-item-title">빌더십</h3>
-            <p class="daangn-culture-item-desc">직무의 경계를 넘어 문제를 직접 발견하고 해결하는 사람들이 있습니다. 시키는 일에 머물지 않고, 스스로 주인이 되어 프로덕트와 서비스를 직접 만들어갑니다.</p>
-          </div>
-          <div class="daangn-culture-item-media">
-            <img src="/images/builder-spirit.webp" alt="빌더십" class="daangn-culture-item-img" />
+          <div class="sticky-desc-box" id="stickyDescBox">
+            서로 다른 관점이 충돌할 때 더 나은 답이 탄생합니다. 치열하게 의견을 나누고, 결정된 방향에는 전적으로 몰입하여 최고의 결과를 만들어냅니다.
           </div>
         </div>
+        <!-- Right sticky cards stack: 섹션 1개당 1개 이미지 + 글 수정 및 자유로운 추가 가능 -->
+        <div class="daangn-cards-stack" id="stickyCardsStack">
+          <!-- Card 1: 신뢰와 충돌 -->
+          <div class="daangn-sticky-card" data-index="0" data-label="신뢰와 충돌">
+            <div class="daangn-sticky-card-media">
+              <img src="https://careers-prismic-image-proxy.krrt.io/karrot/ai_1Fo1P9HI4Ug1L_%E1%84%89%E1%85%B5%E1%86%AB%E1%84%85%E1%85%AC%E1%84%8B%E1%85%AA%E1%84%8E%E1%85%AE%E1%86%BC%E1%84%83%E1%85%A9%E1%86%AF_F.png?auto=compress&w=900&fit=max&fm=webp" alt="신뢰와 충돌" class="daangn-sticky-card-img" />
+            </div>
+            <div class="daangn-sticky-card-caption">
+              <span class="daangn-sticky-card-tag">01 · 일하는 방식</span>
+              <h3 class="daangn-sticky-card-title">신뢰와 충돌</h3>
+              <p class="daangn-sticky-card-desc">서로 다른 관점이 충돌할 때 더 나은 답이 탄생합니다. 치열하게 의견을 나누고, 결정된 방향에는 전적으로 몰입하여 최고의 결과를 만들어냅니다.</p>
+            </div>
+          </div>
 
-        <!-- Culture Item 3: 실행력 -->
-        <div class="daangn-culture-item">
-          <div class="daangn-culture-item-content">
-            <span class="daangn-culture-item-badge">03 · 일하는 방식</span>
-            <h3 class="daangn-culture-item-title">실행력</h3>
-            <p class="daangn-culture-item-desc">100m 앞 현장까지 상상력을 뻗어 빠르게 실행합니다. 긴 탁상공론 대신 작은 실행과 빠른 사용자 피드백을 통해 기민하게 개선하고 학습합니다.</p>
+          <!-- Card 2: 빌더십 -->
+          <div class="daangn-sticky-card" data-index="1" data-label="빌더십">
+            <div class="daangn-sticky-card-media">
+              <img src="/images/builder-spirit.webp" alt="빌더십" class="daangn-sticky-card-img" />
+            </div>
+            <div class="daangn-sticky-card-caption">
+              <span class="daangn-sticky-card-tag">02 · 일하는 방식</span>
+              <h3 class="daangn-sticky-card-title">빌더십</h3>
+              <p class="daangn-sticky-card-desc">직무의 경계를 넘어 문제를 직접 발견하고 해결하는 사람들이 있습니다. 시키는 일에 머물지 않고 스스로 주인이 되어 프로덕트를 만들어갑니다.</p>
+            </div>
           </div>
-          <div class="daangn-culture-item-media">
-            <img src="https://careers-prismic-image-proxy.krrt.io/karrot/ahhmCrK9tuLqEO1Y_%E1%84%89%E1%85%B5%E1%86%AF%E1%84%92%E1%85%A2%E1%86%BC%E1%84%85%E1%85%A7%E1%86%A8_F.png?auto=compress&w=900&fit=max&fm=webp" alt="실행력" class="daangn-culture-item-img" />
-          </div>
-        </div>
 
-        <!-- Culture Item 4: 유저 임팩트 -->
-        <div class="daangn-culture-item">
-          <div class="daangn-culture-item-content">
-            <span class="daangn-culture-item-badge">04 · 일하는 방식</span>
-            <h3 class="daangn-culture-item-title">유저 임팩트</h3>
-            <p class="daangn-culture-item-desc">수천만 이웃의 일상에 가장 빠르게 닿는 변화를 만듭니다. 우리의 모든 결정과 기술적 도전은 사용자에게 실질적인 가치와 감동을 주기 위해 존재합니다.</p>
+          <!-- Card 3: 실행력 -->
+          <div class="daangn-sticky-card" data-index="2" data-label="실행력">
+            <div class="daangn-sticky-card-media">
+              <img src="https://careers-prismic-image-proxy.krrt.io/karrot/ahhmCrK9tuLqEO1Y_%E1%84%89%E1%85%B5%E1%86%AF%E1%84%92%E1%85%A2%E1%86%BC%E1%84%85%E1%85%A7%E1%86%A8_F.png?auto=compress&w=900&fit=max&fm=webp" alt="실행력" class="daangn-sticky-card-img" />
+            </div>
+            <div class="daangn-sticky-card-caption">
+              <span class="daangn-sticky-card-tag">03 · 일하는 방식</span>
+              <h3 class="daangn-sticky-card-title">실행력</h3>
+              <p class="daangn-sticky-card-desc">100m 앞 현장까지 상상력을 뻗어 빠르게 실행합니다. 긴 탁상공론 대신 작은 실행과 빠른 피드백을 통해 기민하게 개선합니다.</p>
+            </div>
           </div>
-          <div class="daangn-culture-item-media">
-            <img src="https://careers-prismic-image-proxy.krrt.io/karrot/ahhmDrK9tuLqEO1Z_%E1%84%8B%E1%85%B2%E1%84%8C%E1%85%A5%E1%84%8B%E1%85%B5%E1%86%B7%E1%84%91%E1%85%A2%E1%86%A8%E1%84%90%E1%85%B3_F.png?auto=compress&w=900&fit=max&fm=webp" alt="유저 임팩트" class="daangn-culture-item-img" />
-          </div>
-        </div>
 
-        <!-- Culture Item 5: 공개와 공유 -->
-        <div class="daangn-culture-item">
-          <div class="daangn-culture-item-content">
-            <span class="daangn-culture-item-badge">05 · 일하는 방식</span>
-            <h3 class="daangn-culture-item-title">공개와 공유</h3>
-            <p class="daangn-culture-item-desc">투명하게 공유하고 함께 성장하는 문화를 지향합니다. 모든 맥락과 정보를 투명하게 열어두어 팀원 누구나 최선의 판단을 내릴 수 있도록 돕습니다.</p>
+          <!-- Card 4: 유저 임팩트 -->
+          <div class="daangn-sticky-card" data-index="3" data-label="유저 임팩트">
+            <div class="daangn-sticky-card-media">
+              <img src="https://careers-prismic-image-proxy.krrt.io/karrot/ahhmDrK9tuLqEO1Z_%E1%84%8B%E1%85%B2%E1%84%8C%E1%85%A5%E1%84%8B%E1%85%B5%E1%86%B7%E1%84%91%E1%85%A2%E1%86%A8%E1%84%90%E1%85%B3_F.png?auto=compress&w=900&fit=max&fm=webp" alt="유저 임팩트" class="daangn-sticky-card-img" />
+            </div>
+            <div class="daangn-sticky-card-caption">
+              <span class="daangn-sticky-card-tag">04 · 일하는 방식</span>
+              <h3 class="daangn-sticky-card-title">유저 임팩트</h3>
+              <p class="daangn-sticky-card-desc">수천만 이웃의 일상에 가장 빠르게 닿는 변화를 만듭니다. 우리의 모든 결정과 기술적 도전은 사용자에게 실질적인 가치를 줍니다.</p>
+            </div>
           </div>
-          <div class="daangn-culture-item-media">
-            <img src="https://careers-prismic-image-proxy.krrt.io/karrot/ahhl_rK9tuLqEO1U_%E1%84%80%E1%85%A9%E1%86%BC%E1%84%80%E1%85%A2%E1%84%8B%E1%85%AA%E1%84%80%E1%85%A9%E1%86%BC%E1%84%8B%E1%85%B2_F.png?auto=compress&w=900&fit=max&fm=webp" alt="공개와 공유" class="daangn-culture-item-img" />
+
+          <!-- Card 5: 공개와 공유 -->
+          <div class="daangn-sticky-card" data-index="4" data-label="공개와 공유">
+            <div class="daangn-sticky-card-media">
+              <img src="https://careers-prismic-image-proxy.krrt.io/karrot/ahhl_rK9tuLqEO1U_%E1%84%80%E1%85%A9%E1%86%BC%E1%84%80%E1%85%A2%E1%84%8B%E1%85%AA%E1%84%80%E1%85%A9%E1%86%BC%E1%84%8B%E1%85%B2_F.png?auto=compress&w=900&fit=max&fm=webp" alt="공개와 공유" class="daangn-sticky-card-img" />
+            </div>
+            <div class="daangn-sticky-card-caption">
+              <span class="daangn-sticky-card-tag">05 · 일하는 방식</span>
+              <h3 class="daangn-sticky-card-title">공개와 공유</h3>
+              <p class="daangn-sticky-card-desc">투명하게 공유하고 함께 성장하는 문화를 지향합니다. 모든 맥락과 정보를 공개하여 누구나 최선의 판단을 내릴 수 있습니다.</p>
+            </div>
           </div>
         </div>
       </div>
@@ -802,7 +815,33 @@ function getOfficialHtml() {
     var cards = document.querySelectorAll('.daangn-sticky-card');
     var items = document.querySelectorAll('.sticky-value-item');
     var descBox = document.getElementById('stickyDescBox');
-    if (!cards.length || !items.length) return;
+    var list = document.getElementById('stickyValueList');
+    if (!cards.length) return;
+
+    // Dynamically sync titles from cards to left navigation items
+    if (list) {
+      if (items.length !== cards.length) {
+        list.innerHTML = '';
+        cards.forEach(function(card, idx) {
+          var titleElem = card.querySelector('.daangn-sticky-card-title');
+          var label = titleElem ? titleElem.textContent.trim() : (card.getAttribute('data-label') || ('가치 ' + (idx + 1)));
+          var item = document.createElement('div');
+          item.className = 'sticky-value-item' + (idx === 0 ? ' is-active' : '');
+          item.setAttribute('data-index', idx);
+          item.textContent = label;
+          item.onclick = function() { scrollToStickyCard(idx); };
+          list.appendChild(item);
+        });
+        items = list.querySelectorAll('.sticky-value-item');
+      } else {
+        cards.forEach(function(card, idx) {
+          var titleElem = card.querySelector('.daangn-sticky-card-title');
+          if (titleElem && items[idx]) {
+            items[idx].textContent = titleElem.textContent.trim();
+          }
+        });
+      }
+    }
 
     var activeIdx = 0;
     var triggerY = window.innerHeight * 0.45;
@@ -823,8 +862,9 @@ function getOfficialHtml() {
     });
 
     if (descBox && cards[activeIdx]) {
-      var sub = cards[activeIdx].getAttribute('data-sub') || '';
-      if (descBox.textContent.trim() !== sub) {
+      var descElem = cards[activeIdx].querySelector('.daangn-sticky-card-desc');
+      var sub = descElem ? descElem.textContent.trim() : (cards[activeIdx].getAttribute('data-sub') || '');
+      if (sub && descBox.textContent.trim() !== sub) {
         descBox.style.opacity = '0';
         descBox.style.transform = 'translateY(4px)';
         setTimeout(function() {

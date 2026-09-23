@@ -146,19 +146,64 @@ body {
   top: 120px;
   border-radius: 24px;
   overflow: hidden;
-  height: 440px;
+  height: 480px;
   flex-shrink: 0;
   border: 1px solid var(--daangn-border);
   box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.04), 0 16px 36px rgba(0, 0, 0, 0.08);
   background: #ffffff;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
+  position: relative;
 }
 
+.daangn-sticky-card-media {
+  width: 100%;
+  height: 100%;
+}
+
+.daangn-sticky-card-img,
 .daangn-sticky-card img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
+}
+
+.daangn-sticky-card-caption {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 32px 36px;
+  background: linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.45) 25%, rgba(0, 0, 0, 0.88) 100%);
+  color: #ffffff;
+  z-index: 2;
+  box-sizing: border-box;
+}
+
+.daangn-sticky-card-tag {
+  display: inline-block;
+  font-size: 13px;
+  font-weight: 800;
+  color: #FFB37C;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.daangn-sticky-card-title {
+  font-size: 26px;
+  font-weight: 800;
+  color: #ffffff;
+  margin: 0 0 8px;
+  letter-spacing: -0.3px;
+}
+
+.daangn-sticky-card-desc {
+  font-size: 16px;
+  color: rgba(255, 255, 255, 0.92);
+  line-height: 1.6;
+  margin: 0;
+  word-break: keep-all;
 }
 
 /* ── Culture Section: 섹션 1개당 1개 이미지 + 텍스트 직접 편집/추가 가능 ────── */

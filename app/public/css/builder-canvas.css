@@ -172,27 +172,89 @@
   color: #FF6F0F !important;
 }
 
-/* ── Culture Section Builder Canvas Helpers ────────────────── */
-.daangn-culture-item {
+/* ── Sticky Culture Section Builder Canvas Helpers ─────────── */
+.daangn-sticky-stack-container {
+  display: flex !important;
+  gap: 40px !important;
+  align-items: flex-start !important;
+}
+
+.daangn-sticky-left {
+  position: static !important;
+  flex: 0 0 280px !important;
+  top: auto !important;
+}
+
+.daangn-cards-stack {
+  flex: 1 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 28px !important;
+}
+
+.daangn-sticky-card {
   position: relative !important;
+  top: auto !important;
+  height: auto !important;
+  border-radius: 20px !important;
+  overflow: hidden !important;
+  margin-bottom: 24px !important;
+  outline: 1px dashed rgba(255, 111, 15, 0.35) !important;
+  background: #ffffff !important;
+}
+
+.daangn-sticky-card:hover {
+  outline: 2px solid #FF6F0F !important;
+}
+
+.daangn-sticky-card-media {
+  height: 320px !important;
+  width: 100% !important;
+  position: relative !important;
+  background: #f0f0f0 !important;
+}
+
+.daangn-sticky-card-img,
+.daangn-sticky-card img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
   cursor: pointer !important;
+  pointer-events: auto !important;
 }
 
-.daangn-culture-item:hover {
-  outline: 2px dashed rgba(255, 111, 15, 0.4) !important;
+.daangn-sticky-card-caption {
+  position: relative !important;
+  background: #FFFFFF !important;
+  border-top: 1px solid #ECEEF2 !important;
+  padding: 20px 24px !important;
+  color: #212124 !important;
 }
 
-.daangn-culture-item-title,
-.daangn-culture-item-desc,
-.daangn-culture-item-badge {
+.daangn-sticky-card-tag {
+  color: #FF6F0F !important;
   cursor: text !important;
   pointer-events: auto !important;
+  display: inline-block !important;
+  margin-bottom: 4px !important;
 }
 
-.daangn-culture-item-media,
-.daangn-culture-item-img {
-  cursor: pointer !important;
+.daangn-sticky-card-title {
+  color: #212124 !important;
+  cursor: text !important;
   pointer-events: auto !important;
+  font-size: 24px !important;
+  margin: 0 0 6px !important;
 }
+
+.daangn-sticky-card-desc {
+  color: #4D5159 !important;
+  cursor: text !important;
+  pointer-events: auto !important;
+  font-size: 15px !important;
+  line-height: 1.6 !important;
+  margin: 0 !important;
+}
+
 
 
