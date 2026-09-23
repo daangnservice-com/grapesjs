@@ -31,7 +31,7 @@ db.initDb()
   .then(() => console.log('✅ SQLite Database initialized successfully.'))
   .catch((err) => console.error('❌ Database init error:', err));
 
-app.get('/favicon.ico', (req, res) => res.sendFile(path.join(__dirname, 'public/images/daangn-service-logo.png')));
+app.get('/favicon.ico', (req, res) => res.sendFile(path.join(__dirname, 'public/images/favicon-192.png')));
 
 // ==========================================
 // 1. Health Check Endpoint (ALB Health Check)
@@ -147,7 +147,7 @@ app.get('/', async (req, res) => {
       return res.send('<h1>페이지 준비 중입니다.</h1>');
     }
 
-    const faviconUrl = publishedPage.favicon_url || '/images/daangn-service-logo.png';
+    const faviconUrl = publishedPage.favicon_url || '/images/favicon-192.png';
     const rendered = template
       .replace(/<%= seoTitle %>/g, publishedPage.seo_title || '당근서비스 채용')
       .replace(/<%= seoDescription %>/g, publishedPage.seo_description || '당근서비스에서 새로운 동료를 찾습니다.')

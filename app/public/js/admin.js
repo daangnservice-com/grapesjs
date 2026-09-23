@@ -3,7 +3,7 @@ let currentPageData = {
   id: null,
   seoTitle: '당근서비스 채용 - 당근다운 경험이 완성되는 당근서비스',
   seoDescription: '당근서비스에 합류하세요. 당근다운 경험이 완성되는 여정을 함께할 동료를 찾습니다.',
-  faviconUrl: '/images/daangn-service-logo.png',
+  faviconUrl: '/images/favicon-192.png',
   isPublished: 0
 };
 
@@ -107,6 +107,53 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   });
 
+  // Customize Header Dropdown Group Trait for intuitive previewing/editing
+  domc.addType('header-menu-item-group', {
+    isComponent: el => {
+      if (!el || !el.getAttribute) return false;
+      return (el.classList && el.classList.contains('header-menu-item-group'));
+    },
+    model: {
+      defaults: {
+        name: '헤더 메뉴 드롭다운 그룹',
+        traits: [
+          {
+            type: 'select',
+            name: 'data-state',
+            label: '📂 서브메뉴 펼치기',
+            options: [
+              { value: 'closed', name: '기본 (접힘)' },
+              { value: 'open', name: '펼쳐서 편집하기 (열림)' }
+            ]
+          }
+        ]
+      },
+      init() {
+        this.on('change:data-state', () => {
+          const state = this.get('data-state');
+          const el = this.getEl();
+          if (el) {
+            if (state === 'open') el.classList.add('is-open');
+            else el.classList.remove('is-open');
+          }
+        });
+      }
+    }
+  });
+
+  // When clicking or selecting menu items in canvas, open dropdown so items are visible and editable
+  editor.on('component:selected', (model) => {
+    const el = model.getEl();
+    if (!el) return;
+    if (el.classList && (el.classList.contains('header-dropdown-trigger') || el.closest('.header-dropdown-trigger'))) {
+      const group = el.closest('.header-menu-item-group');
+      if (group) group.classList.toggle('is-open');
+    } else if (el.closest && el.closest('.header-dropdown-menu')) {
+      const group = el.closest('.header-menu-item-group');
+      if (group) group.classList.add('is-open');
+    }
+  });
+
   // Register Custom Blocks for Daangn Recruitment
   registerSeedBlocks(editor);
 
@@ -123,7 +170,7 @@ function registerSeedBlocks(editor) {
 
   // Category 0: 당근서비스 공식 프로덕션 컴포넌트
   bm.add('daangn-header', {
-    label: '🧭 상단 헤더 (GNB 내비게이션)',
+    label: '🧭 상단 헤더 (GNB 내비게이션 & 드롭다운)',
     category: '당근서비스 공식 프로덕션 컴포넌트',
     content: `
       <header id="daangnHeader" class="header__HeaderContainer-sc-bdd24b93-1 base-header-styles__CustomHeader-sc-eefa7522-0">
@@ -142,31 +189,69 @@ function registerSeedBlocks(editor) {
           </div>
           <div class="mobile-view__MobileView-sc-bb2ed92c-0 gJVwBD">
             <div class="kCDZmt" style="display: flex; align-items: center; gap: 16px;">
+              <!-- 1. 홈 -->
               <a rel="noreferrer" href="/" class="header-link-wrapper">
                 <button type="button" class="header__MenuItemContainer-sc-bdd24b93-0 cIuITU" name="홈">
                   <span class="sc-aYaIB gigtVE">홈</span>
                 </button>
               </a>
-              <a rel="noreferrer" href="#team" class="header-link-wrapper">
-                <button type="button" class="header__MenuItemContainer-sc-bdd24b93-0 cIuITU" name="팀 소개">
+
+              <!-- 2. 팀 소개 (프로덕트 / 사업운영 / 독립) -->
+              <div class="header-menu-item-group">
+                <button type="button" class="header__MenuItemContainer-sc-bdd24b93-0 cIuITU header-dropdown-trigger" onclick="this.parentElement.classList.toggle('is-open')">
                   <span class="sc-aYaIB gigtVE">팀 소개</span>
+                  <svg class="header-chevron-icon" viewBox="0 0 16 16" width="12" height="12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M4 6L8 10L12 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
                 </button>
-              </a>
-              <a rel="noreferrer" href="#inside" class="header-link-wrapper">
-                <button type="button" class="header__MenuItemContainer-sc-bdd24b93-0 cIuITU" name="인사이드">
-                  <span class="sc-aYaIB gigtVE">인사이드</span>
+                <div class="header-dropdown-menu">
+                  <a href="#team-product" class="header-dropdown-item">프로덕트</a>
+                  <a href="#team-biz" class="header-dropdown-item">사업운영</a>
+                  <a href="#team-independent" class="header-dropdown-item">독립</a>
+                </div>
+              </div>
+
+              <!-- 3. 콘텐츠 (People / Culture / CX) -->
+              <div class="header-menu-item-group">
+                <button type="button" class="header__MenuItemContainer-sc-bdd24b93-0 cIuITU header-dropdown-trigger" onclick="this.parentElement.classList.toggle('is-open')">
+                  <span class="sc-aYaIB gigtVE">콘텐츠</span>
+                  <svg class="header-chevron-icon" viewBox="0 0 16 16" width="12" height="12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M4 6L8 10L12 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
                 </button>
-              </a>
-              <a rel="noreferrer" href="#process" class="header-link-wrapper">
-                <button type="button" class="header__MenuItemContainer-sc-bdd24b93-0 cIuITU" name="채용 절차">
+                <div class="header-dropdown-menu">
+                  <a href="#content-people" class="header-dropdown-item">People</a>
+                  <a href="#content-culture" class="header-dropdown-item">Culture</a>
+                  <a href="#content-cx" class="header-dropdown-item">CX</a>
+                </div>
+              </div>
+
+              <!-- 4. 채용 절차 (프로세스 / 자주묻는질문) -->
+              <div class="header-menu-item-group">
+                <button type="button" class="header__MenuItemContainer-sc-bdd24b93-0 cIuITU header-dropdown-trigger" onclick="this.parentElement.classList.toggle('is-open')">
                   <span class="sc-aYaIB gigtVE">채용 절차</span>
+                  <svg class="header-chevron-icon" viewBox="0 0 16 16" width="12" height="12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M4 6L8 10L12 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
                 </button>
-              </a>
-              <a rel="noreferrer" href="https://daangnservice.career.greetinghr.com/" target="_blank" class="header-link-wrapper">
-                <button type="button" class="header__MenuItemContainer-sc-bdd24b93-0 cbRJON" name="채용공고">
-                  <span class="sc-aYaIB gigtVE">채용공고</span>
+                <div class="header-dropdown-menu">
+                  <a href="#process" class="header-dropdown-item">프로세스</a>
+                  <a href="#faq" class="header-dropdown-item">자주묻는질문</a>
+                </div>
+              </div>
+
+              <!-- 5. 채용 공고 (공고 리스트) -->
+              <div class="header-menu-item-group">
+                <button type="button" class="header__MenuItemContainer-sc-bdd24b93-0 cbRJON header-dropdown-trigger" onclick="this.parentElement.classList.toggle('is-open')">
+                  <span class="sc-aYaIB gigtVE">채용 공고</span>
+                  <svg class="header-chevron-icon" viewBox="0 0 16 16" width="12" height="12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M4 6L8 10L12 6" stroke="#ffffff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
                 </button>
-              </a>
+                <div class="header-dropdown-menu">
+                  <a href="https://daangnservice.career.greetinghr.com/" target="_blank" class="header-dropdown-item">공고 리스트</a>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -706,7 +791,7 @@ async function loadCurrentPage() {
       document.getElementById('seoTitleInput').value = data.page.seo_title || '';
       document.getElementById('seoDescInput').value = data.page.seo_description || '';
       
-      const faviconUrl = data.page.favicon_url || '/images/daangn-service-logo.png';
+      const faviconUrl = data.page.favicon_url || '/images/favicon-192.png';
       const favInput = document.getElementById('seoFaviconInput');
       if (favInput) favInput.value = faviconUrl;
       updateFaviconPreview(faviconUrl);
@@ -757,7 +842,7 @@ async function saveDraft() {
   const componentsJson = JSON.stringify(editor.getComponents());
   const seoTitle = document.getElementById('seoTitleInput').value;
   const seoDescription = document.getElementById('seoDescInput').value;
-  const faviconUrl = document.getElementById('seoFaviconInput') ? document.getElementById('seoFaviconInput').value.trim() : (currentPageData.favicon_url || '/images/daangn-service-logo.png');
+  const faviconUrl = document.getElementById('seoFaviconInput') ? document.getElementById('seoFaviconInput').value.trim() : (currentPageData.favicon_url || '/images/favicon-192.png');
 
   try {
     const res = await apiFetch('/api/admin/save', {
@@ -797,7 +882,7 @@ async function publishPage() {
   const componentsJson = JSON.stringify(editor.getComponents());
   const seoTitle = document.getElementById('seoTitleInput').value;
   const seoDescription = document.getElementById('seoDescInput').value;
-  const faviconUrl = document.getElementById('seoFaviconInput') ? document.getElementById('seoFaviconInput').value.trim() : (currentPageData.favicon_url || '/images/daangn-service-logo.png');
+  const faviconUrl = document.getElementById('seoFaviconInput') ? document.getElementById('seoFaviconInput').value.trim() : (currentPageData.favicon_url || '/images/favicon-192.png');
 
   try {
     // Save draft first
@@ -929,7 +1014,7 @@ function toggleSEOModal() {
 function updateFaviconPreview(url) {
   const preview = document.getElementById('seoFaviconPreview');
   if (preview) {
-    preview.src = url || '/images/daangn-service-logo.png';
+    preview.src = url || '/images/favicon-192.png';
   }
 }
 
@@ -944,7 +1029,7 @@ function setFaviconPreset(url) {
 function saveSEOMeta() {
   const favInput = document.getElementById('seoFaviconInput');
   if (favInput) {
-    currentPageData.favicon_url = favInput.value.trim() || '/images/daangn-service-logo.png';
+    currentPageData.favicon_url = favInput.value.trim() || '/images/favicon-192.png';
     updateFaviconPreview(currentPageData.favicon_url);
   }
   toggleSEOModal();

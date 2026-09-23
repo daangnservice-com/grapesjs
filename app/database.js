@@ -24,7 +24,7 @@ function initDb() {
           components_json TEXT,
           seo_title TEXT,
           seo_description TEXT,
-          favicon_url TEXT DEFAULT '/images/daangn-service-logo.png',
+          favicon_url TEXT DEFAULT '/images/favicon-192.png',
           is_published INTEGER DEFAULT 0,
           created_at DATETIME DEFAULT CURRENT_TIMESTAMP
         )
@@ -32,7 +32,7 @@ function initDb() {
         if (err) return reject(err);
         
         // Add favicon_url column to existing database if missing
-        db.run(`ALTER TABLE pages ADD COLUMN favicon_url TEXT DEFAULT '/images/daangn-service-logo.png'`, () => {
+        db.run(`ALTER TABLE pages ADD COLUMN favicon_url TEXT DEFAULT '/images/favicon-192.png'`, () => {
           // Check if there is at least one initial seed page
           db.get('SELECT COUNT(*) as count FROM pages', (err, row) => {
             if (err) return reject(err);
@@ -65,7 +65,7 @@ function seedDefaultPage() {
       '{}',
       '당근서비스 채용 - 당근다운 경험이 완성되는 당근서비스',
       '당근서비스에 합류하세요. 당근다운 경험이 완성되는 여정을 함께할 동료를 찾습니다.',
-      '/images/daangn-service-logo.png',
+      '/images/favicon-192.png',
       (err) => {
         if (err) reject(err);
         else resolve();
@@ -119,31 +119,69 @@ function getOfficialHtml() {
       </div>
       <div class="mobile-view__MobileView-sc-bb2ed92c-0 gJVwBD">
         <div class="kCDZmt" style="display: flex; align-items: center; gap: 16px;">
+          <!-- 1. 홈 -->
           <a rel="noreferrer" href="/" class="header-link-wrapper">
             <button type="button" class="header__MenuItemContainer-sc-bdd24b93-0 cIuITU" name="홈">
               <span class="sc-aYaIB gigtVE">홈</span>
             </button>
           </a>
-          <a rel="noreferrer" href="#team" class="header-link-wrapper">
-            <button type="button" class="header__MenuItemContainer-sc-bdd24b93-0 cIuITU" name="팀 소개">
+
+          <!-- 2. 팀 소개 (프로덕트 / 사업운영 / 독립) -->
+          <div class="header-menu-item-group">
+            <button type="button" class="header__MenuItemContainer-sc-bdd24b93-0 cIuITU header-dropdown-trigger" onclick="this.parentElement.classList.toggle('is-open')">
               <span class="sc-aYaIB gigtVE">팀 소개</span>
+              <svg class="header-chevron-icon" viewBox="0 0 16 16" width="12" height="12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M4 6L8 10L12 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
             </button>
-          </a>
-          <a rel="noreferrer" href="#inside" class="header-link-wrapper">
-            <button type="button" class="header__MenuItemContainer-sc-bdd24b93-0 cIuITU" name="인사이드">
-              <span class="sc-aYaIB gigtVE">인사이드</span>
+            <div class="header-dropdown-menu">
+              <a href="#team-product" class="header-dropdown-item">프로덕트</a>
+              <a href="#team-biz" class="header-dropdown-item">사업운영</a>
+              <a href="#team-independent" class="header-dropdown-item">독립</a>
+            </div>
+          </div>
+
+          <!-- 3. 콘텐츠 (People / Culture / CX) -->
+          <div class="header-menu-item-group">
+            <button type="button" class="header__MenuItemContainer-sc-bdd24b93-0 cIuITU header-dropdown-trigger" onclick="this.parentElement.classList.toggle('is-open')">
+              <span class="sc-aYaIB gigtVE">콘텐츠</span>
+              <svg class="header-chevron-icon" viewBox="0 0 16 16" width="12" height="12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M4 6L8 10L12 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
             </button>
-          </a>
-          <a rel="noreferrer" href="#process" class="header-link-wrapper">
-            <button type="button" class="header__MenuItemContainer-sc-bdd24b93-0 cIuITU" name="채용 절차">
+            <div class="header-dropdown-menu">
+              <a href="#content-people" class="header-dropdown-item">People</a>
+              <a href="#content-culture" class="header-dropdown-item">Culture</a>
+              <a href="#content-cx" class="header-dropdown-item">CX</a>
+            </div>
+          </div>
+
+          <!-- 4. 채용 절차 (프로세스 / 자주묻는질문) -->
+          <div class="header-menu-item-group">
+            <button type="button" class="header__MenuItemContainer-sc-bdd24b93-0 cIuITU header-dropdown-trigger" onclick="this.parentElement.classList.toggle('is-open')">
               <span class="sc-aYaIB gigtVE">채용 절차</span>
+              <svg class="header-chevron-icon" viewBox="0 0 16 16" width="12" height="12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M4 6L8 10L12 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
             </button>
-          </a>
-          <a rel="noreferrer" href="https://daangnservice.career.greetinghr.com/" target="_blank" class="header-link-wrapper">
-            <button type="button" class="header__MenuItemContainer-sc-bdd24b93-0 cbRJON" name="채용공고">
-              <span class="sc-aYaIB gigtVE">채용공고</span>
+            <div class="header-dropdown-menu">
+              <a href="#process" class="header-dropdown-item">프로세스</a>
+              <a href="#faq" class="header-dropdown-item">자주묻는질문</a>
+            </div>
+          </div>
+
+          <!-- 5. 채용 공고 (공고 리스트) -->
+          <div class="header-menu-item-group">
+            <button type="button" class="header__MenuItemContainer-sc-bdd24b93-0 cbRJON header-dropdown-trigger" onclick="this.parentElement.classList.toggle('is-open')">
+              <span class="sc-aYaIB gigtVE">채용 공고</span>
+              <svg class="header-chevron-icon" viewBox="0 0 16 16" width="12" height="12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M4 6L8 10L12 6" stroke="#ffffff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
             </button>
-          </a>
+            <div class="header-dropdown-menu">
+              <a href="https://daangnservice.career.greetinghr.com/" target="_blank" class="header-dropdown-item">공고 리스트</a>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -954,6 +992,42 @@ function getOfficialHtml() {
     initPromoTimer();
   }
 })();
+
+// ── Header Dropdown Submenu Click & Outside Click Controller ─────
+(function() {
+  if (typeof window === 'undefined') return;
+
+  function initHeaderDropdowns() {
+    var groups = document.querySelectorAll('.header-menu-item-group');
+    if (!groups.length) return;
+
+    groups.forEach(function(group) {
+      var btn = group.querySelector('.header-dropdown-trigger');
+      if (!btn) return;
+
+      btn.onclick = function(e) {
+        e.stopPropagation();
+        var wasOpen = group.classList.contains('is-open');
+        groups.forEach(function(g) { g.classList.remove('is-open'); });
+        if (!wasOpen) {
+          group.classList.add('is-open');
+        }
+      };
+    });
+
+    document.addEventListener('click', function(e) {
+      if (!e.target.closest || !e.target.closest('.header-menu-item-group')) {
+        groups.forEach(function(g) { g.classList.remove('is-open'); });
+      }
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initHeaderDropdowns);
+  } else {
+    initHeaderDropdowns();
+  }
+})();
 </script>`.trim();
 }
 
@@ -970,7 +1044,7 @@ function savePageDraft({ versionName, html, css, componentsJson, seoTitle, seoDe
       componentsJson || '{}',
       seoTitle || '당근서비스 채용',
       seoDescription || '당근서비스에 합류하세요.',
-      faviconUrl || '/images/daangn-service-logo.png',
+      faviconUrl || '/images/favicon-192.png',
       function (err) {
         if (err) reject(err);
         else resolve({ id: this.lastID });

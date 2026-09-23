@@ -12,6 +12,7 @@ stats.json
 
 img/
 images/
+!app/public/images/
 private/
 vendor/
 coverage/

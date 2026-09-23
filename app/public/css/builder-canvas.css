@@ -150,3 +150,25 @@
   cursor: pointer !important;
   pointer-events: auto !important;
 }
+
+/* ── Header Dropdown Menu Builder Canvas Helpers ───────────── */
+.header-menu-item-group:hover .header-dropdown-menu,
+.header-menu-item-group.is-open .header-dropdown-menu,
+.header-menu-item-group:focus-within .header-dropdown-menu,
+.header-dropdown-menu.is-open {
+  display: block !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+}
+
+.header-dropdown-item {
+  cursor: pointer !important;
+  pointer-events: auto !important;
+}
+
+.header-dropdown-item:hover {
+  background-color: #F7F9FA !important;
+  color: #FF6F0F !important;
+}
+
