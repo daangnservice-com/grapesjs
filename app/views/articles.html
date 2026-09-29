@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>인사이드 당근서비스 - 아티클 & 이야기</title>
+  <meta name="description" content="따뜻한 경험을 만드는 당근서비스와 구성원의 생생한 성장 이야기를 들려드릴게요." />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="인사이드 당근서비스 - 아티클 & 이야기" />
+  <meta property="og:description" content="따뜻한 경험을 만드는 당근서비스와 구성원의 생생한 성장 이야기를 들려드릴게요." />
+  <meta property="og:image" content="/images/daangn-service-logo.png" />
+  <meta property="og:url" content="https://careers.daangnservice.com/articles" />
+
+  <link rel="icon" type="image/png" href="/images/favicon-192.png" />
+  <link rel="stylesheet" href="/css/fonts.css" />
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+  <link rel="stylesheet" href="/css/daangn-theme.css" />
+
+  <style>
+    :root {
+      --seed-orange: #FF6F0F;
+      --seed-orange-hover: #E85E00;
+      --seed-orange-light: #FFF0E6;
+      --seed-gray-900: #212124;
+      --seed-gray-800: #333336;
+      --seed-gray-700: #4D5159;
+      --seed-gray-500: #868B94;
+      --seed-gray-300: #D1D3D8;
+      --seed-gray-200: #EAEBEE;
+      --seed-gray-100: #F2F3F7;
+      --seed-gray-50: #FAFAFB;
+      --seed-white: #FFFFFF;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+      background: #FFFFFF;
+      color: var(--seed-gray-900);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* GNB Header */
+    .site-header {
+      height: 60px;
+      background: #FFFFFF;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .site-header-inner {
+      max-width: 1140px;
+      height: 100%;
+      margin: 0 auto;
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .site-logo img {
+      height: 30px;
+      display: block;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      list-style: none;
+    }
+
+    .nav-link {
+      text-decoration: none;
+      color: var(--seed-gray-800);
+      font-size: 14.5px;
+      font-weight: 600;
+      transition: color 0.15s;
+    }
+
+    .nav-link:hover, .nav-link.active {
+      color: var(--seed-orange);
+    }
+
+    .btn-recruit {
+      background: var(--seed-orange);
+      color: #fff !important;
+      padding: 6px 14px;
+      border-radius: 6px;
+      font-weight: 700;
+      transition: background 0.15s;
+    }
+
+    .btn-recruit:hover {
+      background: var(--seed-orange-hover);
+    }
+
+    /* Hero Banner */
+    .articles-hero {
+      background: #FAFAFC;
+      border-bottom: 1px solid var(--seed-gray-200);
+      padding: clamp(32px, 4.5vh, 56px) 24px clamp(24px, 3.5vh, 44px);
+      text-align: center;
+    }
+
+    .hero-badge {
+      display: inline-block;
+      font-size: 13.5px;
+      font-weight: 800;
+      color: var(--seed-orange);
+      letter-spacing: 0.5px;
+      margin-bottom: clamp(8px, 1.2vh, 12px);
+    }
+
+    .hero-title {
+      font-size: clamp(30px, 4vw, 42px);
+      font-weight: 800;
+      color: var(--seed-gray-900);
+      letter-spacing: -0.6px;
+      margin-bottom: clamp(10px, 1.5vh, 14px);
+    }
+
+    .hero-desc {
+      font-size: clamp(15px, 1.8vh, 18px);
+      color: var(--seed-gray-500);
+      line-height: 1.6;
+      max-width: 640px;
+      margin: 0 auto;
+    }
+
+    /* Articles Container */
+    .articles-section {
+      max-width: 1140px;
+      width: 100%;
+      margin: 0 auto;
+      padding: clamp(28px, 4vh, 40px) 24px clamp(48px, 6vh, 80px);
+      flex: 1;
+    }
+
+    /* Filter Pills */
+    .filter-pills {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: clamp(20px, 3vh, 32px);
+      overflow-x: auto;
+      padding-bottom: 4px;
+    }
+
+    .pill-btn {
+      padding: 8px 18px;
+      border-radius: 24px;
+      border: 1px solid var(--seed-gray-200);
+      background: #FFFFFF;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--seed-gray-700);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.15s ease;
+      font-family: inherit;
+    }
+
+    .pill-btn:hover {
+      background: var(--seed-gray-100);
+      color: var(--seed-gray-900);
+    }
+
+    .pill-btn.active {
+      background: var(--seed-orange);
+      border-color: var(--seed-orange);
+      color: #FFFFFF;
+    }
+
+    /* Article Grid */
+    .articles-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 32px 28px;
+    }
+
+    @media (max-width: 900px) {
+      .articles-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 600px) {
+      .articles-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Card Component */
+    .article-card {
+      text-decoration: none;
+      color: inherit;
+      display: flex;
+      flex-direction: column;
+      border-radius: 14px;
+      overflow: hidden;
+      background: #FFFFFF;
+      border: 1px solid var(--seed-gray-200);
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    }
+
+    .article-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08);
+      border-color: rgba(255, 111, 15, 0.4);
+    }
+
+    .card-thumb-wrap {
+      width: 100%;
+      height: 210px;
+      background: var(--seed-gray-100);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .card-thumb {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.3s ease;
+    }
+
+    .article-card:hover .card-thumb {
+      transform: scale(1.04);
+    }
+
+    .card-body {
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+
+    .card-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+
+    .card-tag {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--seed-orange);
+      background: var(--seed-orange-light);
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+
+    .card-title {
+      font-size: 19px;
+      font-weight: 700;
+      color: var(--seed-gray-900);
+      line-height: 1.45;
+      margin-bottom: 8px;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .card-desc {
+      font-size: 14px;
+      color: var(--seed-gray-500);
+      line-height: 1.6;
+      margin-bottom: 16px;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      flex: 1;
+    }
+
+    .card-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 13px;
+      color: var(--seed-gray-500);
+      border-top: 1px solid var(--seed-gray-100);
+      padding-top: 14px;
+      margin-top: auto;
+    }
+
+    /* Empty state */
+    .empty-box {
+      text-align: center;
+      padding: 80px 20px;
+      color: var(--seed-gray-500);
+      grid-column: 1 / -1;
+    }
+
+    /* Footer */
+    .site-footer {
+      background: #FAFAFA;
+      border-top: 1px solid var(--seed-gray-200);
+      padding: 48px 24px;
+    }
+
+    .footer-inner {
+      max-width: 1140px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .footer-info {
+      font-size: 13px;
+      color: var(--seed-gray-500);
+      line-height: 1.6;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Global Header (공식 당근서비스 헤더) -->
+  <header id="daangnHeader" class="header__HeaderContainer-sc-bdd24b93-1 base-header-styles__CustomHeader-sc-eefa7522-0">
+    <div class="header__HeaderInnerContainer-sc-bdd24b93-2">
+      <a href="/" class="header-link-wrapper">
+        <div class="header__LogoWrapper-sc-bdd24b93-3">
+          <img alt="당근서비스 로고" src="/images/daangn-service-logo.png" />
+        </div>
+      </a>
+      <div class="mobile-view__MobileView-sc-bb2ed92c-0 hossQr">
+        <button data-testid="모바일_메뉴_버튼" type="button" aria-label="모바일 메뉴 열기" class="header__MobileMenuButtonStyled-sc-bdd24b93-4">
+          <svg fill="none" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+            <path clip-rule="evenodd" d="M3 5.5H21V7.5H3V5.5ZM3 11H21V13H3V11ZM21 16.5H3V18.5H21V16.5Z" fill="#222222" fill-rule="evenodd"></path>
+          </svg>
+        </button>
+      </div>
+      <div class="mobile-view__MobileView-sc-bb2ed92c-0 gJVwBD">
+        <div class="kCDZmt" style="display: flex; align-items: center; gap: 16px;">
+          <!-- 1. 홈 -->
+          <a rel="noreferrer" href="/" class="header-link-wrapper">
+            <button type="button" class="header__MenuItemContainer-sc-bdd24b93-0 cIuITU" name="홈">
+              <span class="sc-aYaIB gigtVE">홈</span>
+            </button>
+          </a>
+
+          <!-- 2. 팀 소개 -->
+          <div class="header-menu-item-group">
+            <button type="button" class="header__MenuItemContainer-sc-bdd24b93-0 cIuITU header-dropdown-trigger">
+              <span class="sc-aYaIB gigtVE">팀 소개</span>
+              <svg class="header-chevron-icon" viewBox="0 0 16 16" width="12" height="12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M4 6L8 10L12 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+            <div class="header-dropdown-menu">
+              <a href="/teams/product" class="header-dropdown-item">프로덕트</a>
+              <a href="/teams/business" class="header-dropdown-item">사업운영</a>
+              <a href="/teams/vertical" class="header-dropdown-item">독립</a>
+              <a href="/teams/support" class="header-dropdown-item">경영지원</a>
+            </div>
+          </div>
+
+          <!-- 3. 콘텐츠 -->
+          <div class="header-menu-item-group">
+            <button type="button" class="header__MenuItemContainer-sc-bdd24b93-0 cIuITU header-dropdown-trigger">
+              <span class="sc-aYaIB gigtVE" style="color: #FF6F0F; font-weight: 800;">콘텐츠</span>
+              <svg class="header-chevron-icon" viewBox="0 0 16 16" width="12" height="12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M4 6L8 10L12 6" stroke="#FF6F0F" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+            <div class="header-dropdown-menu">
+              <a href="/articles" class="header-dropdown-item">전체 이야기</a>
+              <a href="/articles" onclick="selectTag('Culture'); return false;" class="header-dropdown-item">Culture</a>
+              <a href="/articles" onclick="selectTag('People'); return false;" class="header-dropdown-item">People</a>
+              <a href="/articles" onclick="selectTag('CX'); return false;" class="header-dropdown-item">CX</a>
+            </div>
+          </div>
+
+          <!-- 4. 채용 절차 -->
+          <div class="header-menu-item-group">
+            <button type="button" class="header__MenuItemContainer-sc-bdd24b93-0 cIuITU header-dropdown-trigger">
+              <span class="sc-aYaIB gigtVE">채용 절차</span>
+              <svg class="header-chevron-icon" viewBox="0 0 16 16" width="12" height="12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M4 6L8 10L12 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+            <div class="header-dropdown-menu">
+              <a href="/process#process" class="header-dropdown-item">프로세스</a>
+              <a href="/process#faq" class="header-dropdown-item">자주묻는질문</a>
+            </div>
+          </div>
+
+          <!-- 5. 채용 공고 (버튼) -->
+          <a rel="noreferrer" href="/apply" class="header-link-wrapper">
+            <button type="button" class="header__MenuItemContainer-sc-bdd24b93-0 cbRJON" name="채용 공고">
+              <span class="sc-aYaIB gigtVE">채용 공고</span>
+            </button>
+          </a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="articles-hero">
+    <span class="hero-badge">INSIDE STORY</span>
+    <h1 class="hero-title">인사이드 당근서비스</h1>
+    <p class="hero-desc">따뜻한 경험을 만드는 당근서비스와 구성원의 생생한 성장 이야기를 들려드릴게요.</p>
+  </section>
+
+  <!-- Articles List Section -->
+  <main class="articles-section">
+    <!-- Tag Filter Pills -->
+    <div id="filterPills" class="filter-pills">
+      <button class="pill-btn active" onclick="selectTag('all', this)">전체</button>
+      <button class="pill-btn" onclick="selectTag('Culture', this)">Culture</button>
+      <button class="pill-btn" onclick="selectTag('오피스', this)">오피스</button>
+      <button class="pill-btn" onclick="selectTag('People', this)">People</button>
+      <button class="pill-btn" onclick="selectTag('CX', this)">CX</button>
+      <button class="pill-btn" onclick="selectTag('성장', this)">성장</button>
+    </div>
+
+    <!-- Article Cards Grid -->
+    <div id="articlesGrid" class="articles-grid">
+      <div class="empty-box">아티클을 불러오는 중입니다...</div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer id="daangnFooter" class="footer__Container-sc-ece516ab-0 eNKNXj daangn-global-footer">
+    <div class="footer__FooterInner-sc-ece516ab-2 eYxtUY">
+      <div class="sc-kAkozD gVHQgh">
+        <div class="sc-kAkozD dRWxSw footer__LinkAndTitleWrapper-sc-ece516ab-1 bUNMpz">
+          <div data-testid="클릭_테스트" class="sc-kAkozD dRWxSw">
+            <p class="footer-title">당근서비스</p>
+            <p class="footer-detail">사업자번호 : 819-88-01473
+주소 : 서울시 구로구 디지털로 300, 10층 당근서비스</p>
+          </div>
+          <ul class="footer__LinkWrapper-sc-ece516ab-3 gDuQAz">
+            <li><a href="mailto:contact@daangnservice.com" target="_blank" rel="noopener noreferrer">사용자 문의</a></li>
+            <li><a href="mailto:recruit@daangnservice.com" target="_blank" rel="noopener noreferrer">채용 문의</a></li>
+            <li><a href="/admin/articles">Admin 관리자 모드</a></li>
+          </ul>
+        </div>
+        <ul class="footer__SnsLinkWrapper-sc-ece516ab-4 jAhMFN">
+          <li>
+            <a href="https://www.linkedin.com/company/daangnservice/" target="_blank" rel="noopener noreferrer">
+              <img alt="sns-icons" loading="lazy" width="36" height="36" decoding="async" data-nimg="1" style="color:transparent" src="https://cdn.greetinghr.com/assets/career/SNS_Linkedin.svg"/>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    let articles = [];
+    let currentTag = 'all';
+
+    async function fetchArticles() {
+      try {
+        const res = await fetch('/api/articles');
+        const data = await res.json();
+        articles = data.articles || [];
+        renderCards();
+      } catch (err) {
+        console.error('Failed to load articles', err);
+        document.getElementById('articlesGrid').innerHTML = '<div class="empty-box">아티클을 불러오지 못했습니다.</div>';
+      }
+    }
+
+    function selectTag(tag, btn) {
+      currentTag = tag;
+      document.querySelectorAll('.pill-btn').forEach(b => b.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+      renderCards();
+    }
+
+    function renderCards() {
+      const grid = document.getElementById('articlesGrid');
+      let filtered = articles;
+
+      if (currentTag !== 'all') {
+        filtered = filtered.filter(a => (a.tags || []).includes(currentTag));
+      }
+
+      if (filtered.length === 0) {
+        grid.innerHTML = '<div class="empty-box">해당 카테고리의 아티클이 아직 없습니다.</div>';
+        return;
+      }
+
+      grid.innerHTML = filtered.map(a => {
+        const thumb = a.thumbnail_url || '/images/daangn-service-logo.png';
+        const dateStr = new Date(a.published_at || a.created_at).toLocaleDateString('ko-KR', {
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit'
+        }).replace(/\. /g, '.').replace(/\.$/, '');
+
+        const tagsHtml = (a.tags || []).map(t => `<span class="card-tag">${t}</span>`).join('');
+
+        return `
+          <a href="/articles/${a.slug}" class="article-card">
+            <div class="card-thumb-wrap">
+              <img src="${thumb}" alt="${escapeHtml(a.title)}" class="card-thumb" onerror="this.src='/images/daangn-service-logo.png'" />
+            </div>
+            <div class="card-body">
+              <div class="card-tags">${tagsHtml}</div>
+              <h2 class="card-title">${escapeHtml(a.title)}</h2>
+              ${a.subtitle ? `<p class="card-desc">${escapeHtml(a.subtitle)}</p>` : ''}
+              <div class="card-meta">
+                <span>${escapeHtml(a.author || '당근서비스팀')}</span>
+                <span>${dateStr}</span>
+              </div>
+            </div>
+          </a>
+        `;
+      }).join('');
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    fetchArticles();
+  </script>
+  <script src="/js/daangn-runtime.js"></script>
+</body>
+</html>

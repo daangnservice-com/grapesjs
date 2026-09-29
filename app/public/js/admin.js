@@ -1,4 +1,16 @@
 let editor;
+let currentPath = '/';
+let currentPageName = '메인 페이지';
+let allPagesList = [];
+
+// URL query parameter 'path' 확인
+try {
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.has('path') && urlParams.get('path')) {
+    currentPath = urlParams.get('path');
+  }
+} catch (e) {}
+
 let currentPageData = {
   id: null,
   seoTitle: '당근서비스 채용 - 당근다운 경험이 완성되는 당근서비스',
@@ -7,7 +19,15 @@ let currentPageData = {
   isPublished: 0
 };
 
+// Ensure outermost window never scrolls off the top navbar
+window.addEventListener('scroll', () => {
+  if (window.scrollY !== 0 || window.scrollX !== 0) {
+    window.scrollTo(0, 0);
+  }
+}, { passive: true });
+
 document.addEventListener('DOMContentLoaded', async () => {
+  window.scrollTo(0, 0);
   // Initialize GrapesJS Editor
   editor = grapesjs.init({
     container: '#gjs',
@@ -141,6 +161,94 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   });
 
+  // Customize Sticky Value Item Component Traits
+  domc.addType('sticky-value-item', {
+    isComponent: el => el && el.classList && el.classList.contains('sticky-value-item'),
+    model: {
+      defaults: {
+        name: '일하는 방식 가치 항목',
+        editable: true,
+        droppable: false,
+        draggable: '#stickyValueList'
+      }
+    }
+  });
+
+  // Customize Sticky Card Component Traits
+  domc.addType('daangn-sticky-card', {
+    isComponent: el => el && el.classList && el.classList.contains('daangn-sticky-card'),
+    model: {
+      defaults: {
+        name: '일하는 방식 스티키 카드',
+        droppable: true,
+        draggable: '#stickyCardsStack',
+        traits: [
+          {
+            type: 'text',
+            name: 'data-label',
+            label: '🏷️ 가치 명칭'
+          }
+        ]
+      }
+    }
+  });
+
+  // Customize Inside Story Card Component Type
+  domc.addType('daangn-story-card', {
+    isComponent: el => {
+      if (!el || !el.getAttribute) return false;
+      return (el.classList && el.classList.contains('daangn-story-card')) || el.hasAttribute('data-article-slug');
+    },
+    model: {
+      defaults: {
+        name: '인사이드 아티클 카드',
+        traits: [
+          {
+            type: 'select',
+            name: 'data-article-slug',
+            label: '📚 CMS 아티클 연동',
+            options: [
+              { value: '', name: '🚫 미선택 (준비 중 안내)' }
+            ]
+          }
+        ]
+      },
+      init() {
+        this.on('change:data-article-slug', () => {
+          const slug = this.get('data-article-slug') ?? (this.getAttributes()['data-article-slug'] || '');
+          applyCmsArticleToCard(this, slug);
+        });
+      }
+    }
+  });
+
+  // Command to open Article Picker Modal
+  editor.Commands.add('open-article-picker', {
+    run(ed, sender, opts) {
+      const selected = (opts && opts.target) ? opts.target : ed.getSelected();
+      let cardComp = selected;
+      if (cardComp && cardComp.getEl && cardComp.getEl() && !cardComp.getEl().classList.contains('daangn-story-card')) {
+        cardComp = cardComp.closest('.daangn-story-card') || cardComp;
+      }
+      openArticlePickerModal(cardComp);
+    }
+  });
+
+  // Command to toggle default opened state for process track on live site
+  editor.Commands.add('toggle-track-open-default', {
+    run(ed) {
+      const selected = ed.getSelected();
+      if (!selected) return;
+      const el = selected.getEl();
+      const track = el ? (el.classList.contains('daangn-process-track-item') ? el : el.closest('.daangn-process-track-item')) : null;
+      if (track) {
+        track.classList.toggle('is-open');
+        const isOpen = track.classList.contains('is-open');
+        alert(isOpen ? '이 트랙은 실제 사이트 접속 시 기본으로 펼쳐진 상태로 노출됩니다.' : '이 트랙은 실제 사이트 접속 시 기본으로 접힌 상태로 노출됩니다.');
+      }
+    }
+  });
+
   // When clicking or selecting menu items in canvas, open dropdown so items are visible and editable
   editor.on('component:selected', (model) => {
     const el = model.getEl();
@@ -152,6 +260,44 @@ document.addEventListener('DOMContentLoaded', async () => {
       const group = el.closest('.header-menu-item-group');
       if (group) group.classList.add('is-open');
     }
+
+    // 채용 절차 트랙 선택 시 툴바에 '실제 사이트 기본 펼침/접힘 토글' 버튼 제공
+    if (el.classList && (el.classList.contains('daangn-process-track-item') || el.closest('.daangn-process-track-item'))) {
+      const tb = model.get('toolbar') || [];
+      if (!tb.some(item => item.command === 'toggle-track-open-default')) {
+        model.set('toolbar', [
+          {
+            attributes: { class: 'fa fa-arrows-v', title: '실제 사이트 기본 펼침/접힘 설정' },
+            command: 'toggle-track-open-default'
+          },
+          ...tb
+        ]);
+      }
+    }
+
+    // 인사이드 아티클 카드 선택 시 Trait 갱신 및 툴바 버튼 추가
+    let cardComp = model;
+    if (el.classList && !el.classList.contains('daangn-story-card')) {
+      const closestCardEl = el.closest('.daangn-story-card');
+      if (closestCardEl) {
+        cardComp = model.closest('.daangn-story-card') || model;
+      }
+    }
+
+    if (cardComp && (cardComp.get('type') === 'daangn-story-card' || (cardComp.getEl && cardComp.getEl() && cardComp.getEl().classList.contains('daangn-story-card')))) {
+      updateStoryCardTraitOptions(cardComp);
+      const tb = cardComp.get('toolbar') || [];
+      if (!tb.some(item => item.command === 'open-article-picker')) {
+        cardComp.set('toolbar', [
+          {
+            attributes: { class: 'gjs-toolbar-btn-article-picker', title: '클릭하여 아티클을 선택할 수 있는 팝업 창을 엽니다' },
+            command: 'open-article-picker',
+            label: '<span style="display:inline-flex;align-items:center;gap:5px;background:#FF6F0F;color:#ffffff;padding:2px 8px;border-radius:4px;font-size:12px;font-weight:800;letter-spacing:-0.2px;">📚 아티클 선택 / 변경 (팝업)</span>'
+          },
+          ...tb
+        ]);
+      }
+    }
   });
 
   // Register Custom Blocks for Daangn Recruitment
@@ -159,8 +305,15 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // Canvas 준비 후 페이지 로드 (CSS 주입 타이밍 보장)
   editor.on('canvas:frame:load', async () => {
-    await loadCurrentPage();
-    loadVersionHistory();
+    await loadPagesList();
+    await loadCurrentPage(currentPath);
+    loadVersionHistory(currentPath);
+    loadCmsArticles();
+    setTimeout(() => {
+      initCultureSectionSync(editor);
+      bindStoryCardCanvasEvents(editor);
+      bindProcessPageCanvasEvents(editor);
+    }, 200);
   });
 });
 
@@ -198,60 +351,56 @@ function registerSeedBlocks(editor) {
 
               <!-- 2. 팀 소개 (프로덕트 / 사업운영 / 독립) -->
               <div class="header-menu-item-group">
-                <button type="button" class="header__MenuItemContainer-sc-bdd24b93-0 cIuITU header-dropdown-trigger" onclick="this.parentElement.classList.toggle('is-open')">
+                <button type="button" class="header__MenuItemContainer-sc-bdd24b93-0 cIuITU header-dropdown-trigger">
                   <span class="sc-aYaIB gigtVE">팀 소개</span>
                   <svg class="header-chevron-icon" viewBox="0 0 16 16" width="12" height="12" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M4 6L8 10L12 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
                   </svg>
                 </button>
                 <div class="header-dropdown-menu">
-                  <a href="#team-product" class="header-dropdown-item">프로덕트</a>
-                  <a href="#team-biz" class="header-dropdown-item">사업운영</a>
-                  <a href="#team-independent" class="header-dropdown-item">독립</a>
+                  <a href="/teams/product" class="header-dropdown-item">프로덕트</a>
+                  <a href="/teams/business" class="header-dropdown-item">사업운영</a>
+                  <a href="/teams/vertical" class="header-dropdown-item">독립</a>
+                  <a href="/teams/support" class="header-dropdown-item">경영지원</a>
                 </div>
               </div>
 
-              <!-- 3. 콘텐츠 (People / Culture / CX) -->
+              <!-- 3. 콘텐츠 (전체 이야기 / Culture / People / CX) -->
               <div class="header-menu-item-group">
-                <button type="button" class="header__MenuItemContainer-sc-bdd24b93-0 cIuITU header-dropdown-trigger" onclick="this.parentElement.classList.toggle('is-open')">
+                <button type="button" class="header__MenuItemContainer-sc-bdd24b93-0 cIuITU header-dropdown-trigger">
                   <span class="sc-aYaIB gigtVE">콘텐츠</span>
                   <svg class="header-chevron-icon" viewBox="0 0 16 16" width="12" height="12" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M4 6L8 10L12 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
                   </svg>
                 </button>
                 <div class="header-dropdown-menu">
-                  <a href="#content-people" class="header-dropdown-item">People</a>
-                  <a href="#content-culture" class="header-dropdown-item">Culture</a>
-                  <a href="#content-cx" class="header-dropdown-item">CX</a>
+                  <a href="/articles" class="header-dropdown-item">전체 이야기</a>
+                  <a href="/articles" class="header-dropdown-item">Culture</a>
+                  <a href="/articles" class="header-dropdown-item">People</a>
+                  <a href="/articles" class="header-dropdown-item">CX</a>
                 </div>
               </div>
 
               <!-- 4. 채용 절차 (프로세스 / 자주묻는질문) -->
               <div class="header-menu-item-group">
-                <button type="button" class="header__MenuItemContainer-sc-bdd24b93-0 cIuITU header-dropdown-trigger" onclick="this.parentElement.classList.toggle('is-open')">
+                <button type="button" class="header__MenuItemContainer-sc-bdd24b93-0 cIuITU header-dropdown-trigger">
                   <span class="sc-aYaIB gigtVE">채용 절차</span>
                   <svg class="header-chevron-icon" viewBox="0 0 16 16" width="12" height="12" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M4 6L8 10L12 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
                   </svg>
                 </button>
                 <div class="header-dropdown-menu">
-                  <a href="#process" class="header-dropdown-item">프로세스</a>
-                  <a href="#faq" class="header-dropdown-item">자주묻는질문</a>
+                  <a href="/process#process" class="header-dropdown-item">프로세스</a>
+                  <a href="/process#faq" class="header-dropdown-item">자주묻는질문</a>
                 </div>
               </div>
 
-              <!-- 5. 채용 공고 (공고 리스트) -->
-              <div class="header-menu-item-group">
-                <button type="button" class="header__MenuItemContainer-sc-bdd24b93-0 cbRJON header-dropdown-trigger" onclick="this.parentElement.classList.toggle('is-open')">
+              <!-- 5. 채용 공고 (버튼) -->
+              <a rel="noreferrer" href="/apply" class="header-link-wrapper">
+                <button type="button" class="header__MenuItemContainer-sc-bdd24b93-0 cbRJON" name="채용 공고">
                   <span class="sc-aYaIB gigtVE">채용 공고</span>
-                  <svg class="header-chevron-icon" viewBox="0 0 16 16" width="12" height="12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M4 6L8 10L12 6" stroke="#ffffff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-                  </svg>
                 </button>
-                <div class="header-dropdown-menu">
-                  <a href="https://daangnservice.career.greetinghr.com/" target="_blank" class="header-dropdown-item">공고 리스트</a>
-                </div>
-              </div>
+              </a>
             </div>
           </div>
         </div>
@@ -263,12 +412,29 @@ function registerSeedBlocks(editor) {
     label: '🏢 하단 푸터 (Footer 정보)',
     category: '당근서비스 공식 프로덕션 컴포넌트',
     content: `
-      <footer id="daangnFooter" class="daangn-global-footer">
-        <div class="daangn-footer-logo-wrapper">
-          <img src="/images/daangn-service-logo.png" alt="당근서비스" class="daangn-footer-logo" />
+      <footer id="daangnFooter" class="footer__Container-sc-ece516ab-0 eNKNXj daangn-global-footer">
+        <div class="footer__FooterInner-sc-ece516ab-2 eYxtUY">
+          <div class="sc-kAkozD gVHQgh">
+            <div class="sc-kAkozD dRWxSw footer__LinkAndTitleWrapper-sc-ece516ab-1 bUNMpz">
+              <div data-testid="클릭_테스트" class="sc-kAkozD dRWxSw">
+                <p class="footer-title">당근서비스</p>
+                <p class="footer-detail">사업자번호 : 819-88-01473
+주소 : 서울시 구로구 디지털로 300, 10층 당근서비스</p>
+              </div>
+              <ul class="footer__LinkWrapper-sc-ece516ab-3 gDuQAz">
+                <li><a href="mailto:contact@daangnservice.com" target="_blank" rel="noopener noreferrer">사용자 문의</a></li>
+                <li><a href="mailto:recruit@daangnservice.com" target="_blank" rel="noopener noreferrer">채용 문의</a></li>
+              </ul>
+            </div>
+            <ul class="footer__SnsLinkWrapper-sc-ece516ab-4 jAhMFN">
+              <li>
+                <a href="https://www.linkedin.com/company/daangnservice/" target="_blank" rel="noopener noreferrer">
+                  <img alt="sns-icons" loading="lazy" width="36" height="36" decoding="async" data-nimg="1" style="color:transparent" src="https://cdn.greetinghr.com/assets/career/SNS_Linkedin.svg"/>
+                </a>
+              </li>
+            </ul>
+          </div>
         </div>
-        <p class="daangn-footer-company">(주) 당근서비스</p>
-        <p class="daangn-footer-address">서울특별시 서초구 강남대로 327, 대륭서초타워 14층 | careers.daangnservice.com</p>
       </footer>
     `
   });
@@ -465,6 +631,112 @@ function registerSeedBlocks(editor) {
     `
   });
 
+  bm.add('daangn-team-groups', {
+    label: '👥 4대 그룹 소개 카드 (호버 줌 & 서브페이지 링크)',
+    category: '당근서비스 공식 프로덕션 컴포넌트',
+    content: `
+      <section id="team" style="background-color: #ffffff; padding: 100px 24px 60px;">
+        <div style="max-width: 1140px; margin: 0 auto; position: relative;">
+          <div style="margin-bottom: 28px;">
+            <div>
+              <span style="font-size: 14px; font-weight: 800; color: #FF6F0F; letter-spacing: 0.5px; display: block; margin-bottom: 8px;">OUR TEAMS</span>
+              <h2 style="font-size: 38px; font-weight: 800; color: #212124; margin: 0; letter-spacing: -0.5px;">팀 소개</h2>
+              <p style="font-size: 16px; color: #868B94; margin: 8px 0 0; line-height: 1.5;">당근서비스는 목적 조직인 그룹 단위로 유기적으로 협업하며 일하고 있어요.</p>
+            </div>
+          </div>
+
+          <div class="daangn-team-groups-grid">
+            <a href="/teams/product" class="daangn-team-group-card">
+              <img src="https://prismic-image-proxy.krrt.io/karrot/f92b5275-92ec-4ce0-b196-c71dc36239c3_service_01.jpg" alt="프로덕트그룹" class="daangn-team-group-card-img" />
+              <div class="daangn-team-group-card-overlay"></div>
+              <div class="daangn-team-group-card-content">
+                <h3 class="daangn-team-group-card-title">Product</h3>
+                <p class="daangn-team-group-card-desc">중고거래, 커뮤니티, POI, 대외민원, 분쟁조정 등 핵심 프로덕트 경험을 완성해요.</p>
+                <span class="daangn-team-group-card-action">그룹 소개 보기 ➔</span>
+              </div>
+            </a>
+            <a href="/teams/business" class="daangn-team-group-card">
+              <img src="https://prismic-image-proxy.krrt.io/karrot/10d0e07e-9bcf-48a8-b375-fcd43b533606_service_03.jpg" alt="사업운영그룹" class="daangn-team-group-card-img" />
+              <div class="daangn-team-group-card-overlay"></div>
+              <div class="daangn-team-group-card-content">
+                <h3 class="daangn-team-group-card-title">Business</h3>
+                <p class="daangn-team-group-card-desc">광고, 로컬비즈니스, 당근페이 등 비즈니스와 금융 생태계를 견인해요.</p>
+                <span class="daangn-team-group-card-action">그룹 소개 보기 ➔</span>
+              </div>
+            </a>
+            <a href="/teams/vertical" class="daangn-team-group-card">
+              <img src="https://prismic-image-proxy.krrt.io/karrot/f25a287d-a97e-4040-8b8f-62e616d266bd_service_05.jpg" alt="독립그룹" class="daangn-team-group-card-img" />
+              <div class="daangn-team-group-card-overlay"></div>
+              <div class="daangn-team-group-card-content">
+                <h3 class="daangn-team-group-card-title">Independent</h3>
+                <p class="daangn-team-group-card-desc">당근알바, 중고차·부동산 버티컬, 전사 X과제 등 도전적 영역을 선도해요.</p>
+                <span class="daangn-team-group-card-action">그룹 소개 보기 ➔</span>
+              </div>
+            </a>
+            <a href="/teams/support" class="daangn-team-group-card">
+              <img src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=1200&q=80" alt="경영지원그룹" class="daangn-team-group-card-img" />
+              <div class="daangn-team-group-card-overlay"></div>
+              <div class="daangn-team-group-card-content">
+                <h3 class="daangn-team-group-card-title">Support</h3>
+                <p class="daangn-team-group-card-desc">성장문화, 피플(HR, GA, IT) 등 구성원의 성장과 몰입을 파트너십으로 지원해요.</p>
+                <span class="daangn-team-group-card-action">그룹 소개 보기 ➔</span>
+              </div>
+            </a>
+          </div>
+        </div>
+      </section>
+    `
+  });
+
+  bm.add('daangn-group-subpage-hero', {
+    label: '🏢 그룹 소개 본문 (Image 2 레이아웃)',
+    category: '당근서비스 공식 프로덕션 컴포넌트',
+    content: `
+      <div class="daangn-group-page-main">
+        <div class="daangn-group-container">
+          <div class="daangn-group-badge">Product Group</div>
+          <h1 class="daangn-group-title">당근서비스의<br/>프로덕트 그룹을 소개해요.</h1>
+          
+          <div class="daangn-group-hero-media">
+            <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=1200&q=80" alt="그룹 대표 이미지" class="daangn-group-hero-img" />
+          </div>
+
+          <div class="daangn-group-quote">
+            “그룹장이 본인 그룹을 소개하는 코멘트 한 줄”
+          </div>
+
+          <div class="daangn-group-teams-section">
+            <div class="daangn-group-team-item">
+              <span class="daangn-group-team-name">중고거래는~</span>
+              <p class="daangn-group-team-desc">안전하고 따뜻한 중고거래 환경을 구축하고 신뢰도 높은 거래 경험을 완성해 나갑니다.</p>
+            </div>
+            <div class="daangn-group-team-item">
+              <span class="daangn-group-team-name">커뮤니티는~</span>
+              <p class="daangn-group-team-desc">동네생활과 이웃 간 따뜻한 교류와 소통을 이끄는 커뮤니티 공간을 운영합니다.</p>
+            </div>
+            <div class="daangn-group-team-item">
+              <span class="daangn-group-team-name">분쟁조정은~</span>
+              <p class="daangn-group-team-desc">이웃 간 분쟁과 오해를 공정하고 신속하게 중재하여 안심할 수 있는 환경을 만듭니다.</p>
+            </div>
+            <div class="daangn-group-team-item">
+              <span class="daangn-group-team-name">바로구매는~</span>
+              <p class="daangn-group-team-desc">채팅 없이도 빠르고 간편하게 결제하고 구매할 수 있는 혁신적인 거래 경험을 지원합니다.</p>
+            </div>
+            <div class="daangn-group-team-item">
+              <span class="daangn-group-team-name">대외민원운영팀은~</span>
+              <p class="daangn-group-team-desc">대외 유관기관 및 고객의 주요 민원을 책임감 있게 전담하여 신속하게 대응합니다.</p>
+            </div>
+          </div>
+
+          <div class="daangn-group-nav-links">
+            <a href="/teams/business" class="daangn-group-nav-link">사업운영그룹 소개 바로가기 ➔</a>
+            <a href="/teams/vertical" class="daangn-group-nav-link">독립 그룹 소개 바로가기 ➔</a>
+          </div>
+        </div>
+      </div>
+    `
+  });
+
   bm.add('daangn-team-intro', {
     label: '👥 팀 소개 (3개 노출 슬라이딩 캐러셀)',
     category: '당근서비스 공식 프로덕션 컴포넌트',
@@ -597,34 +869,34 @@ function registerSeedBlocks(editor) {
             </button>
             <div class="daangn-stories-viewport">
               <div id="storiesTrack" class="daangn-stories-track">
-                <a href="https://daangnservice.career.greetinghr.com/ko/seasonsgreeting" target="_blank" rel="noopener noreferrer" class="daangn-story-card">
+                <a href="/articles/inside1" class="daangn-story-card" data-article-slug="inside1">
                   <div class="daangn-story-img-box">
-                    <img src="https://opening-attachments.greetinghr.com/2025-12-31/6231bd8a-a36c-4a11-9b7c-09069110f94e/IMG_4030(1).jpg.webp" alt="2025 당근서비스 송년의 밤" class="daangn-story-img" />
+                    <img src="https://opening-attachments.greetinghr.com/2025-10-29/10d70084-3e78-4969-8c59-3e0747a70d94/IMG_2029.jpeg(1).png.webp" alt="새로운 오피스, 그리고 새로운 시작" class="daangn-story-img" />
                   </div>
                   <div class="daangn-story-info">
-                    <h4 class="daangn-story-title">2025 당근서비스 송년의 밤</h4>
-                    <p class="daangn-story-sub">함께였기에 더 빛날 수 있었던 한 해, 그 시간을 만든 주인공들</p>
-                    <span class="daangn-story-tag">컬처</span>
+                    <h4 class="daangn-story-title">새로운 오피스, 그리고 새로운 시작</h4>
+                    <p class="daangn-story-sub">더 좋은 환경에서 업무에 집중할 수 있도록 시작된 오피스 이전</p>
+                    <span class="daangn-story-tag">Culture</span>
                   </div>
                 </a>
-                <a href="https://daangnservice.career.greetinghr.com/ko/1st10x" target="_blank" rel="noopener noreferrer" class="daangn-story-card">
+                <a href="javascript:void(0)" class="daangn-story-card is-placeholder" data-article-slug="">
                   <div class="daangn-story-img-box">
-                    <img src="https://opening-attachments.greetinghr.com/2025-12-26/878130fb-10c6-4b49-affc-dd47ef83e8e6/IMG_9775.jpg.png.webp" alt="[10X] 누구나 처음 리더가 되는 순간이 있다" class="daangn-story-img" />
+                    <img src="/images/article-placeholder.svg" alt="준비중" class="daangn-story-img" />
                   </div>
                   <div class="daangn-story-info">
-                    <h4 class="daangn-story-title">[10X] 누구나 처음 리더가 되는 순간이 있다</h4>
-                    <p class="daangn-story-sub">리더의 첫 걸음, 당근서비스 CEO Brent가 전하는 리더십 이야기</p>
-                    <span class="daangn-story-tag">그로스</span>
+                    <h4 class="daangn-story-title">준비중</h4>
+                    <p class="daangn-story-sub">새로운 당근서비스 이야기를 기대해 주세요.</p>
+                    <span class="daangn-story-tag">준비중</span>
                   </div>
                 </a>
-                <a href="https://daangnservice.career.greetinghr.com/ko/2nd10x" target="_blank" rel="noopener noreferrer" class="daangn-story-card">
+                <a href="javascript:void(0)" class="daangn-story-card is-placeholder" data-article-slug="">
                   <div class="daangn-story-img-box">
-                    <img src="https://opening-attachments.greetinghr.com/2025-12-30/a1c156b1-ef07-4f59-b6c8-7a10c468a96d/IMG_0573(1).jpg.webp" alt="[10X] 앞으로 당근서비스가 가려는 길" class="daangn-story-img" />
+                    <img src="/images/article-placeholder.svg" alt="준비중" class="daangn-story-img" />
                   </div>
                   <div class="daangn-story-info">
-                    <h4 class="daangn-story-title">[10X] 앞으로 당근서비스가 가려는 길</h4>
-                    <p class="daangn-story-sub">당근서비스의 향후 방향성과 비전, CEO Brent의 인사이트</p>
-                    <span class="daangn-story-tag">그로스</span>
+                    <h4 class="daangn-story-title">준비중</h4>
+                    <p class="daangn-story-sub">새로운 당근서비스 이야기를 기대해 주세요.</p>
+                    <span class="daangn-story-tag">준비중</span>
                   </div>
                 </a>
               </div>
@@ -820,13 +1092,287 @@ async function apiFetch(url, options = {}) {
   return res;
 }
 
-// Load currently published or draft page from server
-async function loadCurrentPage() {
+// ── Multi-Page Navigation & Selector Engine ───────────────────
+
+// Load all pages from server
+async function loadPagesList() {
   try {
-    const res = await apiFetch('/api/admin/current-page');
+    const res = await apiFetch('/api/admin/pages');
+    const data = await res.json();
+    if (data.pages && Array.isArray(data.pages)) {
+      allPagesList = data.pages;
+      
+      // Match current page name from DB
+      const matched = allPagesList.find(p => p.page_path === currentPath);
+      if (matched) {
+        currentPageName = matched.page_name || (currentPath === '/' ? '메인 페이지' : currentPath);
+      }
+
+      updatePageSelectorUI();
+      renderPagesDropdown();
+    }
+  } catch (err) {
+    console.error('Failed to load pages list:', err);
+  }
+}
+
+// Update Top Toolbar Page Display
+function updatePageSelectorUI() {
+  const nameEl = document.getElementById('currentSelectedPageName');
+  const pathEl = document.getElementById('currentSelectedPagePath');
+  if (nameEl) nameEl.textContent = currentPageName;
+  if (pathEl) pathEl.textContent = currentPath;
+}
+
+// Render Dropdown List of Pages
+function renderPagesDropdown() {
+  const listEl = document.getElementById('pageDropdownList');
+  if (!listEl) return;
+  listEl.innerHTML = '';
+
+  allPagesList.forEach(p => {
+    const item = document.createElement('div');
+    const isCurrent = p.page_path === currentPath;
+    item.className = `page-dropdown-item ${isCurrent ? 'active' : ''}`;
+    item.onclick = () => {
+      togglePageDropdown(false);
+      switchPage(p.page_path, p.page_name);
+    };
+
+    const statusBadge = p.is_published 
+      ? '<span class="page-item-badge badge-published">배포중</span>'
+      : '<span class="page-item-badge badge-draft">Draft</span>';
+
+    item.innerHTML = `
+      <div class="page-item-main">
+        <span class="page-item-icon">${p.page_path === '/' ? '🏠' : '📄'}</span>
+        <div class="page-item-meta">
+          <span class="page-item-title">${p.page_name || (p.page_path === '/' ? '메인 페이지' : p.page_path)}</span>
+          <span class="page-item-slug">${p.page_path}</span>
+        </div>
+      </div>
+      ${statusBadge}
+    `;
+    listEl.appendChild(item);
+  });
+}
+
+// Toggle Dropdown Menu
+function togglePageDropdown(force) {
+  const wrapper = document.getElementById('pageSelectorWrapper');
+  const dropdown = document.getElementById('pageSelectorDropdown');
+  if (!dropdown || !wrapper) return;
+  const shouldOpen = (typeof force === 'boolean') ? force : !wrapper.classList.contains('is-open');
+  if (shouldOpen) {
+    wrapper.classList.add('is-open');
+    dropdown.classList.add('show');
+  } else {
+    wrapper.classList.remove('is-open');
+    dropdown.classList.remove('show');
+  }
+}
+
+// Close Dropdown when clicking outside
+document.addEventListener('click', (e) => {
+  const wrapper = document.getElementById('pageSelectorWrapper');
+  if (wrapper && !wrapper.contains(e.target)) {
+    togglePageDropdown(false);
+  }
+});
+
+// Switch active editing page in GrapesJS canvas
+async function switchPage(newPath, newName) {
+  if (newPath === currentPath) return;
+
+  currentPath = newPath;
+  currentPageName = newName || (newPath === '/' ? '메인 페이지' : newPath);
+  updatePageSelectorUI();
+  renderPagesDropdown();
+
+  // Update browser URL query parameter without full reload
+  try {
+    const newUrl = new URL(window.location);
+    newUrl.searchParams.set('path', newPath);
+    window.history.pushState({}, '', newUrl);
+  } catch (e) {}
+
+  await loadCurrentPage(currentPath);
+  loadVersionHistory(currentPath);
+}
+
+// Open modal to create a new sub-page
+function openNewPageModal() {
+  togglePageDropdown(false);
+  document.getElementById('newPageNameInput').value = '';
+  document.getElementById('newPagePathInput').value = '/teams/';
+  document.getElementById('newPageTemplateSelect').value = 'group';
+  document.getElementById('newPageModal').style.display = 'flex';
+}
+
+function closeNewPageModal() {
+  document.getElementById('newPageModal').style.display = 'none';
+}
+
+async function createNewPageSubmit() {
+  const pageName = document.getElementById('newPageNameInput').value.trim();
+  let pagePath = document.getElementById('newPagePathInput').value.trim();
+  const templateType = document.getElementById('newPageTemplateSelect').value;
+
+  if (!pageName) {
+    alert('페이지 이름을 입력해주세요.');
+    return;
+  }
+  if (!pagePath || !pagePath.startsWith('/')) {
+    alert('URL 경로는 반드시 "/" 로 시작해야 합니다. (예: /teams/design)');
+    return;
+  }
+
+  try {
+    const res = await apiFetch('/api/admin/pages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ pageName, pagePath, templateType })
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      alert(data.error || '페이지 생성에 실패했습니다.');
+      return;
+    }
+
+    closeNewPageModal();
+    alert(`🎉 [${pageName}] 하위 페이지가 생성되었습니다!\n해당 페이지 편집 화면으로 전환합니다.`);
+    await loadPagesList();
+    await switchPage(pagePath, pageName);
+  } catch (err) {
+    console.error('Create page error:', err);
+    alert('페이지 생성 중 오류가 발생했습니다.');
+  }
+}
+
+// Open modal to configure current page (rename, slug, delete)
+function openPageSettingsModal() {
+  togglePageDropdown(false);
+  document.getElementById('editPageNameInput').value = currentPageName;
+  document.getElementById('editPagePathInput').value = currentPath;
+  
+  const isMain = currentPath === '/';
+  const pathInput = document.getElementById('editPagePathInput');
+  const deleteSec = document.getElementById('deletePageSection');
+  const notice = document.getElementById('editPagePathNotice');
+
+  if (isMain) {
+    pathInput.disabled = true;
+    notice.textContent = '메인 페이지의 URL 경로는 "/" 로 고정되어 변경할 수 없습니다.';
+    if (deleteSec) deleteSec.style.display = 'none';
+  } else {
+    pathInput.disabled = false;
+    notice.textContent = 'URL 경로를 변경하면 기존 배포 URL이 새 주소로 변경됩니다. (예: /teams/design)';
+    if (deleteSec) deleteSec.style.display = 'block';
+  }
+
+  document.getElementById('pageSettingsModal').style.display = 'flex';
+}
+
+function closePageSettingsModal() {
+  document.getElementById('pageSettingsModal').style.display = 'none';
+}
+
+async function savePageSettingsSubmit() {
+  const newName = document.getElementById('editPageNameInput').value.trim();
+  let newPath = document.getElementById('editPagePathInput').value.trim();
+
+  if (!newName) {
+    alert('페이지 이름을 입력해주세요.');
+    return;
+  }
+  if (currentPath === '/') {
+    newPath = '/';
+  } else {
+    if (!newPath || !newPath.startsWith('/')) {
+      alert('URL 경로는 반드시 "/" 로 시작해야 합니다. (예: /teams/design)');
+      return;
+    }
+  }
+
+  try {
+    const res = await apiFetch('/api/admin/pages', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        oldPath: currentPath,
+        newPath,
+        pageName: newName
+      })
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      alert(data.error || '페이지 설정 변경에 실패했습니다.');
+      return;
+    }
+
+    closePageSettingsModal();
+    alert('✅ 페이지 설정이 성공적으로 저장되었습니다.');
+    currentPath = newPath;
+    currentPageName = newName;
+    updatePageSelectorUI();
+
+    try {
+      const newUrl = new URL(window.location);
+      newUrl.searchParams.set('path', newPath);
+      window.history.pushState({}, '', newUrl);
+    } catch (e) {}
+
+    await loadPagesList();
+  } catch (err) {
+    console.error('Update page settings error:', err);
+    alert('페이지 설정 저장 중 오류가 발생했습니다.');
+  }
+}
+
+async function deleteCurrentPageSubmit() {
+  if (currentPath === '/') {
+    alert('메인 페이지는 삭제할 수 없습니다.');
+    return;
+  }
+
+  if (!confirm(`정말로 [${currentPageName}] (${currentPath}) 페이지와 모든 버전 기록을 완전히 삭제하시겠습니까?`)) {
+    return;
+  }
+
+  try {
+    const res = await apiFetch('/api/admin/pages', {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ pagePath: currentPath })
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      alert(data.error || '페이지 삭제에 실패했습니다.');
+      return;
+    }
+
+    closePageSettingsModal();
+    alert('🗑️ 페이지가 삭제되었습니다. 메인 페이지로 이동합니다.');
+    await loadPagesList();
+    await switchPage('/', '메인 페이지');
+  } catch (err) {
+    console.error('Delete page error:', err);
+    alert('페이지 삭제 중 오류가 발생했습니다.');
+  }
+}
+
+// Load currently published or draft page from server for target path
+async function loadCurrentPage(targetPath = currentPath) {
+  try {
+    const res = await apiFetch(`/api/admin/current-page?path=${encodeURIComponent(targetPath)}`);
     const data = await res.json();
     if (data.page) {
       currentPageData = data.page;
+      currentPath = data.page.page_path || targetPath;
+      currentPageName = data.page.page_name || (currentPath === '/' ? '메인 페이지' : currentPath);
+      updatePageSelectorUI();
+      renderPagesDropdown();
+
       editor.setComponents(data.page.html || '');
       
       // GrapesJS setStyle() 대신 canvas iframe에 직접 <style> 태그 주입
@@ -842,6 +1388,11 @@ async function loadCurrentPage() {
       updateFaviconPreview(faviconUrl);
       
       updateStatusBadge(data.page.is_published, data.page.version_name);
+      setTimeout(() => {
+        initCultureSectionSync(editor);
+        bindStoryCardCanvasEvents(editor);
+        bindProcessPageCanvasEvents(editor);
+      }, 150);
     }
   } catch (err) {
     console.error('Page load error:', err);
@@ -867,22 +1418,29 @@ function injectPageCssToCanvas(css) {
   }
 }
 
-
 // Update top navbar status badge
 function updateStatusBadge(isPublished, versionName) {
   const badge = document.getElementById('statusBadge');
   if (isPublished) {
     badge.className = 'status-badge status-published';
-    badge.textContent = `🟢 퍼블릭 배포중 (${versionName || 'v1.0'})`;
+    badge.textContent = `🟢 배포중 (${versionName || 'v1.0'})`;
   } else {
     badge.className = 'status-badge status-draft';
-    badge.textContent = `🟡 임시 저장 상태 (${versionName || 'Draft'})`;
+    badge.textContent = `🟡 임시 저장 (${versionName || 'Draft'})`;
   }
+}
+
+// Clean builder helper elements before saving/publishing to DB
+function cleanHtmlForSave(html) {
+  if (!html) return '';
+  return html
+    .replace(/<button[^>]*class="[^"]*btn-add-culture-card[^"]*"[^>]*>.*?<\/button>/gis, '')
+    .replace(/<button[^>]*class="[^"]*btn-card-article-picker[^"]*"[^>]*>.*?<\/button>/gis, '');
 }
 
 // Save draft
 async function saveDraft() {
-  const html = editor.getHtml();
+  const html = cleanHtmlForSave(editor.getHtml());
   const css = editor.getCss();
   const componentsJson = JSON.stringify(editor.getComponents());
   const seoTitle = document.getElementById('seoTitleInput').value;
@@ -900,6 +1458,8 @@ async function saveDraft() {
         seoTitle,
         seoDescription,
         faviconUrl,
+        pagePath: currentPath,
+        pageName: currentPageName,
         versionName: `수정본 (${new Date().toLocaleTimeString('ko-KR')})`
       })
     });
@@ -908,8 +1468,9 @@ async function saveDraft() {
       currentPageData.id = data.id;
       currentPageData.isPublished = 0;
       updateStatusBadge(0, `Draft #${data.id}`);
-      loadVersionHistory();
-      alert('✅ 성공적으로 임시 저장되었습니다!');
+      loadVersionHistory(currentPath);
+      await loadPagesList();
+      alert(`✅ [${currentPageName}] (${currentPath}) 페이지가 성공적으로 임시 저장되었습니다!`);
     }
   } catch (err) {
     if (err.message !== 'Unauthorized') {
@@ -918,11 +1479,11 @@ async function saveDraft() {
   }
 }
 
-// Publish page immediately to /
+// Publish page immediately
 async function publishPage() {
-  if (!confirm('현재 편집 내용을 퍼블릭 채용 사이트에 즉시 배포하시겠습니까?')) return;
+  if (!confirm(`현재 편집 중인 [${currentPageName}] (${currentPath}) 페이지를 퍼블릭 사이트에 즉시 배포하시겠습니까?`)) return;
 
-  const html = editor.getHtml();
+  const html = cleanHtmlForSave(editor.getHtml());
   const css = editor.getCss();
   const componentsJson = JSON.stringify(editor.getComponents());
   const seoTitle = document.getElementById('seoTitleInput').value;
@@ -941,6 +1502,8 @@ async function publishPage() {
         seoTitle,
         seoDescription,
         faviconUrl,
+        pagePath: currentPath,
+        pageName: currentPageName,
         versionName: `정식 배포 (${new Date().toLocaleDateString('ko-KR')} ${new Date().toLocaleTimeString('ko-KR')})`
       })
     });
@@ -958,8 +1521,9 @@ async function publishPage() {
       currentPageData.id = saveData.id;
       currentPageData.isPublished = 1;
       updateStatusBadge(1, `v${saveData.id}`);
-      loadVersionHistory();
-      alert('🚀 퍼블릭 채용 페이지(careers.daangnservice.com)에 성공적으로 즉시 반영되었습니다!');
+      loadVersionHistory(currentPath);
+      await loadPagesList();
+      alert(`🚀 [${currentPageName}] (${currentPath}) 페이지가 성공적으로 퍼블릭에 즉시 반영되었습니다!`);
     }
   } catch (err) {
     if (err.message !== 'Unauthorized') {
@@ -969,9 +1533,9 @@ async function publishPage() {
 }
 
 // Load Version History list into drawer
-async function loadVersionHistory() {
+async function loadVersionHistory(targetPath = currentPath) {
   try {
-    const res = await apiFetch('/api/admin/versions');
+    const res = await apiFetch(`/api/admin/versions?path=${encodeURIComponent(targetPath)}`);
     const data = await res.json();
     const versionList = document.getElementById('versionList');
     versionList.innerHTML = '';
@@ -1013,8 +1577,8 @@ async function rollbackToVersion(id) {
     const data = await res.json();
     if (data.success) {
       alert(`✅ 버전 #${id} 로 롤백하여 퍼블릭 사이트에 배포되었습니다!`);
-      await loadCurrentPage();
-      await loadVersionHistory();
+      await loadCurrentPage(currentPath);
+      await loadVersionHistory(currentPath);
       toggleHistoryDrawer();
     }
   } catch (err) {
@@ -1029,15 +1593,19 @@ async function resetToRichTemplate() {
   if (!confirm('현재 캔버스를 당근서비스 공식 영상 및 미디어가 포함된 풀 템플릿으로 교체하시겠습니까?')) return;
 
   try {
-    const res = await apiFetch('/api/admin/reset-template', { method: 'POST' });
+    const res = await apiFetch('/api/admin/reset-template', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ pagePath: currentPath })
+    });
     const data = await res.json();
     if (data.success && data.page) {
       editor.setComponents(data.page.html || '');
-      editor.setStyle(data.page.css || '');
+      injectPageCssToCanvas(data.page.css || '');
       currentPageData = data.page;
       updateStatusBadge(0, `Draft #${data.page.id}`);
-      loadVersionHistory();
-      alert('🍊 당근서비스 풀 템플릿(영상, 스토리, 4단계 프로세스, 공고 카드)이 성공적으로 적용되었습니다!');
+      loadVersionHistory(currentPath);
+      alert('🍊 템플릿이 성공적으로 적용되었습니다!');
     }
   } catch (err) {
     if (err.message !== 'Unauthorized') {
@@ -1143,9 +1711,9 @@ function savePromoDelaySetting() {
 function openPreviewModal() {
   const modal = document.getElementById('previewModal');
   const frame = document.getElementById('previewFrame');
-  // 실제 public 페이지를 직접 로드 (GrapesJS HTML 재직렬화 오류 방지)
   modal.style.display = 'flex';
-  frame.src = '/?_t=' + Date.now();
+  const targetUrl = (currentPath === '/' ? '/' : currentPath) + '?_t=' + Date.now();
+  frame.src = targetUrl;
 }
 
 function closePreviewModal() {
@@ -1159,3 +1727,662 @@ function logout() {
     });
   }
 }
+
+// ── 당근서비스가 일하는 방식 (좌측 가치 목록 ↔ 우측 카드 유기적 양방향 연동 엔진) ──
+let isSyncingCulture = false;
+
+function initCultureSectionSync(editorInstance) {
+  if (!editorInstance) return;
+  const ed = editorInstance;
+  let canvasDoc;
+  try {
+    canvasDoc = ed.Canvas.getDocument();
+  } catch (e) {
+    return;
+  }
+  if (!canvasDoc) return;
+
+  // 1. 좌측 패널 하단에 [+ 새 가치 및 카드 추가] 버튼 생성
+  function ensureAddButton() {
+    const leftPanel = canvasDoc.querySelector('.daangn-sticky-left');
+    const list = canvasDoc.getElementById('stickyValueList');
+    if (!leftPanel || !list) return;
+
+    let addBtn = leftPanel.querySelector('.btn-add-culture-card');
+    if (!addBtn) {
+      addBtn = canvasDoc.createElement('button');
+      addBtn.type = 'button';
+      addBtn.className = 'btn-add-culture-card';
+      addBtn.innerHTML = '<span>➕</span> 새로운 가치 및 카드 추가';
+      addBtn.onclick = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        addNewCultureItemAndCard();
+      };
+      leftPanel.appendChild(addBtn);
+    }
+  }
+
+  // 2. 새 가치(좌측) 및 카드(우측) 동시 추가
+  function addNewCultureItemAndCard(title = '새로운 가치') {
+    if (isSyncingCulture) return;
+    isSyncingCulture = true;
+
+    try {
+      const list = canvasDoc.getElementById('stickyValueList');
+      const stack = canvasDoc.getElementById('stickyCardsStack');
+      if (!list || !stack) return;
+
+      const existingCards = stack.querySelectorAll('.daangn-sticky-card');
+      const newIdx = existingCards.length;
+      const tagNum = String(newIdx + 1).padStart(2, '0');
+
+      const wrapper = ed.DomComponents.getWrapper();
+      const listComp = wrapper.find('#stickyValueList')[0];
+      const stackComp = wrapper.find('#stickyCardsStack')[0];
+
+      const newLeftHtml = `<div class="sticky-value-item" data-index="${newIdx}" onclick="scrollToStickyCard(${newIdx})">${title}</div>`;
+      const newCardHtml = `
+        <div class="daangn-sticky-card" data-index="${newIdx}" data-label="${title}">
+          <div class="daangn-sticky-card-media">
+            <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=900&q=80" alt="${title}" class="daangn-sticky-card-img" />
+          </div>
+          <div class="daangn-sticky-card-caption">
+            <span class="daangn-sticky-card-tag">${tagNum} · 일하는 방식</span>
+            <h3 class="daangn-sticky-card-title">${title}</h3>
+            <p class="daangn-sticky-card-desc">당근서비스 팀이 함께 만들어가는 가치와 일하는 방식을 소개하는 문구를 여기에 작성하세요. 1개의 이미지와 글을 자유롭게 편집할 수 있습니다.</p>
+          </div>
+        </div>
+      `;
+
+      if (listComp && stackComp) {
+        listComp.append(newLeftHtml);
+        const addedCards = stackComp.append(newCardHtml);
+        if (addedCards && addedCards.length) {
+          ed.select(addedCards[0]);
+          const cardEl = addedCards[0].getEl();
+          if (cardEl) {
+            cardEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
+        }
+      } else {
+        list.insertAdjacentHTML('beforeend', newLeftHtml);
+        stack.insertAdjacentHTML('beforeend', newCardHtml);
+      }
+
+      bindItemEvents();
+    } finally {
+      isSyncingCulture = false;
+    }
+  }
+
+  // 3. 타이핑 입력 시 양방향 텍스트 실시간 동기화
+  function handleInput(e) {
+    if (isSyncingCulture) return;
+    const target = e.target;
+    if (!target) return;
+
+    // A. 좌측 네비 텍스트 수정 -> 우측 카드의 제목 및 data-label 동시 업데이트
+    const leftItem = target.classList && target.classList.contains('sticky-value-item') 
+      ? target 
+      : (target.closest && target.closest('.sticky-value-item'));
+
+    if (leftItem) {
+      const list = canvasDoc.getElementById('stickyValueList');
+      const stack = canvasDoc.getElementById('stickyCardsStack');
+      if (!list || !stack) return;
+
+      const items = Array.from(list.querySelectorAll('.sticky-value-item'));
+      const idx = items.indexOf(leftItem);
+      if (idx !== -1) {
+        const cards = stack.querySelectorAll('.daangn-sticky-card');
+        if (cards[idx]) {
+          const cardTitle = cards[idx].querySelector('.daangn-sticky-card-title');
+          const newText = leftItem.textContent.trim();
+          if (cardTitle && cardTitle.textContent.trim() !== newText) {
+            isSyncingCulture = true;
+            cardTitle.textContent = newText;
+            cards[idx].setAttribute('data-label', newText);
+            isSyncingCulture = false;
+          }
+        }
+      }
+      return;
+    }
+
+    // B. 우측 카드 제목 수정 -> 좌측 네비 텍스트 동시 업데이트
+    if (target.classList && target.classList.contains('daangn-sticky-card-title')) {
+      const card = target.closest('.daangn-sticky-card');
+      const list = canvasDoc.getElementById('stickyValueList');
+      const stack = canvasDoc.getElementById('stickyCardsStack');
+      if (card && list && stack) {
+        const cards = Array.from(stack.querySelectorAll('.daangn-sticky-card'));
+        const idx = cards.indexOf(card);
+        if (idx !== -1) {
+          const items = list.querySelectorAll('.sticky-value-item');
+          const newText = target.textContent.trim();
+          if (items[idx] && items[idx].textContent.trim() !== newText) {
+            isSyncingCulture = true;
+            items[idx].textContent = newText;
+            card.setAttribute('data-label', newText);
+            isSyncingCulture = false;
+          }
+        }
+      }
+    }
+  }
+
+  // 4. 아이템 이벤트 바인딩 (직접 텍스트 편집, 클릭 시 해당 카드로 스크롤, Enter 시 새 카드 생성)
+  function bindItemEvents() {
+    const leftPanel = canvasDoc.querySelector('.daangn-sticky-left');
+    if (leftPanel) {
+      // "당근서비스가 일하는 방식" 상단 제목도 직접 클릭하여 편집 가능
+      const titleSpan = leftPanel.querySelector('span');
+      if (titleSpan) {
+        titleSpan.setAttribute('contenteditable', 'true');
+      }
+    }
+
+    const list = canvasDoc.getElementById('stickyValueList');
+    const stack = canvasDoc.getElementById('stickyCardsStack');
+    if (!list || !stack) return;
+
+    const items = list.querySelectorAll('.sticky-value-item');
+    items.forEach((item, idx) => {
+      item.setAttribute('contenteditable', 'true');
+
+      // 클릭 시 해당 카드 위치로 스크롤 및 활성화
+      item.onclick = (e) => {
+        items.forEach((it, i) => it.classList.toggle('is-active', i === idx));
+        const cards = stack.querySelectorAll('.daangn-sticky-card');
+        if (cards[idx]) {
+          cards[idx].scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      };
+
+      // 텍스트 수정 중 Enter를 누르면 다음 새 가치 및 카드를 즉시 생성
+      item.onkeydown = (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          addNewCultureItemAndCard();
+        }
+      };
+    });
+  }
+
+  // 5. 컴포넌트 추가/삭제 감지하여 양쪽 개수 동기화
+  ed.off('component:remove:culture');
+  ed.on('component:remove:culture', function onCompRemove(model) {
+    if (isSyncingCulture || !model) return;
+    const classes = model.get('classes') || [];
+    const classStr = typeof classes.pluck === 'function' ? classes.pluck('name').join(' ') : String(classes);
+
+    if (classStr.includes('daangn-sticky-card')) {
+      isSyncingCulture = true;
+      setTimeout(() => {
+        syncLeftListFromCards();
+        isSyncingCulture = false;
+      }, 50);
+    } else if (classStr.includes('sticky-value-item')) {
+      isSyncingCulture = true;
+      setTimeout(() => {
+        syncCardsFromLeftList();
+        isSyncingCulture = false;
+      }, 50);
+    }
+  });
+
+  function syncLeftListFromCards() {
+    const list = canvasDoc.getElementById('stickyValueList');
+    const stack = canvasDoc.getElementById('stickyCardsStack');
+    if (!list || !stack) return;
+
+    const cards = stack.querySelectorAll('.daangn-sticky-card');
+    const wrapper = ed.DomComponents.getWrapper();
+    const listComp = wrapper.find('#stickyValueList')[0];
+    if (!listComp) return;
+
+    listComp.empty();
+    cards.forEach((card, idx) => {
+      const titleEl = card.querySelector('.daangn-sticky-card-title');
+      const title = titleEl ? titleEl.textContent.trim() : `가치 ${idx + 1}`;
+      listComp.append(`<div class="sticky-value-item${idx === 0 ? ' is-active' : ''}" data-index="${idx}" onclick="scrollToStickyCard(${idx})">${title}</div>`);
+    });
+    bindItemEvents();
+  }
+
+  function syncCardsFromLeftList() {
+    const list = canvasDoc.getElementById('stickyValueList');
+    const stack = canvasDoc.getElementById('stickyCardsStack');
+    if (!list || !stack) return;
+
+    const items = list.querySelectorAll('.sticky-value-item');
+    const cards = stack.querySelectorAll('.daangn-sticky-card');
+    const wrapper = ed.DomComponents.getWrapper();
+    const stackComp = wrapper.find('#stickyCardsStack')[0];
+    if (!stackComp) return;
+
+    if (items.length < cards.length) {
+      const cardComps = stackComp.components();
+      while (cardComps.length > items.length) {
+        cardComps.at(cardComps.length - 1).destroy();
+      }
+    }
+    bindItemEvents();
+  }
+
+  // Event Listeners 바인딩
+  canvasDoc.removeEventListener('input', handleInput);
+  canvasDoc.addEventListener('input', handleInput, true);
+
+  ensureAddButton();
+  bindItemEvents();
+}
+
+// ── 인사이드 당근서비스 아티클 관리 CMS 연동 엔진 ─────────────────────
+let cmsArticlesList = [];
+let activeStoryCardComponent = null;
+
+function bindStoryCardCanvasEvents(editorInstance) {
+  if (!editorInstance) return;
+  try {
+    const canvasDoc = editorInstance.Canvas.getDocument();
+    if (!canvasDoc) return;
+    canvasDoc.removeEventListener('dblclick', handleStoryCardDblClick);
+    canvasDoc.addEventListener('dblclick', handleStoryCardDblClick);
+
+    // 각 아티클 카드 하단에 직관적인 [📰 아티클 선택 / 변경 (팝업)] 버튼 주입
+    ensureStoryCardPickerButtons(canvasDoc, editorInstance);
+  } catch (e) {}
+}
+
+function handleStoryCardDblClick(e) {
+  const cardEl = e.target.closest('.daangn-story-card');
+  if (cardEl) {
+    e.preventDefault();
+    e.stopPropagation();
+    const wrapper = editor.DomComponents.getWrapper();
+    const allComps = wrapper.find('.daangn-story-card');
+    const comp = allComps.find(c => c.getEl() === cardEl) || editor.getSelected();
+    openArticlePickerModal(comp);
+  }
+}
+
+function ensureStoryCardPickerButtons(canvasDoc, editorInstance) {
+  if (!canvasDoc) return;
+  const cards = canvasDoc.querySelectorAll('.daangn-story-card');
+  cards.forEach(card => {
+    let btn = card.querySelector('.btn-card-article-picker');
+    if (!btn) {
+      btn = canvasDoc.createElement('button');
+      btn.type = 'button';
+      btn.className = 'btn-card-article-picker';
+      btn.innerHTML = '<span>📰 아티클 선택 / 변경 (팝업)</span>';
+      btn.title = '클릭하면 팝업 창이 열려 원하는 아티클을 선택할 수 있습니다.';
+      btn.onclick = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const wrapper = editorInstance.DomComponents.getWrapper();
+        const allComps = wrapper.find('.daangn-story-card');
+        const comp = allComps.find(c => c.getEl() === card) || editorInstance.getSelected();
+        openArticlePickerModal(comp);
+      };
+      const content = card.querySelector('.daangn-story-content') || card;
+      content.appendChild(btn);
+    }
+  });
+}
+
+async function loadCmsArticles() {
+  try {
+    const res = await fetch('/api/articles');
+    const data = await res.json();
+    cmsArticlesList = data.articles || [];
+    renderArticlePickerModalList();
+  } catch (err) {
+    console.error('CMS 아티클 목록 불러오기 실패:', err);
+  }
+}
+
+function updateStoryCardTraitOptions(comp) {
+  if (!comp) return;
+  const options = [
+    { value: '', name: '🚫 미선택 ("더 좋은 콘텐츠를 준비 중이에요")' },
+    ...cmsArticlesList.map(a => ({
+      value: a.slug,
+      name: `${a.title} (/${a.slug})`
+    }))
+  ];
+  const trait = comp.getTrait('data-article-slug');
+  if (trait) {
+    trait.set('options', options);
+  }
+}
+
+function openArticlePickerModal(cardComp) {
+  activeStoryCardComponent = cardComp || editor.getSelected();
+  if (activeStoryCardComponent && activeStoryCardComponent.getEl && activeStoryCardComponent.getEl()) {
+    const el = activeStoryCardComponent.getEl();
+    if (!el.classList.contains('daangn-story-card')) {
+      activeStoryCardComponent = activeStoryCardComponent.closest('.daangn-story-card') || activeStoryCardComponent;
+    }
+  }
+
+  let currentSlug = '';
+  if (activeStoryCardComponent) {
+    const attrs = activeStoryCardComponent.getAttributes() || {};
+    currentSlug = attrs['data-article-slug'] || activeStoryCardComponent.get('data-article-slug') || '';
+  }
+
+  currentPickerPage = 1;
+  currentPickerKeyword = '';
+  const searchInput = document.getElementById('articlePickerSearch');
+  if (searchInput) searchInput.value = '';
+
+  renderArticlePickerModalList(currentSlug, '', 1);
+
+  const modal = document.getElementById('articlePickerModal');
+  if (modal) modal.style.display = 'flex';
+}
+
+function closeArticlePickerModal() {
+  const modal = document.getElementById('articlePickerModal');
+  if (modal) modal.style.display = 'none';
+  activeStoryCardComponent = null;
+}
+
+function selectCmsArticleForCard(slug) {
+  if (activeStoryCardComponent) {
+    applyCmsArticleToCard(activeStoryCardComponent, slug);
+    editor.trigger('change:canvas');
+    setTimeout(() => {
+      bindStoryCardCanvasEvents(editor);
+    }, 100);
+  }
+  closeArticlePickerModal();
+}
+
+const ARTICLE_PICKER_PAGE_SIZE = 5;
+let currentPickerPage = 1;
+let currentPickerSelectedSlug = '';
+let currentPickerKeyword = '';
+
+function filterArticlePickerModalList(keyword) {
+  currentPickerKeyword = keyword || '';
+  currentPickerPage = 1;
+  renderArticlePickerModalList(currentPickerSelectedSlug, currentPickerKeyword, 1);
+}
+
+function changeArticlePickerPage(page) {
+  currentPickerPage = page;
+  renderArticlePickerModalList(currentPickerSelectedSlug, currentPickerKeyword, currentPickerPage);
+}
+
+function renderArticlePickerModalList(selectedSlug = '', searchKeyword = '', targetPage = 1) {
+  if (selectedSlug !== undefined) currentPickerSelectedSlug = selectedSlug;
+  const container = document.getElementById('articlePickerList');
+  const paginationContainer = document.getElementById('articlePickerPagination');
+  if (!container) return;
+
+  if (!cmsArticlesList || cmsArticlesList.length === 0) {
+    container.innerHTML = `
+      <div style="text-align: center; padding: 32px 16px; color: #868B94;">
+        <p style="font-size: 15px; margin-bottom: 8px;">등록된 CMS 아티클이 없습니다.</p>
+        <a href="/admin/articles" target="_blank" style="color: #FF6F0F; font-weight: 700; text-decoration: underline;">아티클 관리에서 첫 아티클 작성하기 ➔</a>
+      </div>
+    `;
+    if (paginationContainer) paginationContainer.innerHTML = '';
+    return;
+  }
+
+  const kw = (searchKeyword !== undefined ? searchKeyword : currentPickerKeyword).trim().toLowerCase();
+  const filtered = kw ? cmsArticlesList.filter(a => {
+    const title = (a.title || '').toLowerCase();
+    const sub = (a.subtitle || '').toLowerCase();
+    const cat = (a.category || (a.tags && a.tags.join(' ')) || '').toLowerCase();
+    return title.includes(kw) || sub.includes(kw) || cat.includes(kw) || a.slug.toLowerCase().includes(kw);
+  }) : cmsArticlesList;
+
+  if (filtered.length === 0) {
+    container.innerHTML = `
+      <div style="text-align: center; padding: 28px 16px; color: #868B94; font-size: 14px;">
+        '${searchKeyword}' 검색 결과가 없습니다.
+      </div>
+    `;
+    if (paginationContainer) paginationContainer.innerHTML = '';
+    return;
+  }
+
+  // 최대 5개 단위 페이징 계산
+  const totalPages = Math.ceil(filtered.length / ARTICLE_PICKER_PAGE_SIZE) || 1;
+  currentPickerPage = Math.max(1, Math.min(targetPage || currentPickerPage, totalPages));
+  const startIndex = (currentPickerPage - 1) * ARTICLE_PICKER_PAGE_SIZE;
+  const pagedArticles = filtered.slice(startIndex, startIndex + ARTICLE_PICKER_PAGE_SIZE);
+
+  container.innerHTML = pagedArticles.map(a => {
+    const isCurrent = a.slug === currentPickerSelectedSlug;
+    const cat = (a.tags && a.tags[0]) || a.category || '인사이드';
+    const thumb = a.thumbnail_url || '/images/article-placeholder.svg';
+    return `
+      <div style="display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; background: ${isCurrent ? '#FFF3EB' : '#FFFFFF'}; border: 1.5px solid ${isCurrent ? '#FF6F0F' : '#EAECEF'}; border-radius: 12px; gap: 14px; transition: all 0.2s;">
+        <div style="display: flex; align-items: center; gap: 14px; flex: 1; min-width: 0;">
+          <img src="${thumb}" alt="${a.title}" style="width: 72px; height: 50px; border-radius: 8px; object-fit: cover; flex-shrink: 0; background: #F2F3F7;" />
+          <div style="min-width: 0; flex: 1;">
+            <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 4px;">
+              <span style="font-size: 11px; font-weight: 700; color: #FF6F0F; background: #FFF0E6; padding: 2px 6px; border-radius: 4px;">${cat}</span>
+              <span style="font-size: 11px; color: #868B94; font-family: monospace;">/${a.slug}</span>
+            </div>
+            <div style="font-size: 14px; font-weight: 700; color: #212124; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${a.title}</div>
+            ${a.subtitle ? `<div style="font-size: 12px; color: #868B94; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px;">${a.subtitle}</div>` : ''}
+          </div>
+        </div>
+        <button type="button" class="btn ${isCurrent ? 'btn-primary' : 'btn-outline'}" style="flex-shrink: 0; font-size: 13px; font-weight: 700; padding: 8px 16px; border-radius: 8px; cursor: pointer; ${isCurrent ? 'background: #FF6F0F; color: #fff; border: none;' : 'border: 1px solid #D1D3D8; color: #212124; background: #fff;'}" onclick="selectCmsArticleForCard('${a.slug}')">
+          ${isCurrent ? '✓ 현재 선택됨' : '이 아티클 연결'}
+        </button>
+      </div>
+    `;
+  }).join('');
+
+  // 5개 초과 시 페이지네이션 버튼 렌더링
+  if (paginationContainer) {
+    if (totalPages > 1) {
+      let pagesHtml = `
+        <button type="button" class="btn-picker-page-nav" ${currentPickerPage === 1 ? 'disabled' : ''} onclick="changeArticlePickerPage(${currentPickerPage - 1})" title="이전 페이지">〈</button>
+      `;
+      for (let i = 1; i <= totalPages; i++) {
+        pagesHtml += `
+          <button type="button" class="btn-picker-page-num ${i === currentPickerPage ? 'active' : ''}" onclick="changeArticlePickerPage(${i})">${i}</button>
+        `;
+      }
+      pagesHtml += `
+        <button type="button" class="btn-picker-page-nav" ${currentPickerPage === totalPages ? 'disabled' : ''} onclick="changeArticlePickerPage(${currentPickerPage + 1})" title="다음 페이지">〉</button>
+        <span style="font-size: 12px; color: #868B94; margin-left: 8px;">(총 ${filtered.length}개 · ${currentPickerPage}/${totalPages}P)</span>
+      `;
+      paginationContainer.innerHTML = pagesHtml;
+    } else {
+      paginationContainer.innerHTML = '';
+    }
+  }
+}
+
+function applyCmsArticleToCard(cardComp, slug) {
+  if (!cardComp) return;
+  slug = (slug || '').trim();
+
+  const article = cmsArticlesList.find(a => a.slug === slug);
+  const cardEl = cardComp.getEl ? cardComp.getEl() : null;
+
+  if (slug && article) {
+    cardComp.addAttributes({
+      'data-article-slug': slug,
+      'href': '/articles/' + slug
+    });
+    cardComp.removeClass('is-placeholder');
+
+    if (cardEl) {
+      cardEl.classList.remove('is-placeholder');
+      cardEl.setAttribute('data-article-slug', slug);
+      cardEl.setAttribute('href', '/articles/' + slug);
+
+      const imgEl = cardEl.querySelector('.daangn-story-img');
+      if (imgEl && article.thumbnail_url) {
+        imgEl.src = article.thumbnail_url;
+        imgEl.alt = article.title;
+      }
+      const titleEl = cardEl.querySelector('.daangn-story-title');
+      if (titleEl) titleEl.textContent = article.title;
+
+      const subEl = cardEl.querySelector('.daangn-story-sub');
+      if (subEl) subEl.textContent = article.subtitle || '';
+
+      const tagEl = cardEl.querySelector('.daangn-story-tag');
+      if (tagEl) {
+        const cat = (article.tags && article.tags[0]) || article.category || '인사이드';
+        tagEl.textContent = cat;
+      }
+    }
+
+    const imgComp = cardComp.find ? cardComp.find('.daangn-story-img')[0] : null;
+    if (imgComp && article.thumbnail_url) {
+      imgComp.set({ src: article.thumbnail_url });
+      imgComp.addAttributes({ src: article.thumbnail_url, alt: article.title });
+    }
+    const titleComp = cardComp.find ? cardComp.find('.daangn-story-title')[0] : null;
+    if (titleComp) {
+      titleComp.components(article.title);
+    }
+    const subComp = cardComp.find ? cardComp.find('.daangn-story-sub')[0] : null;
+    if (subComp) {
+      subComp.components(article.subtitle || '');
+    }
+    const tagComp = cardComp.find ? cardComp.find('.daangn-story-tag')[0] : null;
+    if (tagComp) {
+      const cat = (article.tags && article.tags[0]) || article.category || '인사이드';
+      tagComp.components(cat);
+    }
+  } else {
+    // Placeholder state: "더 좋은 콘텐츠를 준비 중이에요"
+    cardComp.addAttributes({
+      'data-article-slug': '',
+      'href': 'javascript:void(0)'
+    });
+    cardComp.addClass('is-placeholder');
+
+    if (cardEl) {
+      cardEl.classList.add('is-placeholder');
+      cardEl.setAttribute('data-article-slug', '');
+      cardEl.setAttribute('href', 'javascript:void(0)');
+
+      const imgEl = cardEl.querySelector('.daangn-story-img');
+      if (imgEl) {
+        imgEl.src = '/images/article-placeholder.svg';
+        imgEl.alt = '준비중';
+      }
+      const titleEl = cardEl.querySelector('.daangn-story-title');
+      if (titleEl) titleEl.textContent = '준비중';
+
+      const subEl = cardEl.querySelector('.daangn-story-sub');
+      if (subEl) subEl.textContent = '새로운 당근서비스 이야기를 기대해 주세요.';
+
+      const tagEl = cardEl.querySelector('.daangn-story-tag');
+      if (tagEl) tagEl.textContent = '준비중';
+    }
+
+    const imgComp = cardComp.find ? cardComp.find('.daangn-story-img')[0] : null;
+    if (imgComp) {
+      imgComp.set({ src: '/images/article-placeholder.svg' });
+      imgComp.addAttributes({ src: '/images/article-placeholder.svg', alt: '준비중' });
+    }
+    const titleComp = cardComp.find ? cardComp.find('.daangn-story-title')[0] : null;
+    if (titleComp) titleComp.components('준비중');
+
+    const subComp = cardComp.find ? cardComp.find('.daangn-story-sub')[0] : null;
+    if (subComp) subComp.components('새로운 당근서비스 이야기를 기대해 주세요.');
+
+    const tagComp = cardComp.find ? cardComp.find('.daangn-story-tag')[0] : null;
+    if (tagComp) tagComp.components('준비 중');
+  }
+
+  const trait = cardComp.getTrait ? cardComp.getTrait('data-article-slug') : null;
+  if (trait) {
+    trait.set('value', slug || '');
+  }
+}
+
+// Global exports for modal buttons in admin.html
+window.openArticlePickerModal = openArticlePickerModal;
+window.closeArticlePickerModal = closeArticlePickerModal;
+window.selectCmsArticleForCard = selectCmsArticleForCard;
+window.applyCmsArticleToCard = applyCmsArticleToCard;
+window.filterArticlePickerModalList = filterArticlePickerModalList;
+window.changeArticlePickerPage = changeArticlePickerPage;
+
+// ── 채용 절차(합류 여정) 및 FAQ 빌더 캔버스 텍스트 편집 연동 엔진 ─────────────
+function bindProcessPageCanvasEvents(editorInstance) {
+  if (!editorInstance) return;
+  try {
+    const canvasDoc = editorInstance.Canvas.getDocument();
+    if (!canvasDoc) return;
+
+    // 1. 합류 여정 트랙 아이템 편집 지원
+    const trackItems = canvasDoc.querySelectorAll('.daangn-process-track-item');
+    trackItems.forEach(item => {
+      // '더보기' 버튼 멘트 (span) 직접 편집 가능하도록 설정
+      const toggleBtn = item.querySelector('.daangn-process-toggle-btn');
+      if (toggleBtn) {
+        const span = toggleBtn.querySelector('span');
+        if (span) {
+          span.setAttribute('contenteditable', 'true');
+          span.setAttribute('title', '클릭하여 더보기 멘트를 직접 수정할 수 있습니다');
+        }
+      }
+
+      // 더보기 내부 각 단계별 제목(h4) 및 상세 설명(p) 직접 편집 가능하도록 설정
+      const steps = item.querySelectorAll('.daangn-process-detail-step');
+      steps.forEach(step => {
+        const h4 = step.querySelector('h4');
+        if (h4) {
+          h4.setAttribute('contenteditable', 'true');
+          h4.setAttribute('title', '클릭하여 단계 제목을 직접 수정할 수 있습니다');
+        }
+        const ps = step.querySelectorAll('p');
+        ps.forEach(p => {
+          p.setAttribute('contenteditable', 'true');
+          p.setAttribute('title', '클릭하여 단계별 상세 안내 멘트를 직접 수정할 수 있습니다');
+        });
+      });
+    });
+
+    // 2. FAQ 질문 및 답변 영역 편집 지원
+    const faqItems = canvasDoc.querySelectorAll('.daangn-faq-item');
+    faqItems.forEach(item => {
+      const qText = item.querySelector('.faq-q-text');
+      if (qText) {
+        qText.setAttribute('contenteditable', 'true');
+        qText.setAttribute('title', '클릭하여 질문 내용을 직접 수정할 수 있습니다');
+      }
+      const ansPs = item.querySelectorAll('.daangn-faq-answer-content p');
+      ansPs.forEach(p => {
+        p.setAttribute('contenteditable', 'true');
+        p.setAttribute('title', '클릭하여 답변 내용을 직접 수정할 수 있습니다');
+      });
+    });
+
+    // 3. contenteditable 입력 시 GrapesJS 컴포넌트 모델 동기화
+    const handleCanvasTextInput = (e) => {
+      const target = e.target;
+      if (!target || !target.isContentEditable) return;
+      if (target.closest('.daangn-process-track-item') || target.closest('.daangn-faq-item')) {
+        const comp = editorInstance.getSelected() || (editorInstance.Components && editorInstance.Components.getComponent(target));
+        if (comp && comp.set) {
+          comp.set('content', target.innerHTML);
+        }
+      }
+    };
+    canvasDoc.removeEventListener('input', handleCanvasTextInput);
+    canvasDoc.addEventListener('input', handleCanvasTextInput, true);
+  } catch (err) {
+    console.warn('bindProcessPageCanvasEvents error:', err);
+  }
+}
+

@@ -1,0 +1,15 @@
+node_modules
+npm-debug.log
+.git
+.github
+.env
+data/*.sqlite
+data/*.sqlite-journal
+uploads
+app/public/uploads/*
+!app/public/uploads/.gitkeep
+!app/public/uploads/articles/.gitkeep
+docs
+packages
+dist
+coverage

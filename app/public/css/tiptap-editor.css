@@ -1,0 +1,380 @@
+/* ─────────────────────────────────────────────────────────────
+   Tiptap Article Editor Stylesheet (Daangn SEED Design System)
+   ───────────────────────────────────────────────────────────── */
+
+:root {
+  --seed-orange: #FF6F0F;
+  --seed-orange-hover: #E85E00;
+  --seed-orange-light: #FFF0E6;
+  --seed-gray-900: #212124;
+  --seed-gray-800: #333336;
+  --seed-gray-700: #4D5159;
+  --seed-gray-500: #868B94;
+  --seed-gray-300: #D1D3D8;
+  --seed-gray-200: #EAEBEE;
+  --seed-gray-100: #F2F3F7;
+  --seed-gray-50: #FAFAFB;
+  --seed-white: #FFFFFF;
+  --seed-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+  --seed-shadow-md: 0 4px 16px rgba(0, 0, 0, 0.08);
+  --seed-radius-sm: 6px;
+  --seed-radius-md: 10px;
+  --seed-radius-lg: 16px;
+}
+
+/* Editor Container */
+.tiptap-editor-wrap {
+  background: var(--seed-white);
+  border: 1px solid var(--seed-gray-200);
+  border-radius: var(--seed-radius-md);
+  box-shadow: var(--seed-shadow-sm);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  min-height: 520px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.tiptap-editor-wrap:focus-within {
+  border-color: var(--seed-orange);
+  box-shadow: 0 0 0 3px rgba(255, 111, 15, 0.12);
+}
+
+/* Toolbar */
+.tiptap-toolbar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 8px 12px;
+  background: var(--seed-gray-50);
+  border-bottom: 1px solid var(--seed-gray-200);
+  user-select: none;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.toolbar-group {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.toolbar-divider {
+  width: 1px;
+  height: 20px;
+  background: var(--seed-gray-300);
+  margin: 0 6px;
+}
+
+.toolbar-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+  height: 32px;
+  padding: 0 8px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--seed-gray-700);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--seed-radius-sm);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.toolbar-btn:hover {
+  background: var(--seed-gray-200);
+  color: var(--seed-gray-900);
+}
+
+.toolbar-btn.is-active {
+  background: var(--seed-orange-light);
+  color: var(--seed-orange);
+  border-color: rgba(255, 111, 15, 0.3);
+}
+
+.toolbar-btn svg {
+  width: 16px;
+  height: 16px;
+  fill: currentColor;
+}
+
+/* ProseMirror / Tiptap Editable Canvas */
+.tiptap-content {
+  flex: 1;
+  padding: 28px 32px;
+  outline: none;
+  font-family: Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
+  color: var(--seed-gray-900);
+  font-size: 16.5px;
+  line-height: 1.8;
+  word-break: break-word;
+  min-height: 420px;
+}
+
+.tiptap-content > *:first-child {
+  margin-top: 0;
+}
+
+/* Placeholder */
+.tiptap-content p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  float: left;
+  color: var(--seed-gray-500);
+  pointer-events: none;
+  height: 0;
+}
+
+/* Headings */
+.tiptap-content h1 {
+  font-size: 32px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  line-height: 1.4;
+  margin: 36px 0 16px;
+  color: var(--seed-gray-900);
+}
+
+.tiptap-content h2 {
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -0.4px;
+  line-height: 1.45;
+  margin: 32px 0 14px;
+  color: var(--seed-gray-900);
+}
+
+.tiptap-content h3 {
+  font-size: 21px;
+  font-weight: 700;
+  letter-spacing: -0.3px;
+  line-height: 1.5;
+  margin: 28px 0 12px;
+  color: var(--seed-gray-900);
+}
+
+/* Paragraphs & Text */
+.tiptap-content p {
+  margin: 0 0 16px;
+  color: #2b2c30;
+}
+
+.tiptap-content strong {
+  font-weight: 700;
+  color: var(--seed-gray-900);
+}
+
+.tiptap-content em {
+  font-style: italic;
+}
+
+.tiptap-content u {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.tiptap-content s {
+  text-decoration: line-through;
+}
+
+/* Blockquote */
+.tiptap-content blockquote {
+  margin: 24px 0;
+  padding: 16px 20px;
+  background: var(--seed-gray-50);
+  border-left: 4px solid var(--seed-orange);
+  border-radius: 0 var(--seed-radius-sm) var(--seed-radius-sm) 0;
+  color: var(--seed-gray-800);
+  font-size: 16px;
+  font-style: normal;
+  line-height: 1.7;
+}
+
+.tiptap-content blockquote p {
+  margin: 0 0 8px;
+}
+
+.tiptap-content blockquote p:last-child {
+  margin-bottom: 0;
+}
+
+/* Lists */
+.tiptap-content ul,
+.tiptap-content ol {
+  margin: 0 0 20px;
+  padding-left: 24px;
+}
+
+.tiptap-content li {
+  margin-bottom: 8px;
+  line-height: 1.75;
+}
+
+.tiptap-content li p {
+  margin: 0;
+}
+
+/* Horizontal Rule */
+.tiptap-content hr {
+  border: none;
+  border-top: 1px solid var(--seed-gray-200);
+  margin: 36px 0;
+}
+
+/* Images */
+.tiptap-content img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  border-radius: var(--seed-radius-md);
+  margin: 28px auto;
+  box-shadow: var(--seed-shadow-sm);
+  transition: transform 0.2s;
+}
+
+.tiptap-content img.ProseMirror-selectednode {
+  outline: 3px solid var(--seed-orange);
+  border-radius: var(--seed-radius-md);
+}
+
+/* Links */
+.tiptap-content a {
+  color: var(--seed-orange);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+  transition: color 0.15s;
+}
+
+.tiptap-content a:hover {
+  color: var(--seed-orange-hover);
+}
+
+/* Code block */
+.tiptap-content pre {
+  background: var(--seed-gray-900);
+  color: #f8f9fa;
+  padding: 16px 20px;
+  border-radius: var(--seed-radius-sm);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 14px;
+  overflow-x: auto;
+  margin: 20px 0;
+}
+
+.tiptap-content code {
+  background: var(--seed-gray-100);
+  color: var(--seed-orange-hover);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.9em;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+.tiptap-content pre code {
+  background: transparent;
+  color: inherit;
+  padding: 0;
+}
+
+/* Editor Status Bar */
+.tiptap-statusbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 16px;
+  background: var(--seed-gray-50);
+  border-top: 1px solid var(--seed-gray-200);
+  font-size: 12px;
+  color: var(--seed-gray-500);
+}
+
+/* ─────────────────────────────────────────────────────────────
+   CTA Rectangular Button (네모난 지원하기 / 이동 버튼)
+   ───────────────────────────────────────────────────────────── */
+.article-cta-wrap {
+  margin: 36px 0;
+  text-align: center;
+  clear: both;
+}
+
+.article-cta-btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  min-width: 180px;
+  padding: 15px 36px !important;
+  font-family: inherit !important;
+  font-size: 16.5px !important;
+  font-weight: 700 !important;
+  color: #ffffff !important;
+  background-color: var(--seed-orange) !important;
+  border: 1px solid var(--seed-orange) !important;
+  border-radius: 8px !important; /* 네모난 버튼 스타일 */
+  text-decoration: none !important;
+  cursor: pointer !important;
+  box-shadow: 0 4px 14px rgba(255, 111, 15, 0.28) !important;
+  transition: all 0.2s cubic-bezier(0.2, 0, 0, 1) !important;
+  letter-spacing: -0.3px !important;
+  user-select: none;
+}
+
+.article-cta-btn:hover {
+  background-color: var(--seed-orange-hover) !important;
+  border-color: var(--seed-orange-hover) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 111, 15, 0.38) !important;
+  color: #ffffff !important;
+}
+
+.article-cta-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(255, 111, 15, 0.25) !important;
+}
+
+/* Editor In-Canvas CTA View */
+.tiptap-cta-view {
+  padding: 16px 20px;
+  background: var(--seed-gray-50);
+  border: 1px dashed var(--seed-gray-300);
+  border-radius: var(--seed-radius-md);
+  transition: border-color 0.2s, background 0.2s;
+  cursor: pointer;
+}
+
+.tiptap-cta-view:hover {
+  background: #FFF9F5;
+  border-color: var(--seed-orange);
+}
+
+.cta-meta-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+  padding: 4px 12px;
+  border-radius: 20px;
+  background: #ffffff;
+  border: 1px solid var(--seed-gray-200);
+  font-size: 12px;
+  color: var(--seed-gray-700);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.cta-link-preview {
+  max-width: 320px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--seed-gray-500);
+}
+
+.cta-edit-btn {
+  font-weight: 700;
+  color: var(--seed-orange);
+}

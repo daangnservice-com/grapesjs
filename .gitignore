@@ -27,3 +27,11 @@ dist/
 data/*.sqlite
 data/*.sqlite-journal
 data/*.db
+
+# Uploaded content
+uploads/
+app/public/uploads/*
+!app/public/uploads/.gitkeep
+!app/public/uploads/articles/
+app/public/uploads/articles/*
+!app/public/uploads/articles/.gitkeep

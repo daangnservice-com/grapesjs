@@ -1,0 +1,1130 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>아티클 편집기 - 당근서비스</title>
+
+  <link rel="icon" type="image/png" href="/images/favicon-192.png" />
+  <link rel="stylesheet" href="/css/fonts.css" />
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+  <link rel="stylesheet" href="/css/tiptap-editor.css" />
+
+  <!-- Marked.js for Markdown & Notion parsing -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+  <style>
+    :root {
+      --seed-orange: #FF6F0F;
+      --seed-orange-hover: #E85E00;
+      --seed-orange-light: #FFF0E6;
+      --seed-gray-900: #212124;
+      --seed-gray-800: #333336;
+      --seed-gray-700: #4D5159;
+      --seed-gray-500: #868B94;
+      --seed-gray-300: #D1D3D8;
+      --seed-gray-200: #EAEBEE;
+      --seed-gray-100: #F2F3F7;
+      --seed-gray-50: #FAFAFB;
+      --seed-white: #FFFFFF;
+      --seed-green: #0CA678;
+      --seed-red: #FA5252;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+      background: #F8F9FA;
+      color: var(--seed-gray-900);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Top Sticky Header */
+    .editor-top-header {
+      height: 64px;
+      background: var(--seed-white);
+      border-bottom: 1px solid var(--seed-gray-200);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 28px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .btn-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--seed-gray-700);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 600;
+      padding: 6px 10px;
+      border-radius: 6px;
+      transition: background 0.15s;
+    }
+
+    .btn-back:hover {
+      background: var(--seed-gray-100);
+      color: var(--seed-gray-900);
+    }
+
+    .header-status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 20px;
+    }
+
+    .badge-published {
+      background: #E6FBF2;
+      color: #087F5B;
+    }
+
+    .badge-draft {
+      background: var(--seed-gray-100);
+      color: var(--seed-gray-500);
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 8px 16px;
+      font-size: 14px;
+      font-weight: 600;
+      font-family: inherit;
+      border-radius: 8px;
+      border: 1px solid transparent;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+
+    .btn-primary {
+      background: var(--seed-orange);
+      color: var(--seed-white);
+    }
+
+    .btn-primary:hover {
+      background: var(--seed-orange-hover);
+    }
+
+    .btn-secondary {
+      background: var(--seed-white);
+      color: var(--seed-gray-700);
+      border-color: var(--seed-gray-300);
+    }
+
+    .btn-secondary:hover {
+      background: var(--seed-gray-100);
+      color: var(--seed-gray-900);
+    }
+
+    /* Editor Layout Grid */
+    .editor-layout {
+      max-width: 1360px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 28px 24px 60px;
+      display: grid;
+      grid-template-columns: 1fr 360px;
+      gap: 28px;
+      flex: 1;
+    }
+
+    @media (max-width: 1024px) {
+      .editor-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Left Main Area */
+    .editor-main-col {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .article-header-inputs {
+      background: var(--seed-white);
+      border: 1px solid var(--seed-gray-200);
+      border-radius: 12px;
+      padding: 24px 28px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+    }
+
+    .title-input {
+      width: 100%;
+      border: none;
+      outline: none;
+      font-family: inherit;
+      font-size: 26px;
+      font-weight: 800;
+      color: var(--seed-gray-900);
+      letter-spacing: -0.5px;
+      margin-bottom: 12px;
+    }
+
+    .title-input::placeholder {
+      color: var(--seed-gray-300);
+    }
+
+    .subtitle-input {
+      width: 100%;
+      border: none;
+      outline: none;
+      font-family: inherit;
+      font-size: 16px;
+      font-weight: 500;
+      color: var(--seed-gray-700);
+      line-height: 1.5;
+    }
+
+    .subtitle-input::placeholder {
+      color: var(--seed-gray-300);
+    }
+
+    /* Right Sidebar */
+    .editor-sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .sidebar-card {
+      background: var(--seed-white);
+      border: 1px solid var(--seed-gray-200);
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+    }
+
+    .sidebar-card-title {
+      font-size: 14.5px;
+      font-weight: 700;
+      color: var(--seed-gray-900);
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-group:last-child {
+      margin-bottom: 0;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--seed-gray-700);
+      margin-bottom: 6px;
+    }
+
+    .form-input {
+      width: 100%;
+      border: 1px solid var(--seed-gray-300);
+      border-radius: 8px;
+      padding: 9px 12px;
+      font-size: 13.5px;
+      font-family: inherit;
+      color: var(--seed-gray-900);
+      outline: none;
+      transition: border-color 0.15s;
+    }
+
+    .form-input:focus {
+      border-color: var(--seed-orange);
+    }
+
+    .slug-preview {
+      font-size: 12px;
+      color: var(--seed-gray-500);
+      margin-top: 4px;
+      word-break: break-all;
+    }
+
+    /* Thumbnail Box */
+    .thumb-preview-box {
+      width: 100%;
+      height: 160px;
+      border-radius: 8px;
+      background: var(--seed-gray-100);
+      border: 1px dashed var(--seed-gray-300);
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      margin-bottom: 10px;
+    }
+
+    .thumb-preview-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .thumb-preview-box.empty {
+      color: var(--seed-gray-500);
+      font-size: 13px;
+      text-align: center;
+      padding: 16px;
+    }
+
+    /* Tags component */
+    .tag-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 8px;
+    }
+
+    .tag-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: var(--seed-orange-light);
+      color: var(--seed-orange);
+      font-size: 12px;
+      font-weight: 700;
+      padding: 4px 8px;
+      border-radius: 12px;
+    }
+
+    .tag-badge button {
+      background: transparent;
+      border: none;
+      color: inherit;
+      cursor: pointer;
+      font-size: 13px;
+      line-height: 1;
+    }
+
+    /* Danger zone */
+    .btn-danger-text {
+      color: var(--seed-red);
+      background: transparent;
+      border: none;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      padding: 6px 0;
+      text-decoration: underline;
+    }
+
+    /* Modal Overlay & Dialog Styles */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(17, 17, 17, 0.45);
+      backdrop-filter: blur(3px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 20px;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal-card {
+      background: var(--seed-white);
+      border-radius: 14px;
+      width: 100%;
+      max-width: 540px;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.16);
+      overflow: hidden;
+      animation: modalFadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      display: flex;
+      flex-direction: column;
+    }
+
+    @keyframes modalFadeIn {
+      from { opacity: 0; transform: scale(0.96) translateY(-8px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    .modal-head {
+      padding: 18px 24px;
+      border-bottom: 1px solid var(--seed-gray-200);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #ffffff;
+    }
+
+    .modal-head h3 {
+      font-size: 17px;
+      font-weight: 800;
+      color: var(--seed-gray-900);
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .modal-close-btn {
+      background: transparent;
+      border: none;
+      font-size: 22px;
+      line-height: 1;
+      color: var(--seed-gray-500);
+      cursor: pointer;
+      padding: 4px;
+      border-radius: 6px;
+      transition: background 0.15s;
+    }
+
+    .modal-close-btn:hover {
+      background: var(--seed-gray-100);
+      color: var(--seed-gray-900);
+    }
+
+    .modal-body {
+      padding: 22px 24px;
+      max-height: 70vh;
+      overflow-y: auto;
+    }
+
+    .modal-foot {
+      padding: 16px 24px;
+      border-top: 1px solid var(--seed-gray-200);
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 10px;
+      background: var(--seed-gray-50);
+    }
+
+    .radio-pill-group {
+      display: flex;
+      gap: 8px;
+    }
+
+    .radio-pill-label {
+      flex: 1;
+      text-align: center;
+      padding: 8px 12px;
+      border: 1px solid var(--seed-gray-300);
+      border-radius: 8px;
+      font-size: 13.5px;
+      font-weight: 600;
+      color: var(--seed-gray-700);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .radio-pill-label:has(input:checked) {
+      background: var(--seed-orange-light);
+      border-color: var(--seed-orange);
+      color: var(--seed-orange);
+    }
+
+    .radio-pill-label input {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Header -->
+  <header class="editor-top-header">
+    <div class="header-left">
+      <a href="/admin/articles" class="btn-back">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        아티클 목록
+      </a>
+      <span id="articleStatusBadge" class="header-status-badge badge-draft">
+        작성 중
+      </span>
+    </div>
+
+    <div class="header-right">
+      <a id="btnLivePreview" href="#" target="_blank" class="btn btn-secondary" style="display: none;">
+        미리보기 ↗
+      </a>
+      <button class="btn btn-secondary" onclick="saveArticle('draft')">
+        임시 저장
+      </button>
+      <button class="btn btn-primary" onclick="saveArticle('published')">
+        🚀 즉시 배포하기
+      </button>
+    </div>
+  </header>
+
+  <!-- Editor Main Layout -->
+  <div class="editor-layout">
+
+    <!-- Left Column: Title + Tiptap Editor -->
+    <div class="editor-main-col">
+
+      <!-- Title & Subtitle Card -->
+      <div class="article-header-inputs">
+        <input type="text" id="articleTitle" class="title-input" placeholder="아티클 제목을 입력하세요..." oninput="onTitleChange(this.value)" />
+        <input type="text" id="articleSubtitle" class="subtitle-input" placeholder="부제목 또는 한 줄 요약을 입력하세요 (선택 사항)" />
+      </div>
+
+      <!-- Tiptap Editor Wrap -->
+      <div class="tiptap-editor-wrap">
+        <!-- Toolbar -->
+        <div id="tiptapToolbar" class="tiptap-toolbar">
+          <div class="toolbar-group">
+            <button type="button" class="toolbar-btn" data-action="h1" title="대제목 1">H1</button>
+            <button type="button" class="toolbar-btn" data-action="h2" title="중제목 2">H2</button>
+            <button type="button" class="toolbar-btn" data-action="h3" title="소제목 3">H3</button>
+            <button type="button" class="toolbar-btn" data-action="paragraph" title="일반 본문">P</button>
+          </div>
+
+          <div class="toolbar-divider"></div>
+
+          <div class="toolbar-group">
+            <button type="button" class="toolbar-btn" data-action="bold" title="굵게 (Ctrl+B)"><b>B</b></button>
+            <button type="button" class="toolbar-btn" data-action="italic" title="기울임 (Ctrl+I)"><i>I</i></button>
+            <button type="button" class="toolbar-btn" data-action="underline" title="밑줄 (Ctrl+U)"><u>U</u></button>
+            <button type="button" class="toolbar-btn" data-action="strike" title="취소선"><s>S</s></button>
+          </div>
+
+          <div class="toolbar-divider"></div>
+
+          <div class="toolbar-group">
+            <button type="button" class="toolbar-btn" data-action="blockquote" title="인용구">
+              “ 인용
+            </button>
+            <button type="button" class="toolbar-btn" data-action="bulletList" title="글머리 기호 목록">• 목록</button>
+            <button type="button" class="toolbar-btn" data-action="orderedList" title="번호 매기기 목록">1. 목록</button>
+            <button type="button" class="toolbar-btn" data-action="horizontalRule" title="구분선">― 구분선</button>
+          </div>
+
+          <div class="toolbar-divider"></div>
+
+          <div class="toolbar-divider"></div>
+
+          <div class="toolbar-group">
+            <button type="button" class="toolbar-btn" data-action="link" title="하이퍼링크">🔗 링크</button>
+            <button type="button" class="toolbar-btn" data-action="image-upload" title="이미지 파일 업로드">🖼️ 이미지 추가</button>
+            <button type="button" class="toolbar-btn" data-action="image-url" title="이미지 URL 삽입">URL 삽입</button>
+          </div>
+
+          <div class="toolbar-divider"></div>
+
+          <div class="toolbar-group">
+            <button type="button" class="toolbar-btn" data-action="cta-button" title="네모난 CTA 버튼 추가 (지원하기 / 채용공고 이동 등)" style="color: var(--seed-orange); font-weight: 700; background: var(--seed-orange-light); border: 1px solid rgba(255, 111, 15, 0.35);">
+              🟧 버튼 추가
+            </button>
+            <button type="button" class="toolbar-btn" data-action="markdown-import" title="노션 .md 파일 또는 마크다운 텍스트 불러오기" style="color: #1c7ed6; font-weight: 600; background: #e7f5ff; border: 1px solid rgba(28, 126, 214, 0.3);">
+              📄 MD 가져오기
+            </button>
+          </div>
+
+          <div class="toolbar-divider"></div>
+
+          <div class="toolbar-group">
+            <button type="button" class="toolbar-btn" data-action="undo" title="실행 취소">↩</button>
+            <button type="button" class="toolbar-btn" data-action="redo" title="다시 실행">↪</button>
+          </div>
+        </div>
+
+        <!-- Hidden input for file upload -->
+        <input type="file" id="tiptapImageInput" accept="image/*" style="display: none;" />
+
+        <!-- Tiptap Editable Node -->
+        <div id="tiptapEditor"></div>
+
+        <!-- Statusbar -->
+        <div class="tiptap-statusbar">
+          <span>당근서비스 리치 텍스트 CMS</span>
+          <span id="tiptapWordCount">0자</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Right Column: Settings & Metadata Sidebar -->
+    <div class="editor-sidebar">
+
+      <!-- Metadata Card -->
+      <div class="sidebar-card">
+        <div class="sidebar-card-title">기본 정보</div>
+
+        <div class="form-group">
+          <label class="form-label">URL 슬러그 (Slug)</label>
+          <input type="text" id="articleSlug" class="form-input" placeholder="inside1" oninput="updateSlugPreview(this.value)" />
+          <div id="slugPreview" class="slug-preview">/articles/inside1</div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">작성자</label>
+          <input type="text" id="articleAuthor" class="form-input" value="당근서비스팀" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">발행일 / 표기 날짜</label>
+          <input type="date" id="articleDate" class="form-input" />
+          <div style="font-size: 11.5px; color: var(--seed-gray-500); margin-top: 4px;">
+            아티클 화면에 표시될 날짜를 자유롭게 선택할 수 있습니다.
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">태그 (Tags)</label>
+          <div id="tagContainer" class="tag-container"></div>
+          <input type="text" id="tagInput" class="form-input" placeholder="태그 입력 후 Enter (예: Culture, 오피스)" onkeydown="handleTagKeydown(event)" />
+        </div>
+      </div>
+
+      <!-- Thumbnail Card -->
+      <div class="sidebar-card">
+        <div class="sidebar-card-title">대표 썸네일 이미지</div>
+
+        <div id="thumbBox" class="thumb-preview-box empty">
+          <span>등록된 썸네일이 없습니다.</span>
+        </div>
+
+        <div class="form-group">
+          <input type="file" id="thumbFileInput" accept="image/*" style="display: none;" onchange="uploadThumbnailFile(this)" />
+          <div style="display: flex; gap: 8px;">
+            <button type="button" class="btn btn-secondary btn-sm" style="flex: 1;" onclick="document.getElementById('thumbFileInput').click()">
+              📁 파일 업로드
+            </button>
+            <button type="button" class="btn btn-secondary btn-sm" onclick="promptThumbnailUrl()">
+              URL 입력
+            </button>
+          </div>
+          <input type="hidden" id="thumbnailUrl" />
+        </div>
+      </div>
+
+      <!-- Danger / Action Card -->
+      <div id="deleteCard" class="sidebar-card" style="display: none;">
+        <div class="sidebar-card-title" style="color: var(--seed-red);">아티클 삭제</div>
+        <p style="font-size: 13px; color: var(--seed-gray-500); margin-bottom: 10px;">
+          이 아티클을 삭제하면 복구할 수 없습니다.
+        </p>
+        <button type="button" class="btn-danger-text" onclick="handleDeleteArticle()">아티클 영구 삭제</button>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- Modal: CTA Button Configuration -->
+  <div id="ctaButtonModal" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-head">
+        <h3>🟧 네모난 CTA 버튼 설정</h3>
+        <button type="button" class="modal-close-btn" onclick="closeCtaButtonModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">버튼 문구</label>
+          <input type="text" id="ctaBtnText" class="form-input" placeholder="예: 지원하기, 당근서비스 채용공고 보러가기" value="지원하기" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">연결 링크 URL (href)</label>
+          <input type="text" id="ctaBtnUrl" class="form-input" placeholder="https://daangnservice.career.greetinghr.com/" value="https://daangnservice.career.greetinghr.com/" />
+          <div style="font-size: 12px; color: var(--seed-gray-500); margin-top: 4px;">
+            클릭 시 이동할 채용공고 주소나 페이지 링크를 입력하세요.
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">버튼 정렬</label>
+          <div class="radio-pill-group">
+            <label class="radio-pill-label">
+              <input type="radio" name="ctaAlign" value="center" checked /> 가운데 정렬
+            </label>
+            <label class="radio-pill-label">
+              <input type="radio" name="ctaAlign" value="left" /> 왼쪽 정렬
+            </label>
+            <label class="radio-pill-label">
+              <input type="radio" name="ctaAlign" value="right" /> 오른쪽 정렬
+            </label>
+          </div>
+        </div>
+        <div class="form-group" style="margin-top: 14px;">
+          <label style="display: flex; align-items: center; gap: 8px; font-size: 13.5px; cursor: pointer;">
+            <input type="checkbox" id="ctaBtnTarget" checked style="width: 16px; height: 16px;" />
+            <span>새 창으로 열기 (_blank)</span>
+          </label>
+        </div>
+      </div>
+      <div class="modal-foot">
+        <button type="button" id="btnDeleteCta" class="btn btn-secondary" style="margin-right: auto; color: var(--seed-red); display: none;" onclick="deleteCurrentCta()">삭제</button>
+        <button type="button" class="btn btn-secondary" onclick="closeCtaButtonModal()">취소</button>
+        <button type="button" class="btn btn-primary" onclick="applyCtaButtonModal()">적용하기</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Markdown (.md) & Notion Import -->
+  <div id="markdownModal" class="modal-overlay">
+    <div class="modal-card" style="max-width: 620px;">
+      <div class="modal-head">
+        <h3>📄 노션 .md / 마크다운 가져오기</h3>
+        <button type="button" class="modal-close-btn" onclick="closeMarkdownModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size: 13.5px; color: var(--seed-gray-700); line-height: 1.5; margin-bottom: 16px;">
+          Notion에서 내보낸 <strong>.md 파일</strong>을 선택하거나, 복사한 <strong>마크다운 텍스트</strong>를 아래에 붙여넣으면 제목·목록·인용구·링크가 적용된 리치 텍스트로 즉시 변환되어 삽입됩니다.
+        </p>
+
+        <div class="form-group">
+          <label class="form-label">📁 .md 파일 직접 선택</label>
+          <input type="file" id="mdFileInput" accept=".md,.markdown,.txt" class="form-input" onchange="handleMdFileSelect(this)" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">또는 마크다운 텍스트 직접 붙여넣기</label>
+          <textarea id="mdTextInput" class="form-input" rows="8" placeholder="# 노션에서 복사한 마크다운을 여기에 붙여넣으세요...&#10;&#10;## 소제목&#10;- 목록 아이템 1&#10;- 목록 아이템 2&#10;&#10;> 인용 문구"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">적용 방식</label>
+          <div class="radio-pill-group">
+            <label class="radio-pill-label">
+              <input type="radio" name="mdInsertMode" value="append" checked /> 현재 커서 위치에 삽입
+            </label>
+            <label class="radio-pill-label">
+              <input type="radio" name="mdInsertMode" value="replace" /> 본문 전체 새로 대체
+            </label>
+          </div>
+        </div>
+      </div>
+      <div class="modal-foot">
+        <button type="button" class="btn btn-secondary" onclick="closeMarkdownModal()">취소</button>
+        <button type="button" class="btn btn-primary" onclick="applyMarkdownModal()">변환하여 본문에 적용</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tiptap Editor Initializer Module -->
+  <script type="module">
+    import { createTiptapEditor } from '/js/tiptap-editor.js';
+
+    let editorInstance = null;
+    let articleId = null;
+    let tagsList = ['Culture'];
+
+    // Parse Article ID from URL (/admin/articles/:id/edit)
+    const match = location.pathname.match(/\/admin\/articles\/(\d+)\/edit/);
+    if (match) {
+      articleId = match[1];
+    }
+
+    async function init() {
+      let initialContent = '';
+
+      if (articleId) {
+        document.title = '아티클 수정 - 당근서비스';
+        document.getElementById('deleteCard').style.display = 'block';
+
+        try {
+          const res = await fetch(`/api/admin/articles/${articleId}`);
+          const data = await res.json();
+          if (data.article) {
+            const a = data.article;
+            document.getElementById('articleTitle').value = a.title;
+            document.getElementById('articleSubtitle').value = a.subtitle || '';
+            document.getElementById('articleSlug').value = a.slug;
+            document.getElementById('articleAuthor').value = a.author || '당근서비스팀';
+            updateSlugPreview(a.slug);
+
+            // Set date picker value
+            const dateVal = a.published_at || a.created_at;
+            if (dateVal) {
+              const dt = new Date(dateVal);
+              const yyyy = dt.getFullYear();
+              const mm = String(dt.getMonth() + 1).padStart(2, '0');
+              const dd = String(dt.getDate()).padStart(2, '0');
+              document.getElementById('articleDate').value = `${yyyy}-${mm}-${dd}`;
+            }
+
+            tagsList = Array.isArray(a.tags) ? a.tags : [];
+            renderTags();
+
+            if (a.thumbnail_url) {
+              setThumbnail(a.thumbnail_url);
+            }
+
+            updateStatusBadge(a.status);
+            enableLivePreview(a.slug);
+
+            initialContent = a.content || a.content_html || '';
+          }
+        } catch (err) {
+          console.error('Failed to load article', err);
+          alert('아티클을 불러오는 데 실패했습니다.');
+        }
+      } else {
+        // New article: default date to today
+        const dt = new Date();
+        const yyyy = dt.getFullYear();
+        const mm = String(dt.getMonth() + 1).padStart(2, '0');
+        const dd = String(dt.getDate()).padStart(2, '0');
+        document.getElementById('articleDate').value = `${yyyy}-${mm}-${dd}`;
+        renderTags();
+      }
+
+      // Initialize Tiptap
+      editorInstance = createTiptapEditor({
+        element: document.getElementById('tiptapEditor'),
+        toolbarElement: document.getElementById('tiptapToolbar'),
+        initialContent: initialContent,
+        onUpdate: () => {}
+      });
+
+      window.editorInstance = editorInstance;
+    }
+
+    window.saveArticle = async function(targetStatus) {
+      const title = document.getElementById('articleTitle').value.trim();
+      const subtitle = document.getElementById('articleSubtitle').value.trim();
+      const slug = document.getElementById('articleSlug').value.trim();
+      const author = document.getElementById('articleAuthor').value.trim();
+      const dateVal = document.getElementById('articleDate').value;
+      const thumbnailUrl = document.getElementById('thumbnailUrl').value.trim();
+
+      if (!title) {
+        alert('아티클 제목을 입력해 주세요.');
+        document.getElementById('articleTitle').focus();
+        return;
+      }
+
+      if (!slug) {
+        alert('URL 슬러그(주소)를 입력해 주세요.');
+        document.getElementById('articleSlug').focus();
+        return;
+      }
+
+      const contentJson = JSON.stringify(editorInstance.getJSON());
+      const contentHtml = editorInstance.getHTML();
+
+      const publishedAt = dateVal ? new Date(`${dateVal}T12:00:00`).toISOString() : new Date().toISOString();
+
+      const payload = {
+        title,
+        subtitle,
+        slug,
+        author: author || '당근서비스팀',
+        published_at: publishedAt,
+        thumbnail_url: thumbnailUrl,
+        tags: tagsList,
+        content: contentJson,
+        content_html: contentHtml,
+        status: targetStatus
+      };
+
+      try {
+        let res;
+        if (articleId) {
+          res = await fetch(`/api/admin/articles/${articleId}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+        } else {
+          res = await fetch('/api/admin/articles', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+        }
+
+        const data = await res.json();
+        if (data.success) {
+          alert(targetStatus === 'published' ? '🚀 아티클이 성공적으로 배포되었습니다!' : '✅ 임시 저장되었습니다.');
+          if (!articleId && data.id) {
+            location.href = `/admin/articles/${data.id}/edit`;
+          } else {
+            updateStatusBadge(targetStatus);
+            enableLivePreview(slug);
+          }
+        } else {
+          alert('저장 실패: ' + (data.error || '오류가 발생했습니다.'));
+        }
+      } catch (err) {
+        console.error('Save failed', err);
+        alert('네트워크 오류가 발생했습니다.');
+      }
+    };
+
+    window.handleDeleteArticle = async function() {
+      if (!articleId) return;
+      if (!confirm('이 아티클을 정말 삭제하시겠습니까? 복구할 수 없습니다.')) return;
+
+      try {
+        const res = await fetch(`/api/admin/articles/${articleId}`, { method: 'DELETE' });
+        const data = await res.json();
+        if (data.success) {
+          alert('삭제되었습니다.');
+          location.href = '/admin/articles';
+        } else {
+          alert('삭제 실패: ' + (data.error || ''));
+        }
+      } catch (err) {
+        alert('삭제 중 오류가 발생했습니다.');
+      }
+    };
+
+    window.onTitleChange = function(val) {
+      const slugInput = document.getElementById('articleSlug');
+      if (!articleId && !slugInput.dataset.manual) {
+        // Auto suggest slug if not manually edited
+        const suggested = val.toLowerCase().trim().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-');
+        if (suggested) {
+          slugInput.value = suggested;
+          updateSlugPreview(suggested);
+        }
+      }
+    };
+
+    window.updateSlugPreview = function(val) {
+      const slug = val.trim().toLowerCase().replace(/[^a-z0-9-_]/g, '-');
+      document.getElementById('slugPreview').textContent = location.origin + '/articles/' + (slug || '[slug]');
+    };
+
+    window.handleTagKeydown = function(e) {
+      if (e.key === 'Enter' || e.key === ',') {
+        e.preventDefault();
+        const input = document.getElementById('tagInput');
+        const tag = input.value.trim().replace(/,/g, '');
+        if (tag && !tagsList.includes(tag)) {
+          tagsList.push(tag);
+          renderTags();
+        }
+        input.value = '';
+      }
+    };
+
+    window.removeTag = function(idx) {
+      tagsList.splice(idx, 1);
+      renderTags();
+    };
+
+    function renderTags() {
+      const container = document.getElementById('tagContainer');
+      container.innerHTML = tagsList.map((t, idx) => `
+        <span class="tag-badge">
+          #${escapeHtml(t)}
+          <button type="button" onclick="removeTag(${idx})">&times;</button>
+        </span>
+      `).join('');
+    }
+
+    function setThumbnail(url) {
+      document.getElementById('thumbnailUrl').value = url;
+      const box = document.getElementById('thumbBox');
+      box.className = 'thumb-preview-box';
+      box.innerHTML = `<img src="${url}" alt="썸네일" />`;
+    }
+
+    window.promptThumbnailUrl = function() {
+      const url = prompt('썸네일 이미지 URL을 입력하세요:');
+      if (url && url.trim()) {
+        setThumbnail(url.trim());
+      }
+    };
+
+    window.uploadThumbnailFile = async function(input) {
+      const file = input.files[0];
+      if (!file) return;
+
+      const formData = new FormData();
+      formData.append('image', file);
+
+      try {
+        const res = await fetch('/api/admin/upload-image', {
+          method: 'POST',
+          body: formData
+        });
+        const data = await res.json();
+        if (data.success && data.url) {
+          setThumbnail(data.url);
+        } else {
+          alert('썸네일 업로드 실패: ' + (data.error || ''));
+        }
+      } catch (err) {
+        alert('업로드 중 오류 발생');
+      } finally {
+        input.value = '';
+      }
+    };
+
+    function updateStatusBadge(status) {
+      const badge = document.getElementById('articleStatusBadge');
+      if (status === 'published') {
+        badge.className = 'header-status-badge badge-published';
+        badge.textContent = '🚀 배포됨';
+      } else {
+        badge.className = 'header-status-badge badge-draft';
+        badge.textContent = '📝 임시저장';
+      }
+    }
+
+    function enableLivePreview(slug) {
+      const btn = document.getElementById('btnLivePreview');
+      btn.href = `/articles/${slug}`;
+      btn.style.display = 'inline-flex';
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    // ─────────────────────────────────────────────────────────
+    // CTA Button Modal Logic
+    // ─────────────────────────────────────────────────────────
+    let currentCtaCallback = null;
+    let currentCtaDeleteCallback = null;
+
+    window.openCtaButtonModal = function({ attrs = {}, onSave, onDelete } = {}) {
+      currentCtaCallback = onSave;
+      currentCtaDeleteCallback = onDelete;
+
+      document.getElementById('ctaBtnText').value = attrs.text || '지원하기';
+      document.getElementById('ctaBtnUrl').value = attrs.url || 'https://daangnservice.career.greetinghr.com/';
+      
+      const align = attrs.align || 'center';
+      const alignRadio = document.querySelector(`input[name="ctaAlign"][value="${align}"]`);
+      if (alignRadio) alignRadio.checked = true;
+
+      document.getElementById('ctaBtnTarget').checked = (attrs.target !== '_self');
+
+      const delBtn = document.getElementById('btnDeleteCta');
+      if (typeof onDelete === 'function') {
+        delBtn.style.display = 'inline-block';
+      } else {
+        delBtn.style.display = 'none';
+      }
+
+      document.getElementById('ctaButtonModal').classList.add('active');
+    };
+
+    window.closeCtaButtonModal = function() {
+      document.getElementById('ctaButtonModal').classList.remove('active');
+      currentCtaCallback = null;
+      currentCtaDeleteCallback = null;
+    };
+
+    window.applyCtaButtonModal = function() {
+      const text = document.getElementById('ctaBtnText').value.trim() || '지원하기';
+      let url = document.getElementById('ctaBtnUrl').value.trim() || '#';
+      if (url && !url.match(/^(https?:\/\/|\/|#)/i)) {
+        url = 'https://' + url;
+      }
+      const alignRadio = document.querySelector('input[name="ctaAlign"]:checked');
+      const align = alignRadio ? alignRadio.value : 'center';
+      const target = document.getElementById('ctaBtnTarget').checked ? '_blank' : '_self';
+
+      if (typeof currentCtaCallback === 'function') {
+        currentCtaCallback({ text, url, align, target });
+      }
+      closeCtaButtonModal();
+    };
+
+    window.deleteCurrentCta = function() {
+      if (typeof currentCtaDeleteCallback === 'function') {
+        currentCtaDeleteCallback();
+      }
+      closeCtaButtonModal();
+    };
+
+    // ─────────────────────────────────────────────────────────
+    // Markdown (.md) & Notion Import Modal Logic
+    // ─────────────────────────────────────────────────────────
+    let currentMdCallback = null;
+
+    window.openMarkdownImportModal = function(callback) {
+      currentMdCallback = callback;
+      document.getElementById('mdFileInput').value = '';
+      document.getElementById('mdTextInput').value = '';
+      document.getElementById('markdownModal').classList.add('active');
+    };
+
+    window.closeMarkdownModal = function() {
+      document.getElementById('markdownModal').classList.remove('active');
+      currentMdCallback = null;
+    };
+
+    window.handleMdFileSelect = function(input) {
+      const file = input.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        document.getElementById('mdTextInput').value = e.target.result;
+      };
+      reader.readAsText(file, 'utf-8');
+    };
+
+    window.applyMarkdownModal = function() {
+      const text = document.getElementById('mdTextInput').value.trim();
+      if (!text) {
+        alert('마크다운 텍스트를 입력하거나 .md 파일을 선택해 주세요.');
+        return;
+      }
+
+      const modeRadio = document.querySelector('input[name="mdInsertMode"]:checked');
+      const mode = modeRadio ? modeRadio.value : 'append';
+
+      const parser = window.marked || (typeof marked !== 'undefined' ? marked : null);
+      const parsedHtml = parser ? parser.parse(text) : text;
+
+      if (mode === 'replace') {
+        if (confirm('현재 본문 내용을 모두 지우고 마크다운 내용으로 대체하시겠습니까?')) {
+          editorInstance.setContent(parsedHtml);
+        } else {
+          return;
+        }
+      } else {
+        if (typeof currentMdCallback === 'function') {
+          currentMdCallback(text);
+        } else {
+          editorInstance.editor.commands.insertContent(parsedHtml);
+        }
+      }
+
+      closeMarkdownModal();
+      alert('마크다운 콘텐츠가 본문에 성공적으로 적용되었습니다!');
+    };
+
+    init();
+  </script>
+</body>
+</html>

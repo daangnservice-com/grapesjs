@@ -145,11 +145,10 @@ body {
   position: sticky;
   top: 120px;
   border-radius: 24px;
-  overflow: hidden;
-  height: 480px;
+  height: auto;
   flex-shrink: 0;
   border: 1px solid var(--daangn-border);
-  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.04), 0 16px 36px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
   background: #ffffff;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   position: relative;
@@ -345,8 +344,14 @@ body {
 /* ── Hero Sticky Scroll Section (about.daangn.com 스타일) ────── */
 .daangn-hero-track {
   position: relative;
-  height: 260vh;
+  height: clamp(1400px, 195vh, 2000px);
   background-color: var(--daangn-bg-white);
+}
+
+@media (max-width: 768px) {
+  .daangn-hero-track {
+    height: clamp(900px, 140vh, 1200px);
+  }
 }
 
 .daangn-hero-sticky {
@@ -366,7 +371,7 @@ body {
 
 .daangn-hero-title-container {
   position: absolute;
-  top: clamp(32px, 5vh, 56px);
+  top: clamp(24px, 4vh, 48px);
   left: 0;
   width: 100%;
   padding: 0 24px;
@@ -379,7 +384,7 @@ body {
 
 .daangn-hero-main-title {
   font-family: 'KarrotSans', 'Pretendard', sans-serif;
-  font-size: clamp(32px, 4.2vw, 60px);
+  font-size: clamp(28px, 4vw, 56px);
   font-weight: 800;
   line-height: 1.25;
   margin: 0;
@@ -392,8 +397,8 @@ body {
   position: relative;
   overflow: hidden;
   width: min(1060px, calc(100vw - 48px));
-  height: min(520px, calc(100vh - 290px));
-  margin-top: 240px;
+  height: clamp(320px, 50vh, 620px);
+  margin-top: clamp(140px, 19vh, 210px);
   border-radius: 28px;
   box-shadow: 0 20px 48px rgba(0, 0, 0, 0.08);
   border: 1px solid var(--daangn-border);
@@ -402,6 +407,15 @@ body {
   align-items: center;
   justify-content: center;
   will-change: width, height, margin-top, border-radius, box-shadow;
+}
+
+@media (max-width: 768px) {
+  .daangn-hero-video-box {
+    width: calc(100vw - 32px);
+    height: min(240px, 35vh);
+    margin-top: 130px;
+    border-radius: 20px;
+  }
 }
 
 .daangn-hero-video-box video {
@@ -477,7 +491,7 @@ body {
 }
 
 .daangn-search-section {
-  padding: 80px 24px;
+  padding: clamp(36px, 5vh, 64px) 24px;
   text-align: center;
   background-color: var(--daangn-bg-white);
 }
@@ -904,6 +918,19 @@ body {
   transform: rotate(180deg);
 }
 
+/* Active Navigation State */
+.header-menu-item-group.is-active .header__MenuItemContainer-sc-bdd24b93-0 span,
+.header__MenuItemContainer-sc-bdd24b93-0.is-active span,
+.header__MenuItemContainer-sc-bdd24b93-0.is-active {
+  color: #FF6F0F !important;
+  font-weight: 800 !important;
+}
+.header-menu-item-group.is-active .header-chevron-icon {
+  stroke: #FF6F0F;
+  color: #FF6F0F;
+  opacity: 1;
+}
+
 .header-dropdown-menu {
   display: none;
   position: absolute;
@@ -917,6 +944,25 @@ body {
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1), 0 2px 6px rgba(0, 0, 0, 0.04);
   padding: 8px 0;
   z-index: 1050;
+}
+
+.header-dropdown-menu::before {
+  content: '';
+  position: absolute;
+  top: -12px;
+  left: 0;
+  right: 0;
+  height: 12px;
+}
+
+@media (hover: hover) and (min-width: 769px) {
+  .header-menu-item-group:hover .header-dropdown-menu {
+    display: block;
+    animation: headerDropdownFadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .header-menu-item-group:hover .header-chevron-icon {
+    transform: rotate(180deg);
+  }
 }
 
 .header-menu-item-group.is-open .header-dropdown-menu {
@@ -1048,19 +1094,22 @@ body {
 }
 
 .daangn-promo-card {
-  background-color: #131B19;
-  color: #ffffff;
-  width: 380px;
+  background: #ffffff;
+  color: #212124;
+  width: 360px;
   max-width: calc(100vw - 32px);
   border-radius: 20px;
-  padding: 22px 24px;
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.3), 0 4px 12px rgba(0, 0, 0, 0.15);
+  padding: 20px 22px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.15), 0 4px 12px rgba(0, 0, 0, 0.08);
+  border: 1px solid #EAEBEE;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 12px;
   box-sizing: border-box;
   transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
   transform-origin: bottom right;
+  height: auto;
+  min-height: auto;
 }
 
 .daangn-promo-header {
@@ -1072,10 +1121,10 @@ body {
 
 .daangn-promo-title {
   margin: 0;
-  font-size: 18px;
+  font-size: 17px;
   font-weight: 800;
   line-height: 1.35;
-  color: #ffffff;
+  color: #212124;
   word-break: keep-all;
   white-space: pre-line;
   flex: 1;
@@ -1084,7 +1133,7 @@ body {
 .daangn-promo-close {
   background: transparent;
   border: none;
-  color: rgba(255, 255, 255, 0.7);
+  color: #868B94;
   cursor: pointer;
   padding: 4px;
   margin: -4px -4px 0 0;
@@ -1093,29 +1142,30 @@ body {
   align-items: center;
   justify-content: center;
   transition: color 0.15s ease, background-color 0.15s ease;
+  flex-shrink: 0;
 }
 
 .daangn-promo-close:hover {
-  color: #ffffff;
-  background-color: rgba(255, 255, 255, 0.1);
+  color: #212124;
+  background-color: rgba(0, 0, 0, 0.06);
 }
 
 .daangn-promo-desc {
   margin: 0;
-  font-size: 13.5px;
+  font-size: 13px;
   font-weight: 500;
-  line-height: 1.45;
-  color: rgba(255, 255, 255, 0.85);
+  line-height: 1.5;
+  color: #71757E;
   word-break: keep-all;
   white-space: pre-line;
 }
 
 .daangn-promo-bottom {
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   justify-content: space-between;
   gap: 12px;
-  margin-top: 4px;
+  margin-top: 2px;
 }
 
 .daangn-promo-cta {
@@ -1123,10 +1173,10 @@ body {
   align-items: center;
   justify-content: center;
   min-height: 38px;
-  padding: 8px 16px;
-  background-color: #ffffff;
-  color: #131B19;
-  font-size: 14px;
+  padding: 0 16px;
+  background-color: #FF6F0F;
+  color: #ffffff;
+  font-size: 13.5px;
   font-weight: 700;
   border-radius: 10px;
   text-decoration: none;
@@ -1135,13 +1185,13 @@ body {
 }
 
 .daangn-promo-cta:hover {
-  background-color: rgba(255, 255, 255, 0.88);
+  background-color: #E85A00;
   transform: translateY(-1px);
 }
 
 .daangn-promo-img {
-  width: 120px;
-  height: 75px;
+  width: 60px;
+  height: 60px;
   object-fit: contain;
   flex-shrink: 0;
   display: block;
@@ -1300,9 +1350,15 @@ body {
 }
 
 /* ── Stories & News Carousel (소식과 이야기 - 하나씩 넘겨지는 카드) ──── */
+#inside,
+.daangn-stories-section {
+  padding: clamp(36px, 5vh, 64px) 24px clamp(48px, 6vh, 80px) !important;
+  background-color: #ffffff !important;
+}
+
 .daangn-stories-carousel {
   position: relative;
-  margin-top: 16px;
+  margin-top: clamp(12px, 1.8vh, 20px);
   padding: 4px 0 12px;
 }
 
@@ -1341,6 +1397,32 @@ body {
   transform: translateY(-4px);
   box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08);
   border-color: #D1D3D8;
+}
+
+/* 미선택 / 더 좋은 콘텐츠 준비 중 카드 스타일 */
+.daangn-story-card.is-placeholder {
+  background: #FCFCFD !important;
+  border: 1px dashed #D2D5DC !important;
+  cursor: default !important;
+}
+
+.daangn-story-card.is-placeholder:hover {
+  transform: none !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03) !important;
+  border-color: #D2D5DC !important;
+}
+
+.daangn-story-card.is-placeholder .daangn-story-title {
+  color: #71757E !important;
+}
+
+.daangn-story-card.is-placeholder .daangn-story-sub {
+  color: #9CA1AB !important;
+}
+
+.daangn-story-card.is-placeholder .daangn-story-tag {
+  background: #F0F2F5 !important;
+  color: #868B94 !important;
 }
 
 @media (max-width: 768px) {
@@ -1472,18 +1554,85 @@ body {
   color: #FF6F0F !important;
 }
 
+/* ── LOCAL QUESTIONS STICKY SCROLL SECTION (상단 고정 및 스크롤 연동 슬라이딩) ──── */
+.daangn-questions-section {
+  position: relative !important;
+  min-height: min(180vh, 1700px) !important; /* 가변형 스크롤 감상 트랙 */
+  background-color: #ffffff !important;
+  z-index: 55 !important;
+}
+
+.daangn-questions-sticky-pin {
+  position: -webkit-sticky !important;
+  position: sticky !important;
+  top: 60px !important; /* GNB 헤더(60px) 직하단 고정 */
+  height: calc(100vh - 60px) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  align-items: center !important;
+  padding: clamp(16px, 2.2vh, 32px) 0 !important;
+  box-sizing: border-box !important;
+  overflow: hidden !important;
+  background-color: #ffffff !important;
+  z-index: 55 !important;
+}
+
+@media (max-width: 768px) {
+  .daangn-questions-section {
+    min-height: auto !important;
+    padding: clamp(36px, 5vh, 52px) 0 !important;
+  }
+
+  .daangn-questions-sticky-pin {
+    position: relative !important;
+    top: auto !important;
+    height: auto !important;
+    padding: 0 !important;
+  }
+}
+
+.daangn-questions-header {
+  text-align: center;
+  padding: 0 24px;
+  margin-bottom: clamp(16px, 2.4vh, 32px) !important;
+  flex-shrink: 0;
+}
+
+.daangn-questions-title {
+  font-size: clamp(34px, 3.6vh, 44px) !important;
+  font-weight: 800 !important;
+  color: #212124 !important;
+  margin: 0 0 clamp(10px, 1.5vh, 18px) !important;
+  letter-spacing: -0.5px !important;
+  line-height: 1.25 !important;
+}
+
+.daangn-questions-img {
+  width: auto !important;
+  max-width: min(85vw, 680px) !important;
+  height: auto !important;
+  max-height: clamp(210px, 27vh, 320px) !important;
+  object-fit: contain !important;
+  display: block !important;
+  margin: 0 auto !important;
+}
+
 /* ── Questions Carousel (로컬의 질문들 - 3개 노출 슬라이딩 캐러셀) ──── */
 .daangn-questions-carousel {
   position: relative;
   max-width: 1140px;
+  width: 100%;
   margin: 0 auto;
   padding: 0 24px;
+  box-sizing: border-box;
+  flex-shrink: 0;
 }
 
 .daangn-questions-viewport {
   overflow: hidden;
   width: 100%;
-  padding: 8px 0 20px;
+  padding: 8px 0 16px;
 }
 
 .daangn-questions-track {
@@ -1497,10 +1646,11 @@ body {
   flex: 0 0 calc((100% - 48px) / 3);
   min-width: 320px;
   max-width: 360px;
+  min-height: clamp(210px, 24vh, 280px) !important;
   box-sizing: border-box;
   background: #F7F9FA;
   border-radius: 20px;
-  padding: 36px 28px;
+  padding: clamp(28px, 3.2vh, 40px) 28px !important;
   border: 1px solid #EAEBEE;
   display: flex;
   flex-direction: column;
@@ -1516,16 +1666,16 @@ body {
 }
 
 .daangn-question-text {
-  font-size: 17px;
+  font-size: clamp(16.5px, 1.8vh, 18.5px) !important;
   font-weight: 700;
   line-height: 1.65;
-  margin: 0 0 24px;
+  margin: 0 0 clamp(16px, 2vh, 24px) !important;
   color: #212124;
   word-break: keep-all;
 }
 
 .daangn-question-author {
-  font-size: 13.5px;
+  font-size: clamp(13.5px, 1.4vh, 15px) !important;
   color: #868B94;
   font-weight: 600;
 }
@@ -1549,67 +1699,1588 @@ body {
   }
 }
 
-/* ── Global Footer Component Styles ─────────────────────────── */
-.daangn-global-footer {
-  padding: 56px 24px 48px;
+/* ── Global Footer Component Styles (Greeting HR Replica) ─────────────────────────── */
+.daangn-global-footer,
+.footer__Container-sc-ece516ab-0,
+.eNKNXj {
+  width: 100%;
+  box-sizing: border-box;
+  background-color: #FAFAFA;
+  word-wrap: break-word;
+  padding: 28px 40px 60px;
   border-top: 1px solid #EAEBEE;
-  text-align: center;
-  color: #868B94;
-  font-size: 14px;
-  background-color: #F7F9FA;
+  text-align: left;
   position: relative;
   z-index: 10;
 }
 
-.daangn-footer-logo-wrapper {
-  margin-bottom: 16px;
+@media (max-width: 767px) {
+  .daangn-global-footer,
+  .footer__Container-sc-ece516ab-0,
+  .eNKNXj {
+    padding: 28px 20px 60px;
+  }
+}
+
+.footer__FooterInner-sc-ece516ab-2,
+.eYxtUY {
+  width: 100%;
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+.sc-kAkozD.gVHQgh {
+  box-sizing: border-box;
   display: flex;
+  flex-flow: column nowrap;
+  gap: 28px;
+  align-items: flex-start;
   justify-content: center;
+  flex: unset;
+  width: initial;
+}
+.sc-kAkozD.gVHQgh * {
+  box-sizing: border-box;
+}
+
+.footer__LinkAndTitleWrapper-sc-ece516ab-1,
+.bUNMpz {
+  display: flex;
+  flex-flow: column nowrap;
+  gap: 12px;
+  align-items: flex-start;
+  justify-content: center;
+}
+@media (max-width: 767px) {
+  .footer__LinkAndTitleWrapper-sc-ece516ab-1,
+  .bUNMpz {
+    gap: 40px;
+  }
+}
+
+.sc-kAkozD.dRWxSw {
+  box-sizing: border-box;
+  display: flex;
+  flex-flow: column nowrap;
+  gap: 12px;
+  align-items: flex-start;
+  justify-content: center;
+  flex: unset;
+  width: initial;
+}
+.sc-kAkozD.dRWxSw * {
+  box-sizing: border-box;
+}
+
+.eYxtUY .footer-title,
+.footer-title {
+  font-size: 15px;
+  color: #222222;
+  font-weight: 600;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.eYxtUY .footer-detail,
+.footer-detail {
+  color: #8C8C8C;
+  white-space: pre-wrap;
+  font-size: 13px;
+  line-height: 19.5px;
+  margin: 0;
+}
+
+.footer__LinkWrapper-sc-ece516ab-3,
+.gDuQAz {
+  display: flex;
+  list-style: none;
+  column-gap: 20px;
+  row-gap: 8px;
+  align-items: unset;
+  padding: 0;
+  margin: 0;
+}
+@media (max-width: 767px) {
+  .footer__LinkWrapper-sc-ece516ab-3,
+  .gDuQAz {
+    padding-bottom: 12px;
+    flex-direction: column;
+  }
+}
+.gDuQAz li {
+  margin: 0;
+  padding: 0;
+}
+.gDuQAz span,
+.gDuQAz a {
+  color: #8C8C8C;
+  font-size: 13px;
+  line-height: 150%;
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+.gDuQAz a:hover {
+  color: #212124;
+  text-decoration: underline;
+}
+.gDuQAz span.bold,
+.gDuQAz a.bold {
+  color: #595959;
+  font-weight: 600;
+}
+
+.footer__SnsLinkWrapper-sc-ece516ab-4,
+.jAhMFN {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.footer__SnsLinkWrapper-sc-ece516ab-4 li,
+.jAhMFN li {
+  margin: 0;
+  padding: 0;
+}
+.footer__SnsLinkWrapper-sc-ece516ab-4 a,
+.jAhMFN a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.2s ease;
+}
+.footer__SnsLinkWrapper-sc-ece516ab-4 a:hover,
+.jAhMFN a:hover {
+  opacity: 0.8;
+}
+
+
+/* ── Sticky Culture Section (빌더 및 실 배포 일치: 카드 스택 방식) ─────────── */
+
+.daangn-sticky-section {
+  position: relative;
+}
+
+/* ── Sticky Culture Section Header (제목 + 설명글 함께 상단 고정) ── */
+.daangn-culture-section {
+  position: relative !important;
+  margin-top: 0 !important;
+  padding: clamp(36px, 5vh, 64px) 0 clamp(48px, 6vh, 80px) !important;
+}
+
+.daangn-culture-header {
+  position: -webkit-sticky !important;
+  position: sticky !important;
+  top: 60px !important; /* GNB 헤더(60px) 직하단 고정 */
+  z-index: 40 !important;
+  background: #ffffff !important;
+  padding: clamp(24px, 3vh, 36px) 0 clamp(16px, 2vh, 24px) !important;
+  text-align: center !important;
+}
+
+.daangn-culture-title {
+  font-size: clamp(30px, 3.6vh, 38px) !important;
+  font-weight: 800 !important;
+  color: #212124 !important;
+  letter-spacing: -0.5px !important;
+  margin: 0 0 clamp(8px, 1.2vh, 12px) !important;
+  line-height: 1.3 !important;
+}
+
+.daangn-culture-desc {
+  font-size: clamp(14.5px, 1.6vh, 16px) !important;
+  color: #868B94 !important;
+  line-height: 1.6 !important;
+  max-width: 760px !important;
+  margin: 0 auto !important;
+}
+
+/* 컨테이너: flex row, 좌우 정렬 및 상단 글씨와의 간격 가변형 */
+.daangn-sticky-stack-container {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: clamp(24px, 3.5vw, 48px);
+  position: relative;
+  margin-top: clamp(20px, 2.5vh, 36px) !important;
+}
+
+/* 좌측 고정 네비게이션: 상단 헤더 및 제목 아래에 sticky 고정 */
+.daangn-sticky-left {
+  flex: 0 0 270px;
+  position: -webkit-sticky !important;
+  position: sticky !important;
+  top: clamp(200px, 24vh, 260px) !important;
+  align-self: flex-start;
+  padding: 0 20px 20px 0;
+  z-index: 30;
+}
+
+/* 좌측 네비 목록 */
+.sticky-value-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.sticky-value-item {
+  cursor: pointer;
+  font-size: 18px;
+  font-weight: 600;
+  color: #C5C8CF;
+  padding: 6px 0;
+  transition: all 0.25s ease;
+  line-height: 1.35;
+  display: flex;
   align-items: center;
 }
 
-.daangn-footer-logo {
-  height: 24px;
-  width: auto;
-  opacity: 0.9;
-  object-fit: contain;
-  transition: opacity 0.2s ease;
+.sticky-value-item:hover {
+  color: #868B94;
 }
 
-.daangn-footer-logo:hover {
-  opacity: 1;
+.sticky-value-item.is-active {
+  color: #212124;
+  font-size: 22px;
+  font-weight: 800;
 }
 
-.daangn-footer-company {
+.sticky-value-item.is-active::before {
+  content: '';
+  display: inline-block;
+  width: 4px;
+  height: 20px;
+  background: #FF6F0F;
+  border-radius: 2px;
+  margin-right: 12px;
+}
+
+/* 빌더 전용 추가 버튼은 실 사이트에서 숨김 */
+.btn-add-culture-card {
+  display: none !important;
+}
+
+/* 좌측 설명 박스는 카드의 캡션과 중복되므로 실 사이트에서도 깔끔하게 숨김 */
+#stickyDescBox,
+.sticky-desc-box {
+  display: none !important;
+}
+
+/* 우측 카드 스택: 카드 전환을 위한 상대 위치 컨테이너 */
+.daangn-cards-stack {
+  flex: 1;
+  max-width: 620px;
+  position: relative;
+  min-height: 200px;
+}
+
+/* 각 카드: 절대 위치로 겹쳐 쌓기 (JS가 opacity+transform으로 전환) */
+.daangn-sticky-card {
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  max-width: 640px !important;
+  height: auto !important;
+  min-height: auto !important;
+  max-height: none !important;
+  background: #ffffff !important;
+  border-radius: 24px !important;
+  border: 1px solid #ECEEF2 !important;
+  box-shadow: 0 10px 32px rgba(0, 0, 0, 0.07) !important;
+  padding: 32px 32px 36px !important;
+  box-sizing: border-box !important;
+  overflow: visible !important;
+  margin-bottom: 0 !important;
+  opacity: 0 !important;
+  transform: translateY(32px) !important;
+  transition: opacity 0.45s ease, transform 0.45s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  pointer-events: none !important;
+}
+
+/* 현재 활성 카드 */
+.daangn-sticky-card.is-active {
+  opacity: 1 !important;
+  transform: translateY(0) !important;
+  pointer-events: auto !important;
+  position: relative !important;
+}
+
+/* z-index는 JS 전환 방식에서 불필요하지만 builder용으로 유지 */
+.daangn-sticky-card:nth-child(1) { z-index: 10; }
+.daangn-sticky-card:nth-child(2) { z-index: 11; }
+.daangn-sticky-card:nth-child(3) { z-index: 12; }
+.daangn-sticky-card:nth-child(4) { z-index: 13; }
+.daangn-sticky-card:nth-child(5) { z-index: 14; }
+.daangn-sticky-card:nth-child(6) { z-index: 15; }
+.daangn-sticky-card:nth-child(7) { z-index: 16; }
+
+/* 카테고리 태그 (예: 일을 즐기는 사람) */
+.daangn-sticky-card-category {
+  display: block !important;
+  font-size: 15px !important;
+  font-weight: 800 !important;
+  color: #C84A23 !important;
+  letter-spacing: -0.3px !important;
+  margin-bottom: 8px !important;
+}
+
+/* 메인 헤드라인 (예: 즐겁게, 제대로) */
+.daangn-sticky-card-headline {
+  display: block !important;
+  font-size: 26px !important;
+  font-weight: 800 !important;
+  color: #212124 !important;
+  letter-spacing: -0.5px !important;
+  line-height: 1.3 !important;
+  margin: 0 0 18px !important;
+}
+
+/* 카드 이미지 */
+.daangn-sticky-card-media {
+  position: relative !important;
+  width: 100% !important;
+  height: 200px !important;
+  overflow: hidden !important;
+  background: #f8f9fa !important;
+  border-radius: 16px !important;
+  border: 1px solid #ECEEF2 !important;
+  margin-bottom: 20px !important;
+}
+
+.daangn-sticky-card img,
+.daangn-sticky-card-img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  display: block !important;
+}
+
+/* 인용구 영역 (예: “내가 쌓은 지식과 경험이...” - 당근알바팀 Trudy) */
+.daangn-sticky-card-quote {
+  font-size: 18px !important;
+  font-weight: 700 !important;
+  color: #212124 !important;
+  line-height: 1.5 !important;
+  letter-spacing: -0.3px !important;
+  margin: 0 0 16px !important;
+  word-break: keep-all !important;
+}
+
+.daangn-sticky-card-author {
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  color: #212124 !important;
+  margin-left: 6px !important;
+  display: inline-block !important;
+}
+
+/* 본문 텍스트 설명 */
+.daangn-sticky-card-body,
+.daangn-sticky-card-desc {
+  display: block !important;
+  font-size: 15px !important;
+  color: #52565C !important;
+  line-height: 1.7 !important;
+  margin: 0 !important;
+  word-break: keep-all !important;
+}
+
+@media (max-width: 900px) {
+  .daangn-sticky-stack-container {
+    flex-direction: column !important;
+    gap: 32px !important;
+  }
+
+  .daangn-sticky-left {
+    position: relative !important;
+    top: auto !important;
+    flex: 0 0 100% !important;
+    width: 100% !important;
+    padding: 0 0 10px 0 !important;
+  }
+
+  .sticky-value-list {
+    flex-direction: row !important;
+    overflow-x: auto !important;
+    gap: 8px !important;
+    padding-bottom: 8px !important;
+  }
+
+  .sticky-value-item {
+    font-size: 15px !important;
+    white-space: nowrap !important;
+    padding: 6px 12px !important;
+    background: #F5F6F8 !important;
+    border-radius: 100px !important;
+  }
+
+  .sticky-value-item.is-active {
+    font-size: 15px !important;
+    background: #212124 !important;
+    color: #ffffff !important;
+  }
+
+  .sticky-value-item.is-active::before {
+    display: none !important;
+  }
+
+  .daangn-sticky-card {
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    opacity: 1 !important;
+    transform: none !important;
+    pointer-events: auto !important;
+    margin-bottom: 24px !important;
+  }
+
+  .daangn-sticky-card-media {
+    height: 240px !important;
+  }
+}
+
+/* ── Main Page Team Groups Grid (Product / Business / Vertical) ────── */
+/* ── Main Page Team Groups Grid (Product / Business / Independent / Support) ────── */
+.daangn-team-section {
+  padding: clamp(48px, 6vh, 80px) 24px clamp(40px, 5vh, 64px) !important;
+  background-color: #ffffff !important;
+}
+
+.daangn-team-header {
+  margin-bottom: clamp(20px, 2.8vh, 32px) !important;
+}
+
+.daangn-team-groups-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  margin-top: clamp(12px, 1.8vh, 20px);
+}
+
+.daangn-team-group-card {
+  position: relative;
+  height: clamp(300px, 35vh, 380px);
+  border-radius: 24px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  padding: clamp(24px, 3.5vh, 38px) clamp(20px, 2.5vw, 30px);
+  text-decoration: none;
+  box-sizing: border-box;
+  background-color: #2E3138;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  cursor: pointer;
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s ease;
+}
+
+.daangn-team-group-card-bg,
+.daangn-team-group-card-img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 1;
+}
+
+.daangn-team-group-card-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(180deg, rgba(20, 24, 30, 0.35) 0%, rgba(15, 18, 24, 0.85) 100%);
+  z-index: 2;
+  pointer-events: none;
+}
+
+/* 블록마다 마우스 호버할 때 줌 */
+.daangn-team-group-card:hover {
+  transform: scale(1.03) translateY(-6px);
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.22);
+}
+
+.daangn-team-group-card:hover .daangn-team-group-card-bg,
+.daangn-team-group-card:hover .daangn-team-group-card-img {
+  transform: scale(1.08);
+}
+
+.daangn-team-group-card-content {
+  position: relative;
+  z-index: 3;
+}
+
+.daangn-team-group-card-title {
+  font-family: 'KarrotSans', 'Pretendard', sans-serif;
+  font-size: 32px;
+  font-weight: 800;
+  color: #ffffff;
   margin: 0 0 8px;
+  letter-spacing: -0.5px;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+}
+
+.daangn-team-group-card-sub {
+  font-size: 15px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.88);
+  margin: 0;
+}
+
+@media (max-width: 1100px) {
+  .daangn-team-groups-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+}
+
+@media (max-width: 640px) {
+  .daangn-team-groups-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  .daangn-team-group-card {
+    height: 250px;
+    padding: 28px 20px;
+  }
+}
+
+/* ── Group Sub-Page Layout (Image 2: 그룹 상세 및 소속 팀 소개 레이아웃) ──── */
+.daangn-group-page-main {
+  background-color: #ffffff;
+  padding: clamp(32px, 4.5vh, 56px) 24px clamp(48px, 6vh, 80px);
+  min-height: calc(100vh - 60px);
+}
+
+.daangn-group-container {
+  max-width: 860px;
+  margin: 0 auto;
+}
+
+.daangn-group-badge {
+  font-size: clamp(17px, 2vh, 20px);
+  font-weight: 800;
+  color: #212124;
+  margin-bottom: clamp(12px, 1.6vh, 16px);
+  letter-spacing: -0.3px;
+}
+
+.daangn-group-title {
+  font-size: clamp(30px, 4vw, 44px);
+  font-weight: 800;
+  color: #212124;
+  line-height: 1.3;
+  margin: 0 0 clamp(20px, 2.8vh, 32px);
+  letter-spacing: -1px;
+}
+
+.daangn-group-hero-media {
+  width: 100%;
+  border-radius: 20px;
+  overflow: hidden;
+  background-color: #E5E7EB;
+  margin-bottom: clamp(24px, 3.2vh, 36px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+.daangn-group-hero-img {
+  width: 100%;
+  height: auto;
+  max-height: clamp(320px, 42vh, 480px);
+  object-fit: cover;
+  display: block;
+}
+
+.daangn-group-quote {
+  font-size: clamp(20px, 2.4vh, 24px);
   font-weight: 700;
   color: #212124;
-  font-size: 15px;
+  margin: clamp(24px, 3.2vh, 36px) 0 clamp(28px, 3.8vh, 40px);
+  line-height: 1.5;
+  word-break: keep-all;
+  border: none;
+  padding: 0;
 }
 
-.daangn-footer-address {
-  margin: 0;
-  color: #868B94;
-  font-size: 13px;
-  line-height: 1.6;
-}
-
-.daangn-footer-links {
-  margin-top: 16px;
+.daangn-group-teams-section {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  gap: clamp(20px, 2.6vh, 32px);
+  margin-bottom: clamp(32px, 4.5vh, 48px);
+}
+
+.daangn-group-team-item {
+  padding-bottom: clamp(18px, 2.4vh, 26px);
+  border-bottom: 1px solid #F0F1F3;
+}
+
+.daangn-group-team-item:last-child {
+  border-bottom: none;
+}
+
+.daangn-group-team-name {
+  font-size: 22px;
+  font-weight: 800;
+  color: #212124;
+  margin: 0 0 10px;
+  letter-spacing: -0.4px;
+}
+
+.daangn-group-team-desc {
+  font-size: 16.5px;
+  color: #4D5159;
+  line-height: 1.65;
+  margin: 0;
+  word-break: keep-all;
+}
+
+.daangn-group-nav-links {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 12px;
+  margin-top: 48px;
+  padding-top: 24px;
+}
+
+.daangn-group-nav-link {
+  font-size: 16px;
+  font-weight: 700;
+  color: #212124;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: color 0.2s, transform 0.2s;
+}
+
+.daangn-group-nav-link:hover {
+  color: #FF6F0F;
+  transform: translateX(4px);
+}
+
+/* ── Recruitment Process & FAQ Sub-Page Layout ──────────────────── */
+.daangn-process-page-main {
+  padding: clamp(32px, 4.5vh, 56px) 24px clamp(48px, 6vh, 80px);
+  background-color: #ffffff;
+}
+
+.daangn-process-container {
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+.daangn-process-header {
+  margin-bottom: clamp(24px, 3.2vh, 36px);
+  text-align: left;
+}
+
+.daangn-process-title {
+  font-size: clamp(28px, 3.8vh, 34px);
+  font-weight: 800;
+  color: #FF6F0F;
+  letter-spacing: -0.6px;
+  margin: 0;
+  line-height: 1.35;
+}
+
+/* Process Track Items (Matching Screenshot) */
+.daangn-process-tracks {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: clamp(32px, 4.5vh, 48px);
+}
+
+.daangn-process-track-item {
+  width: 100%;
+}
+
+.daangn-process-track-img {
+  width: 100%;
+  border-radius: 6px;
+  overflow: hidden;
+  background: transparent;
+}
+
+.daangn-process-track-img img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.daangn-process-toggle-bar {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 14px 4px 6px;
+}
+
+.daangn-process-toggle-btn {
+  background: none;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 15px;
+  color: #71757E;
+  font-weight: 500;
+  padding: 6px 8px;
+  border-radius: 6px;
+  transition: color 0.2s, background-color 0.2s;
+}
+
+.daangn-process-toggle-btn:hover {
+  color: #212124;
+  background-color: #F8F9FA;
+}
+
+.daangn-process-toggle-btn .toggle-icon {
+  width: 18px;
+  height: 18px;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  color: #868B94;
+}
+
+.daangn-process-track-item.is-open .toggle-icon {
+  transform: rotate(180deg);
+  color: #212124;
+}
+
+.daangn-process-detail {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: max-height 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease, margin 0.3s ease;
+}
+
+.daangn-process-track-item.is-open .daangn-process-detail {
+  max-height: 1200px;
+  opacity: 1;
+  margin-top: 16px;
+  margin-bottom: 24px;
+}
+
+.daangn-process-detail-inner {
+  padding: 10px 4px 16px;
+}
+
+.daangn-process-detail-step {
+  margin-bottom: 24px;
+}
+
+.daangn-process-detail-step:last-child {
+  margin-bottom: 0;
+}
+
+.daangn-process-detail-step h4 {
+  font-size: 16.5px;
+  font-weight: 800;
+  color: #212124;
+  margin: 0 0 6px;
+  line-height: 1.5;
+}
+
+.daangn-process-detail-step p {
+  font-size: 15px;
+  color: #373A40;
+  line-height: 1.65;
+  margin: 0 0 4px;
+  word-break: keep-all;
+}
+
+.daangn-process-divider {
+  border: none;
+  border-bottom: 1px solid #ECEFF2;
+  margin: 24px 0 40px;
+}
+
+/* Notice Box */
+.daangn-process-notice-box {
+  background: #F7F8FA;
+  border: 1px solid #EAECEF;
+  border-radius: 16px;
+  padding: 28px 32px;
+  margin-bottom: 72px;
+}
+
+.daangn-process-notice-title {
+  font-size: 16px;
+  font-weight: 800;
+  color: #212124;
+  margin: 0 0 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.daangn-process-notice-list {
+  margin: 0;
+  padding-left: 20px;
+  font-size: 14.5px;
+  color: #71757E;
+  line-height: 1.7;
+}
+
+.daangn-process-notice-list li {
+  margin-bottom: 6px;
+}
+
+.daangn-process-notice-list li:last-child {
+  margin-bottom: 0;
+}
+
+/* FAQ Section */
+.daangn-faq-container {
+  margin-top: 72px;
+  padding-top: 48px;
+  border-top: 1px solid #EAECEF;
+}
+
+.daangn-faq-section-header {
+  margin-bottom: 40px;
+}
+
+.daangn-faq-group {
+  margin-bottom: 48px;
+}
+
+.daangn-faq-group-title {
+  font-size: 22px;
+  font-weight: 800;
+  color: #212124;
+  margin: 0 0 20px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid #212124;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.daangn-faq-group-title .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #FF6F0F;
+  display: inline-block;
+}
+
+.daangn-faq-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.daangn-faq-item {
+  border-bottom: 1px solid #EAECEF;
+  overflow: hidden;
+  transition: background-color 0.2s;
+}
+
+.daangn-faq-item:first-child {
+  border-top: 1px solid transparent;
+}
+
+.daangn-faq-question-btn {
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  border: none;
+  outline: none;
+  padding: 22px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  gap: 16px;
+  transition: color 0.2s, background-color 0.2s;
+}
+
+.daangn-faq-question-btn:hover {
+  background-color: #FAFBFD;
+}
+
+.daangn-faq-question-text {
+  font-size: 16.5px;
+  font-weight: 700;
+  color: #212124;
+  line-height: 1.45;
+  flex: 1;
+}
+
+.daangn-faq-item.is-open .daangn-faq-question-text {
+  color: #FF6F0F;
+}
+
+.daangn-faq-chevron {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  color: #868B94;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), color 0.2s;
+}
+
+.daangn-faq-item.is-open .daangn-faq-chevron {
+  transform: rotate(180deg);
+  color: #FF6F0F;
+}
+
+.daangn-faq-answer {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: max-height 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease, padding 0.35s ease;
+  background: #FAFBFD;
+  padding: 0 20px;
+}
+
+.daangn-faq-item.is-open .daangn-faq-answer {
+  max-height: 600px;
+  opacity: 1;
+  padding: 20px 24px 28px;
+  border-top: 1px dashed #EAECEF;
+}
+
+.daangn-faq-answer-content {
+  font-size: 15.5px;
+  color: #373A40;
+  line-height: 1.7;
+  word-break: keep-all;
+}
+
+.daangn-faq-answer-content a {
+  color: #FF6F0F;
+  font-weight: 700;
+  text-decoration: underline;
+}
+
+/* Bottom CTA Banner */
+.daangn-process-cta {
+  margin-top: 64px;
+  padding: 48px 36px;
+  background: linear-gradient(135deg, #FFF6F0 0%, #FFF0E6 100%);
+  border: 1px solid #FFE0CC;
+  border-radius: 20px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   gap: 20px;
 }
 
-.daangn-footer-link {
-  color: #868B94;
-  text-decoration: none;
-  font-size: 13px;
-  transition: color 0.15s ease;
+.daangn-process-cta-title {
+  font-size: 26px;
+  font-weight: 800;
+  color: #212124;
+  margin: 0;
 }
 
-.daangn-footer-link:hover {
+.daangn-process-cta-sub {
+  font-size: 16px;
+  color: #71757E;
+  margin: 0;
+}
+
+.daangn-process-cta-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #FF6F0F;
+  color: #FFFFFF;
+  padding: 14px 32px;
+  border-radius: 28px;
+  font-size: 16px;
+  font-weight: 800;
+  text-decoration: none;
+  box-shadow: 0 6px 18px rgba(255, 111, 15, 0.3);
+  transition: background-color 0.2s, transform 0.2s, box-shadow 0.2s;
+}
+
+.daangn-process-cta-btn:hover {
+  background-color: #ED6408;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(255, 111, 15, 0.4);
+}
+
+}
+
+/* ─────────────────────────────────────────────────────────────
+   채용 공고 페이지 (/apply) Bucketplace & Karrot 스타일 디자인 시스템
+   ───────────────────────────────────────────────────────────── */
+.daangn-jobs-page-main {
+  padding: clamp(24px, 3.5vh, 40px) 0 clamp(48px, 6vh, 80px);
+  background-color: #ffffff;
+  min-height: 80vh;
+}
+
+.daangn-jobs-hero {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: clamp(32px, 4.5vh, 56px) 24px clamp(24px, 3.2vh, 36px);
+}
+
+.daangn-jobs-badge-top {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 20px;
+  background: #FFF1E6;
+  color: #FF6F0F;
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+.daangn-jobs-title {
+  font-size: 44px;
+  font-weight: 800;
+  line-height: 1.25;
   color: #212124;
+  letter-spacing: -0.8px;
+  margin: 0 0 16px;
+}
+
+.daangn-jobs-sub {
+  font-size: 18px;
+  line-height: 1.6;
+  color: #71757E;
+  margin: 0 0 28px;
+}
+
+.daangn-jobs-highlights {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.daangn-jobs-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  background: #F7F8FA;
+  border: 1px solid #EAEBEE;
+  border-radius: 24px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #4D5159;
+}
+
+/* Filter & Search Bar */
+.daangn-jobs-filter-section {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.daangn-jobs-search-box {
+  position: relative;
+  width: 100%;
+  margin-bottom: 24px;
+}
+
+.daangn-jobs-search-icon {
+  position: absolute;
+  left: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 20px;
+  color: #868B94;
+  pointer-events: none;
+}
+
+.daangn-jobs-search-input {
+  width: 100%;
+  padding: 16px 50px 16px 52px;
+  font-size: 16px;
+  font-family: inherit;
+  color: #212124;
+  background: #F7F8FA;
+  border: 1.5px solid #EAEBEE;
+  border-radius: 14px;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.daangn-jobs-search-input:focus {
+  background: #FFFFFF;
+  border-color: #FF6F0F;
+  box-shadow: 0 0 0 4px rgba(255, 111, 15, 0.12);
+}
+
+.daangn-jobs-search-clear {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: #EAEBEE;
+  border: none;
+  color: #71757E;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  transition: all 0.2s;
+}
+
+.daangn-jobs-search-clear:hover {
+  background: #D8DBE0;
+  color: #212124;
+}
+
+/* Role / Job Family Tabs (Bucketplace style) */
+.daangn-jobs-role-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.daangn-role-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border-radius: 30px;
+  background: #F4F5F7;
+  color: #4D5159;
+  border: 1.5px solid transparent;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.daangn-role-tab .tab-badge-num {
+  font-size: 13px;
+  font-weight: 600;
+  opacity: 0.8;
+}
+
+.daangn-role-tab:hover:not(.is-active) {
+  background: #EAEBEE;
+  color: #212124;
+}
+
+.daangn-role-tab.is-active {
+  background: #212124;
+  color: #FFFFFF;
+}
+
+.daangn-role-tab.is-active .tab-badge-num {
+  color: #FF9E59;
+}
+
+/* Sub-filter chips (Employment & Group) */
+.daangn-jobs-subfilters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 0;
+  border-top: 1px solid #F0F1F3;
+}
+
+.daangn-filter-group-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: #868B94;
+  margin-right: 4px;
+}
+
+.daangn-subfilter-chips {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.daangn-subfilter-chip {
+  padding: 6px 14px;
+  border-radius: 18px;
+  font-size: 13px;
+  font-weight: 600;
+  background: transparent;
+  border: 1px solid #EAEBEE;
+  color: #5B5F67;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.daangn-subfilter-chip:hover:not(.is-active) {
+  border-color: #C5C9D0;
+  color: #212124;
+}
+
+.daangn-subfilter-chip.is-active {
+  background: #FFF1E6;
+  border-color: #FF6F0F;
+  color: #FF6F0F;
+  font-weight: 700;
+}
+
+/* Status count row */
+.daangn-jobs-status-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24px 0 16px;
+  margin-bottom: 8px;
+  border-bottom: 2px solid #212124;
+}
+
+.daangn-jobs-count-text {
+  font-size: 18px;
+  font-weight: 800;
+  color: #212124;
+}
+
+.daangn-jobs-count-text .num-highlight {
+  color: #FF6F0F;
+}
+
+.daangn-jobs-reset-link {
+  font-size: 14px;
+  font-weight: 600;
+  color: #868B94;
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  transition: all 0.2s;
+}
+
+.daangn-jobs-reset-link:hover {
+  color: #FF6F0F;
+  background: #FFF1E6;
+}
+
+/* Job Postings List */
+.daangn-jobs-list-container {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 0 24px 60px;
+}
+
+.daangn-job-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 30px 24px;
+  border-bottom: 1px solid #EAEBEE;
+  text-decoration: none;
+  color: inherit;
+  border-radius: 16px;
+  transition: all 0.25s cubic-bezier(0.2, 0, 0, 1);
+  position: relative;
+  background-color: #ffffff;
+}
+
+.daangn-job-card:hover {
+  background-color: #FAFBFD;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.04);
+  border-bottom-color: transparent;
+}
+
+.daangn-job-card:hover .daangn-job-card-title {
+  color: #FF6F0F;
+}
+
+.daangn-job-card:hover .daangn-job-card-arrow {
+  background-color: #FF6F0F;
+  color: #FFFFFF;
+  transform: translateX(4px);
+  box-shadow: 0 4px 14px rgba(255, 111, 15, 0.35);
+}
+
+.daangn-job-card-info {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding-right: 24px;
+}
+
+.daangn-job-badges {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.daangn-badge-category {
+  font-size: 12px;
+  font-weight: 700;
+  color: #4D5159;
+  background: #F0F2F5;
+  padding: 4px 10px;
+  border-radius: 6px;
+}
+
+.daangn-badge-emp {
+  font-size: 12px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 6px;
+}
+
+.daangn-badge-emp.fulltime {
+  background: #FFF1E6;
+  color: #FF6F0F;
+}
+
+.daangn-badge-emp.contract {
+  background: #EDF3FB;
+  color: #2C68A5;
+}
+
+.daangn-badge-career {
+  font-size: 12px;
+  font-weight: 600;
+  color: #6C727D;
+  background: #F7F8FA;
+  border: 1px solid #E5E8EC;
+  padding: 3px 9px;
+  border-radius: 6px;
+}
+
+.daangn-job-card-title {
+  font-size: 22px;
+  font-weight: 800;
+  color: #212124;
+  margin: 0 0 10px;
+  line-height: 1.35;
+  transition: color 0.2s ease;
+  word-break: keep-all;
+}
+
+.daangn-job-card-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+  font-size: 14px;
+  color: #868B94;
+}
+
+.daangn-job-meta-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.daangn-job-meta-item svg {
+  width: 14px;
+  height: 14px;
+  color: #A3A7AF;
+}
+
+.daangn-job-card-arrow-wrap {
+  flex-shrink: 0;
+}
+
+.daangn-job-card-arrow {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #F4F5F7;
+  color: #71757E;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.25s ease;
+}
+
+.daangn-job-card-arrow svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* Empty State */
+.daangn-jobs-empty {
+  text-align: center;
+  padding: 80px 20px;
+  background: #FAFBFD;
+  border-radius: 20px;
+  border: 1px dashed #DCE0E6;
+  margin: 20px 0;
+  display: none;
+}
+
+.daangn-jobs-empty-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+}
+
+.daangn-jobs-empty-title {
+  font-size: 20px;
+  font-weight: 800;
+  color: #212124;
+  margin: 0 0 8px;
+}
+
+.daangn-jobs-empty-desc {
+  font-size: 15px;
+  color: #868B94;
+  margin: 0 0 24px;
+}
+
+.daangn-jobs-empty-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  background: #FF6F0F;
+  color: #FFFFFF;
+  border: none;
+  border-radius: 24px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.daangn-jobs-empty-btn:hover {
+  background: #ED6408;
+}
+
+/* Bottom Talent Pool & Help Banner (Bucketplace style) */
+.daangn-jobs-bottom-banner {
+  max-width: 1080px;
+  margin: 40px auto 0;
+  padding: 44px 36px;
+  background: linear-gradient(135deg, #FBFBFD 0%, #F5F7FA 100%);
+  border: 1px solid #EAEBEE;
+  border-radius: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.daangn-jobs-banner-content h3 {
+  font-size: 22px;
+  font-weight: 800;
+  color: #212124;
+  margin: 0 0 8px;
+}
+
+.daangn-jobs-banner-content p {
+  font-size: 15px;
+  color: #71757E;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.daangn-jobs-banner-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.daangn-banner-btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 22px;
+  background: #FFFFFF;
+  color: #4D5159;
+  border: 1px solid #D5D9E0;
+  border-radius: 22px;
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+.daangn-banner-btn-secondary:hover {
+  border-color: #212124;
+  color: #212124;
+}
+
+.daangn-banner-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 22px;
+  background: #FF6F0F;
+  color: #FFFFFF;
+  border-radius: 22px;
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+  box-shadow: 0 4px 12px rgba(255, 111, 15, 0.25);
+  transition: all 0.2s;
+}
+
+.daangn-banner-btn-primary:hover {
+  background: #ED6408;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(255, 111, 15, 0.35);
+}
+
+@media (max-width: 768px) {
+  .daangn-jobs-hero {
+    padding: 36px 20px 28px;
+  }
+  .daangn-jobs-title {
+    font-size: 32px;
+  }
+  .daangn-jobs-sub {
+    font-size: 16px;
+  }
+  .daangn-jobs-filter-section {
+    padding: 0 20px;
+  }
+  .daangn-jobs-list-container {
+    padding: 0 20px 60px;
+  }
+  .daangn-job-card {
+    padding: 22px 16px;
+  }
+  .daangn-job-card-title {
+    font-size: 18px;
+  }
+  .daangn-job-card-arrow {
+    width: 36px;
+    height: 36px;
+  }
+  .daangn-job-card-arrow svg {
+    width: 16px;
+    height: 16px;
+  }
+  .daangn-jobs-bottom-banner {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 28px 20px;
+    margin: 32px 20px 0;
+  }
+  .daangn-jobs-banner-actions {
+    width: 100%;
+    flex-direction: column;
+  }
+  .daangn-banner-btn-secondary,
+  .daangn-banner-btn-primary {
+    width: 100%;
+    justify-content: center;
+  }
 }
 
 

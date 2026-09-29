@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  careers-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: daangn-careers-web
+    restart: always
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    volumes:
+      # SQLite DB 파일 및 업로드 이미지 영속성 보장
+      - ./data:/app/data
+      - ./uploads:/app/app/public/uploads
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 10s

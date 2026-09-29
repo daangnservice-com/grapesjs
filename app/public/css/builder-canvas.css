@@ -173,16 +173,135 @@
 }
 
 /* ── Sticky Culture Section Builder Canvas Helpers ─────────── */
-.daangn-sticky-stack-container {
-  display: flex !important;
-  gap: 40px !important;
-  align-items: flex-start !important;
+/* 실 사이트의 sticky single-image 레이아웃을 빌더에서 override      */
+/* 빌더에서는 카드들이 세로로 펼쳐져 각각 편집 가능해야 함             */
+
+/* 실 사이트 sticky 해제 */
+.daangn-sticky-section,
+.daangn-culture-section {
+  min-height: auto !important;
+  position: relative !important;
 }
 
+.daangn-culture-header {
+  position: static !important;
+  padding: 0 0 32px !important;
+  text-align: center !important;
+}
+
+/* 컨테이너: sticky 해제, flex row */
+.daangn-sticky-stack-container {
+  position: static !important;
+  height: auto !important;
+  display: flex !important;
+  gap: 32px !important;
+  align-items: flex-start !important;
+  overflow: visible !important;
+  background: transparent !important;
+}
+
+/* 좌측 패널: 완전 편집 가능 및 인터랙티브 연동 */
 .daangn-sticky-left {
   position: static !important;
   flex: 0 0 280px !important;
-  top: auto !important;
+  display: block !important;
+  padding: 16px !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+  background: transparent !important;
+}
+
+/* 상단 "당근서비스가 일하는 방식" 제목 */
+.daangn-sticky-left > span,
+.daangn-sticky-left-title {
+  display: block !important;
+  font-size: 14px !important;
+  font-weight: 800 !important;
+  color: #FF6F0F !important;
+  letter-spacing: 0.5px !important;
+  cursor: text !important;
+  pointer-events: auto !important;
+  margin-bottom: 16px !important;
+}
+
+.sticky-value-list {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 8px !important;
+  pointer-events: auto !important;
+}
+
+.sticky-value-item {
+  cursor: pointer !important;
+  pointer-events: auto !important;
+  font-size: 17px !important;
+  font-weight: 600 !important;
+  color: #4D5159 !important;
+  padding: 8px 12px !important;
+  border-radius: 10px !important;
+  border: 1px dashed transparent !important;
+  transition: all 0.2s ease !important;
+  display: flex !important;
+  align-items: center !important;
+  background: #ffffff !important;
+  user-select: text !important;
+}
+
+.sticky-value-item:hover {
+  border-color: #FF6F0F !important;
+  background: #FFF5EF !important;
+  color: #FF6F0F !important;
+}
+
+.sticky-value-item.is-active {
+  color: #212124 !important;
+  font-size: 18px !important;
+  font-weight: 800 !important;
+  background: #F4F5F8 !important;
+  border-color: #ECEEF2 !important;
+}
+
+.sticky-value-item.is-active::before {
+  content: '' !important;
+  display: inline-block !important;
+  width: 4px !important;
+  height: 18px !important;
+  background: #FF6F0F !important;
+  border-radius: 2px !important;
+  margin-right: 8px !important;
+}
+
+/* 빌더 전용: 새 가치 및 카드 추가 버튼 */
+.btn-add-culture-card {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 6px !important;
+  width: 100% !important;
+  margin-top: 14px !important;
+  padding: 10px 16px !important;
+  background: #FFF5EF !important;
+  border: 1.5px dashed #FF6F0F !important;
+  border-radius: 12px !important;
+  color: #FF6F0F !important;
+  font-size: 13.5px !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+  pointer-events: auto !important;
+  transition: all 0.2s ease !important;
+}
+
+.btn-add-culture-card:hover {
+  background: #FF6F0F !important;
+  color: #ffffff !important;
+  border-style: solid !important;
+  box-shadow: 0 4px 12px rgba(255, 111, 15, 0.25) !important;
+}
+
+/* 좌측 desc-box 숨김 (빌더에서 편집은 우측 카드 caption에서) */
+#stickyDescBox,
+.sticky-desc-box {
+  display: none !important;
 }
 
 .daangn-cards-stack {
@@ -190,28 +309,50 @@
   display: flex !important;
   flex-direction: column !important;
   gap: 28px !important;
+  position: static !important;
+  overflow: visible !important;
+  height: auto !important;
 }
 
+/* 각 카드: sticky 완전 해제 → 이미지 + 캡션(회색 박스) 세로 스택 */
 .daangn-sticky-card {
   position: relative !important;
   top: auto !important;
+  left: auto !important;
+  width: auto !important;
   height: auto !important;
-  border-radius: 20px !important;
-  overflow: hidden !important;
-  margin-bottom: 24px !important;
-  outline: 1px dashed rgba(255, 111, 15, 0.35) !important;
+  opacity: 1 !important;
+  transform: none !important;
+  pointer-events: auto !important;
+  z-index: auto !important;
+  border-radius: 24px !important;
+  overflow: visible !important;
+  margin-bottom: 28px !important;
+  border: 1px solid #ECEEF2 !important;
+  outline: 1px dashed rgba(255, 111, 15, 0.3) !important;
   background: #ffffff !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06) !important;
+  transition: none !important;
+}
+
+.daangn-sticky-card.is-active {
+  /* 빌더에서는 is-active 무시 → 모든 카드 동일하게 표시 */
+  opacity: 1 !important;
+  transform: none !important;
 }
 
 .daangn-sticky-card:hover {
   outline: 2px solid #FF6F0F !important;
+  border-color: rgba(255, 111, 15, 0.4) !important;
 }
 
 .daangn-sticky-card-media {
   height: 320px !important;
   width: 100% !important;
   position: relative !important;
-  background: #f0f0f0 !important;
+  background: #f4f5f8 !important;
+  border-radius: 24px 24px 0 0 !important;
+  overflow: hidden !important;
 }
 
 .daangn-sticky-card-img,
@@ -221,14 +362,18 @@
   object-fit: cover !important;
   cursor: pointer !important;
   pointer-events: auto !important;
+  display: block !important;
 }
 
+/* 캡션: 절대위치 해제 → 이미지 아래 회색 박스로 명확하게 표시 */
 .daangn-sticky-card-caption {
   position: relative !important;
-  background: #FFFFFF !important;
+  background: #F8F9FA !important;
   border-top: 1px solid #ECEEF2 !important;
-  padding: 20px 24px !important;
+  border-radius: 0 0 24px 24px !important;
+  padding: 24px 30px 28px !important;
   color: #212124 !important;
+  background-image: none !important;
 }
 
 .daangn-sticky-card-tag {
@@ -236,25 +381,195 @@
   cursor: text !important;
   pointer-events: auto !important;
   display: inline-block !important;
-  margin-bottom: 4px !important;
+  margin-bottom: 6px !important;
+  font-size: 13px !important;
+  font-weight: 800 !important;
 }
 
 .daangn-sticky-card-title {
   color: #212124 !important;
   cursor: text !important;
   pointer-events: auto !important;
-  font-size: 24px !important;
-  margin: 0 0 6px !important;
+  font-size: 22px !important;
+  font-weight: 800 !important;
+  margin: 0 0 10px !important;
 }
 
+/* 빌더에서 desc 다시 보이게 (실 사이트에서는 숨김, 빌더에서는 직접 편집) */
 .daangn-sticky-card-desc {
+  display: block !important;
   color: #4D5159 !important;
   cursor: text !important;
   pointer-events: auto !important;
   font-size: 15px !important;
-  line-height: 1.6 !important;
+  line-height: 1.65 !important;
   margin: 0 !important;
+  word-break: keep-all !important;
 }
 
+/* Questions Section in Builder: Lay out statically for editing without sticky scroll */
+.daangn-questions-section {
+  min-height: auto !important;
+  height: auto !important;
+  padding: 80px 0 60px !important;
+}
+
+.daangn-questions-sticky-pin {
+  position: static !important;
+  height: auto !important;
+  padding: 0 !important;
+  overflow: visible !important;
+}
+
+/* ── 채용 절차(합류 여정) 빌더 캔버스 헬퍼 ── */
+/* 빌더 편집 화면에서는 '더보기' 상세 내용이 기본으로 펼쳐진 상태로 표시되어 모든 멘트를 직접 클릭해 수정할 수 있습니다 */
+.daangn-process-detail {
+  max-height: none !important;
+  opacity: 1 !important;
+  overflow: visible !important;
+  margin-top: 16px !important;
+  margin-bottom: 24px !important;
+  display: block !important;
+  border: 1.5px dashed rgba(255, 111, 15, 0.45) !important;
+  border-radius: 14px !important;
+  padding: 20px 24px !important;
+  background-color: #FAFAFC !important;
+  position: relative !important;
+}
+
+.daangn-process-detail::before {
+  content: '📝 더보기 상세 내용 (빌더 편집 모드: 항상 펼침 - 텍스트를 클릭해 직접 수정 가능)' !important;
+  display: inline-block !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  color: #FF6F0F !important;
+  background: #FFF4ED !important;
+  border: 1px solid rgba(255, 111, 15, 0.3) !important;
+  border-radius: 6px !important;
+  padding: 4px 10px !important;
+  margin-bottom: 16px !important;
+  letter-spacing: -0.2px !important;
+  user-select: none !important;
+  pointer-events: none !important;
+}
+
+.daangn-process-detail-inner {
+  display: block !important;
+}
+
+.daangn-process-detail-step {
+  margin-bottom: 20px !important;
+}
+
+.daangn-process-detail-step:last-child {
+  margin-bottom: 0 !important;
+}
+
+.daangn-process-detail-step h4 {
+  cursor: text !important;
+  pointer-events: auto !important;
+  user-select: text !important;
+}
+
+.daangn-process-detail-step p {
+  cursor: text !important;
+  pointer-events: auto !important;
+  user-select: text !important;
+}
+
+.daangn-process-toggle-bar {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+}
+
+.daangn-process-toggle-btn {
+  cursor: pointer !important;
+  pointer-events: auto !important;
+  border: 1px dashed rgba(255, 111, 15, 0.5) !important;
+  background: #FFF8F4 !important;
+}
+
+.daangn-process-toggle-btn span {
+  cursor: text !important;
+  pointer-events: auto !important;
+  user-select: text !important;
+}
+
+/* ── FAQ 아코디언 빌더 캔버스 헬퍼 ── */
+/* 빌더 편집 화면에서는 FAQ 질문별 답변 영역도 펼쳐져 직접 텍스트 수정 가능 */
+.daangn-faq-answer {
+  max-height: none !important;
+  opacity: 1 !important;
+  overflow: visible !important;
+  margin-top: 12px !important;
+  display: block !important;
+  border: 1px dashed rgba(255, 111, 15, 0.35) !important;
+  border-radius: 8px !important;
+  padding: 14px 18px !important;
+  background-color: #FAFAFC !important;
+  position: relative !important;
+}
+
+.daangn-faq-answer::before {
+  content: '📝 FAQ 답변 내용 (빌더 편집 모드: 항상 펼침 - 텍스트를 클릭해 직접 수정 가능)' !important;
+  display: inline-block !important;
+  font-size: 11.5px !important;
+  font-weight: 700 !important;
+  color: #FF6F0F !important;
+  background: #FFF4ED !important;
+  border: 1px solid rgba(255, 111, 15, 0.3) !important;
+  border-radius: 5px !important;
+  padding: 3px 8px !important;
+  margin-bottom: 10px !important;
+  user-select: none !important;
+  pointer-events: none !important;
+}
+
+.daangn-faq-answer-content p,
+.daangn-faq-answer-content a {
+  cursor: text !important;
+  pointer-events: auto !important;
+  user-select: text !important;
+}
+
+/* ── 인사이드 당근서비스 아티클 카드 빌더 헬퍼 ── */
+.daangn-story-card {
+  position: relative !important;
+  transition: outline 0.15s ease !important;
+}
+
+.daangn-story-card:hover {
+  outline: 2px dashed #FF6F0F !important;
+}
+
+.btn-card-article-picker {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 6px !important;
+  width: 100% !important;
+  margin-top: 14px !important;
+  padding: 10px 14px !important;
+  background: #FFF0E6 !important;
+  color: #FF6F0F !important;
+  border: 1.5px dashed #FF6F0F !important;
+  border-radius: 10px !important;
+  font-size: 13.5px !important;
+  font-weight: 800 !important;
+  cursor: pointer !important;
+  pointer-events: auto !important;
+  transition: all 0.2s ease !important;
+  box-sizing: border-box !important;
+  font-family: 'Pretendard', sans-serif !important;
+}
+
+.btn-card-article-picker:hover {
+  background: #FF6F0F !important;
+  color: #ffffff !important;
+  border-style: solid !important;
+  box-shadow: 0 4px 12px rgba(255, 111, 15, 0.3) !important;
+  transform: translateY(-1px) !important;
+}
 
 
