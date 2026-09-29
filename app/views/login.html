@@ -130,79 +130,6 @@
       border: 1px solid #FCA5A5;
       color: #B91C1C;
     }
-    .divider {
-      display: flex;
-      align-items: center;
-      text-align: center;
-      color: #9CA3AF;
-      font-size: 12px;
-      margin: 20px 0;
-    }
-    .divider::before, .divider::after {
-      content: '';
-      flex: 1;
-      border-bottom: 1px solid #E5E7EB;
-    }
-    .divider:not(:empty)::before {
-      margin-right: .75em;
-    }
-    .divider:not(:empty)::after {
-      margin-left: .75em;
-    }
-    .emergency-toggle {
-      font-size: 12px;
-      color: #9CA3AF;
-      background: none;
-      border: none;
-      cursor: pointer;
-      text-decoration: underline;
-      display: block;
-      margin: 0 auto;
-      padding: 4px 8px;
-    }
-    .emergency-form {
-      display: none;
-      margin-top: 16px;
-      padding-top: 16px;
-      border-top: 1px dashed #E5E7EB;
-    }
-    .form-group {
-      margin-bottom: 14px;
-    }
-    label {
-      display: block;
-      font-size: 13px;
-      font-weight: 600;
-      margin-bottom: 6px;
-    }
-    input {
-      width: 100%;
-      padding: 10px 14px;
-      border: 1px solid #D1D5DB;
-      border-radius: 8px;
-      font-size: 14px;
-      transition: border-color 0.2s;
-    }
-    input:focus {
-      outline: none;
-      border-color: var(--seed-orange);
-      box-shadow: 0 0 0 3px rgba(255, 111, 15, 0.15);
-    }
-    .btn-login {
-      width: 100%;
-      padding: 12px;
-      background-color: #4B5563;
-      color: #ffffff;
-      border: none;
-      border-radius: 8px;
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: background-color 0.2s;
-    }
-    .btn-login:hover {
-      background-color: #374151;
-    }
     .footer-note {
       font-size: 12px;
       color: #9CA3AF;
@@ -242,26 +169,6 @@
       <span>Google 계정으로 로그인</span>
     </a>
 
-    <!-- Emergency / Local Developer Fallback -->
-    <div class="divider">또는</div>
-    <button type="button" class="emergency-toggle" id="toggleEmergency">
-      비상 / 로컬 개발자 로그인 펼치기 ▼
-    </button>
-
-    <div class="emergency-form" id="emergencySection">
-      <form id="emergencyLoginForm">
-        <div class="form-group">
-          <label for="username">관리자 아이디</label>
-          <input type="text" id="username" name="username" required placeholder="아이디 입력" />
-        </div>
-        <div class="form-group">
-          <label for="password">비밀번호</label>
-          <input type="password" id="password" name="password" required placeholder="비밀번호 입력" />
-        </div>
-        <button type="submit" class="btn-login">로컬 계정으로 로그인</button>
-      </form>
-    </div>
-
     <div class="footer-note">
       careers.daangnservice.com/admin
     </div>
@@ -290,41 +197,6 @@
       alertBox.innerHTML = `<strong>⚠️ 인증 처리 오류</strong><br/>인증 처리 중 오류가 발생했습니다.<br/><small>${message}</small>`;
       alertBox.style.display = 'block';
     }
-
-    // 비상 로그인 토글
-    const toggleBtn = document.getElementById('toggleEmergency');
-    const emergencySection = document.getElementById('emergencySection');
-    toggleBtn.addEventListener('click', () => {
-      const isVisible = emergencySection.style.display === 'block';
-      emergencySection.style.display = isVisible ? 'none' : 'block';
-      toggleBtn.textContent = isVisible ? '비상 / 로컬 개발자 로그인 펼치기 ▼' : '비상 / 로컬 개발자 로그인 접기 ▲';
-    });
-
-    // 비상 로그인 폼 제출
-    document.getElementById('emergencyLoginForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const username = e.target.username.value;
-      const password = e.target.password.value;
-
-      try {
-        const res = await fetch('/api/auth/login', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ username, password })
-        });
-        const data = await res.json();
-
-        if (res.ok && data.success) {
-          window.location.href = '/admin';
-        } else {
-          alertBox.textContent = data.error || '로그인 정보가 올바르지 않습니다.';
-          alertBox.style.display = 'block';
-        }
-      } catch (err) {
-        alertBox.textContent = '서버 통신 오류가 발생했습니다.';
-        alertBox.style.display = 'block';
-      }
-    });
   </script>
 </body>
 </html>
