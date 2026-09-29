@@ -20,6 +20,8 @@ function initDb() {
         CREATE TABLE IF NOT EXISTS pages (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
           version_name TEXT NOT NULL,
+          page_path TEXT DEFAULT '/',
+          page_name TEXT DEFAULT '메인 페이지',
           html TEXT NOT NULL,
           css TEXT NOT NULL,
           components_json TEXT,
@@ -33,10 +35,13 @@ function initDb() {
         if (err) return reject(err);
         
         // Add favicon_url, page_path, page_name columns to existing database if missing
-        db.run(`ALTER TABLE pages ADD COLUMN favicon_url TEXT DEFAULT '/images/favicon-192.png'`, () => {});
-        db.run(`ALTER TABLE pages ADD COLUMN page_path TEXT DEFAULT '/'`, () => {});
-        db.run(`ALTER TABLE pages ADD COLUMN page_name TEXT DEFAULT '메인 페이지'`, () => {});
-        seedDefaultSubPages();
+        db.run(`ALTER TABLE pages ADD COLUMN favicon_url TEXT DEFAULT '/images/favicon-192.png'`, () => {
+          db.run(`ALTER TABLE pages ADD COLUMN page_path TEXT DEFAULT '/'`, () => {
+            db.run(`ALTER TABLE pages ADD COLUMN page_name TEXT DEFAULT '메인 페이지'`, () => {
+              seedDefaultSubPages().catch(e => console.warn('[DB] seedDefaultSubPages error:', e.message));
+            });
+          });
+        });
 
         // 2. Articles table
         db.run(`
