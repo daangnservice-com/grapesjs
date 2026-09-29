@@ -410,6 +410,7 @@
       <a href="/articles" target="_blank" class="btn btn-secondary">🌐 사이트 아티클 보기</a>
       <a href="/admin" class="btn btn-secondary">🎨 메인 페이지 빌더</a>
       <a href="/admin/articles/new" class="btn btn-primary">✏️ 새 아티클 작성</a>
+      <span id="userProfileBadge" style="font-size: 13px; color: #374151; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; background: #F3F4F6; border-radius: 6px; border: 1px solid #E5E7EB;">👤 로딩 중</span>
       <button class="btn btn-secondary" onclick="logout()">로그아웃</button>
     </div>
   </header>
@@ -633,6 +634,23 @@
         .replace(/'/g, '&#039;');
     }
 
+    async function initUser() {
+      try {
+        const res = await fetch('/api/auth/me');
+        if (res.ok) {
+          const data = await res.json();
+          const badge = document.getElementById('userProfileBadge');
+          if (badge && data.user) {
+            const u = data.user;
+            const displayName = u.name || u.email;
+            badge.innerHTML = (u.picture ? `<img src="${u.picture}" style="width:18px;height:18px;border-radius:50%;object-fit:cover;" /> ` : '👤 ') + `<span>${displayName}</span>`;
+            badge.title = u.email || '';
+          }
+        }
+      } catch (e) {}
+    }
+
+    initUser();
     loadArticles();
   </script>
 </body>

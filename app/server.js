@@ -5,6 +5,7 @@ const path = require('path');
 const fs = require('fs');
 const db = require('./database');
 const { requireAuth } = require('./middleware/auth');
+const googleAuth = require('./auth/google');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -45,7 +46,7 @@ app.get('/health', (req, res) => {
 });
 
 // ==========================================
-// 2. Authentication Routes
+// 2. Authentication Routes (Google Workspace OAuth)
 // ==========================================
 app.get('/login', (req, res) => {
   if (req.session && req.session.authenticated) {
@@ -54,14 +55,81 @@ app.get('/login', (req, res) => {
   res.sendFile(path.join(__dirname, 'views/login.html'));
 });
 
+// 2-1. Google 로그인 요청 시작
+app.get('/auth/google', (req, res) => {
+  const redirectUri = googleAuth.getRedirectUri(req);
+  const authUrl = googleAuth.getAuthUrl(redirectUri);
+  res.redirect(authUrl);
+});
+
+// 2-2. Google OAuth 콜백 처리 및 people_@daangnservice.com 그룹 검증
+app.get('/auth/google/callback', async (req, res) => {
+  const { code, error } = req.query;
+
+  if (error || !code) {
+    console.warn('[GoogleAuth] OAuth error or code missing:', error);
+    return res.redirect('/login?error=GoogleAuthFailed');
+  }
+
+  try {
+    const redirectUri = googleAuth.getRedirectUri(req);
+    const userInfo = await googleAuth.getUserInfoFromCode(code, redirectUri);
+    console.log(`[GoogleAuth] Google login attempt: ${userInfo.email} (${userInfo.name})`);
+
+    // people_@daangnservice.com 그룹 권한 검증
+    const authCheck = await googleAuth.checkGroupMembership(userInfo.email);
+
+    if (!authCheck.authorized) {
+      console.warn(`[GoogleAuth] Access denied for ${userInfo.email}: ${authCheck.reason}`);
+      return res.redirect(`/login?error=UnauthorizedGroup&email=${encodeURIComponent(userInfo.email)}&reason=${encodeURIComponent(authCheck.reason)}`);
+    }
+
+    // 인증 성공 - 세션 저장
+    req.session.authenticated = true;
+    req.session.user = {
+      id: userInfo.id,
+      email: userInfo.email,
+      name: userInfo.name,
+      picture: userInfo.picture
+    };
+    req.session.username = userInfo.name || userInfo.email;
+
+    console.log(`[GoogleAuth] Login successful: ${userInfo.email} -> Redirect to /admin`);
+    res.redirect('/admin');
+  } catch (err) {
+    console.error('[GoogleAuth] Callback processing error:', err);
+    res.redirect('/login?error=AuthCallbackError&message=' + encodeURIComponent(err.message));
+  }
+});
+
+// 2-3. 현재 로그인 사용자 정보 조회 API
+app.get('/api/auth/me', (req, res) => {
+  if (req.session && req.session.authenticated) {
+    return res.json({
+      authenticated: true,
+      user: req.session.user || { name: req.session.username || '관리자', email: 'admin' }
+    });
+  }
+  res.status(401).json({ authenticated: false });
+});
+
+// 2-4. 비상/로컬 개발용 아이디/비밀번호 로그인
 app.post('/api/auth/login', (req, res) => {
   const { username, password } = req.body;
   if (username === ADMIN_USER && password === ADMIN_PASSWORD) {
     req.session.authenticated = true;
     req.session.username = username;
+    req.session.user = { email: `${username}@local`, name: username };
     return res.json({ success: true });
   }
   res.status(401).json({ error: '아이디 또는 비밀번호가 올바르지 않습니다.' });
+});
+
+// 2-5. 로그아웃 (GET & POST 모두 지원)
+app.get('/auth/logout', (req, res) => {
+  req.session.destroy(() => {
+    res.redirect('/login');
+  });
 });
 
 app.post('/api/auth/logout', (req, res) => {

@@ -28,6 +28,22 @@ window.addEventListener('scroll', () => {
 
 document.addEventListener('DOMContentLoaded', async () => {
   window.scrollTo(0, 0);
+
+  // Fetch current user info
+  try {
+    const meRes = await fetch('/api/auth/me');
+    if (meRes.ok) {
+      const meData = await meRes.json();
+      const badge = document.getElementById('userProfileBadge');
+      if (badge && meData.user) {
+        const u = meData.user;
+        const displayName = u.name || u.email;
+        badge.innerHTML = (u.picture ? `<img src="${u.picture}" style="width:18px;height:18px;border-radius:50%;object-fit:cover;" /> ` : '👤 ') + `<span>${displayName}</span>`;
+        badge.title = u.email || '';
+      }
+    }
+  } catch (e) {}
+
   // Initialize GrapesJS Editor
   editor = grapesjs.init({
     container: '#gjs',
