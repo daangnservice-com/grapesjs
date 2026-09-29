@@ -1,10 +1,6 @@
-version: '3.8'
-
 services:
   careers-app:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: careers-app
     container_name: daangn-careers-web
     restart: always
     ports:
