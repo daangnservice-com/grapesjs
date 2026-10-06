@@ -520,12 +520,16 @@ async function renderPublicPage(req, res, pagePath = '/') {
 
     const template = fs.readFileSync(path.join(__dirname, 'views/public.html'), 'utf-8');
     const faviconUrl = publishedPage.favicon_url || '/images/favicon-192.png';
+    let cleanHtml = publishedPage.html || '';
+    // 과거 버전에서 생성되어 남아있던 문법 오류 인라인 스크립트 제거
+    cleanHtml = cleanHtml.replace(/<script>\s*\(function\(\)\s*\{[\s\S]*?initFaqAccordions[\s\S]*?<\/script>/gi, '');
+
     const rendered = template
       .replace(/<%= seoTitle %>/g, publishedPage.seo_title || '당근서비스 채용')
       .replace(/<%= seoDescription %>/g, publishedPage.seo_description || '당근서비스에서 새로운 동료를 찾습니다.')
       .replace(/<%= faviconUrl %>/g, faviconUrl)
       .replace(/<%- pageCss %>/g, publishedPage.css || '')
-      .replace(/<%- pageHtml %>/g, publishedPage.html || '');
+      .replace(/<%- pageHtml %>/g, cleanHtml);
 
     res.send(rendered);
   } catch (err) {

@@ -422,23 +422,33 @@
 }
 
 /* ── 채용 절차(합류 여정) 빌더 캔버스 헬퍼 ── */
-/* 빌더 편집 화면에서는 '더보기' 상세 내용이 기본으로 펼쳐진 상태로 표시되어 모든 멘트를 직접 클릭해 수정할 수 있습니다 */
+/* 빌더 편집 화면에서도 클릭 시 부드럽게 펼쳐지고 접히며, 펼쳐진 상태에서 모든 텍스트를 직접 클릭해 수정할 수 있습니다 */
 .daangn-process-detail {
-  max-height: none !important;
-  opacity: 1 !important;
-  overflow: visible !important;
-  margin-top: 16px !important;
-  margin-bottom: 24px !important;
+  max-height: 0 !important;
+  opacity: 0 !important;
+  overflow: hidden !important;
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
   display: block !important;
+  transition: max-height 0.35s ease, opacity 0.25s ease, margin 0.3s ease !important;
   border: 1.5px dashed rgba(255, 111, 15, 0.45) !important;
   border-radius: 14px !important;
-  padding: 20px 24px !important;
+  padding: 0 24px !important;
   background-color: #FAFAFC !important;
   position: relative !important;
 }
 
+.daangn-process-track-item.is-open .daangn-process-detail {
+  max-height: 2000px !important;
+  opacity: 1 !important;
+  overflow: visible !important;
+  margin-top: 16px !important;
+  margin-bottom: 24px !important;
+  padding: 20px 24px !important;
+}
+
 .daangn-process-detail::before {
-  content: '📝 더보기 상세 내용 (빌더 편집 모드: 항상 펼침 - 텍스트를 클릭해 직접 수정 가능)' !important;
+  content: '📝 더보기 상세 내용 (텍스트를 클릭해 직접 수정 가능)' !important;
   display: inline-block !important;
   font-size: 12px !important;
   font-weight: 700 !important;
@@ -490,29 +500,62 @@
   background: #FFF8F4 !important;
 }
 
+.daangn-process-toggle-btn .toggle-icon {
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  pointer-events: none !important;
+}
+
+.daangn-process-track-item.is-open .toggle-icon {
+  transform: rotate(180deg) !important;
+  color: #212124 !important;
+}
+
 .daangn-process-toggle-btn span {
-  cursor: text !important;
+  cursor: pointer !important;
   pointer-events: auto !important;
-  user-select: text !important;
 }
 
 /* ── FAQ 아코디언 빌더 캔버스 헬퍼 ── */
-/* 빌더 편집 화면에서는 FAQ 질문별 답변 영역도 펼쳐져 직접 텍스트 수정 가능 */
+/* 빌더 편집 화면에서도 클릭 시 펼침/접힘이 실시간 동작하며 답변을 직접 수정 가능 */
 .daangn-faq-answer {
-  max-height: none !important;
-  opacity: 1 !important;
-  overflow: visible !important;
-  margin-top: 12px !important;
+  max-height: 0 !important;
+  opacity: 0 !important;
+  overflow: hidden !important;
+  margin-top: 0 !important;
   display: block !important;
+  transition: max-height 0.35s ease, opacity 0.25s ease, padding 0.3s ease !important;
   border: 1px dashed rgba(255, 111, 15, 0.35) !important;
   border-radius: 8px !important;
-  padding: 14px 18px !important;
+  padding: 0 18px !important;
   background-color: #FAFAFC !important;
   position: relative !important;
 }
 
+.daangn-faq-item.is-open .daangn-faq-answer {
+  max-height: 1000px !important;
+  opacity: 1 !important;
+  overflow: visible !important;
+  margin-top: 12px !important;
+  padding: 14px 18px !important;
+}
+
+.daangn-faq-question-btn {
+  cursor: pointer !important;
+  pointer-events: auto !important;
+}
+
+.daangn-faq-chevron {
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  pointer-events: none !important;
+}
+
+.daangn-faq-item.is-open .daangn-faq-chevron {
+  transform: rotate(180deg) !important;
+  color: #FF6F0F !important;
+}
+
 .daangn-faq-answer::before {
-  content: '📝 FAQ 답변 내용 (빌더 편집 모드: 항상 펼침 - 텍스트를 클릭해 직접 수정 가능)' !important;
+  content: '📝 FAQ 답변 내용 (텍스트를 클릭해 직접 수정 가능)' !important;
   display: inline-block !important;
   font-size: 11.5px !important;
   font-weight: 700 !important;

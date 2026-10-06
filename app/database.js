@@ -38,6 +38,8 @@ function initDb() {
         db.run(`ALTER TABLE pages ADD COLUMN favicon_url TEXT DEFAULT '/images/favicon-192.png'`, () => {
           db.run(`ALTER TABLE pages ADD COLUMN page_path TEXT DEFAULT '/'`, () => {
             db.run(`ALTER TABLE pages ADD COLUMN page_name TEXT DEFAULT '메인 페이지'`, () => {
+              // 과거 버전에서 잔존할 수 있는 문법 오류 인라인 스크립트 자동 정제
+              db.run(`UPDATE pages SET html = REPLACE(html, 'initHeaderDropdowns();', '') WHERE html LIKE '%initHeaderDropdowns();%'`);
               seedDefaultSubPages().catch(e => console.warn('[DB] seedDefaultSubPages error:', e.message));
             });
           });

@@ -17,7 +17,7 @@
   <link rel="shortcut icon" href="<%= faviconUrl %>" />
   <link rel="stylesheet" href="/css/fonts.css" />
   <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
-  <link rel="stylesheet" href="/css/daangn-theme.css" />
+  <link rel="stylesheet" href="/css/daangn-theme.css?v=20261006_4" />
 
   <style>
     /* SEED & Daangn Theme Color Mappings */
@@ -164,6 +164,48 @@
   </main>
 
   <!-- Dedicated Runtime Client Interactions (Hero Sticky Zoom, Carousels, Sticky Culture, Promo) -->
-  <script src="/js/daangn-runtime.js"></script>
+  <script src="/js/daangn-runtime.js?v=20261006_4"></script>
+
+  <!-- Standalone Guaranteed Interaction Controller (채용 프로세스 더보기 & FAQ 아코디언 캐시 방지 직결 엔진) -->
+  <script>
+  (function() {
+    function handleGlobalInteractions(e) {
+      // 1. 채용 프로세스 '더보기' 버튼 및 자식 svg/span 클릭
+      var processBtn = e.target.closest('.daangn-process-toggle-btn');
+      if (processBtn) {
+        e.preventDefault();
+        e.stopPropagation();
+        var item = processBtn.closest('.daangn-process-track-item');
+        if (item) {
+          var isOpen = item.classList.toggle('is-open');
+          var textSpan = processBtn.querySelector('span');
+          if (textSpan) {
+            var currentText = textSpan.textContent.trim();
+            if (isOpen && currentText === '더보기') {
+              textSpan.textContent = '접기';
+            } else if (!isOpen && currentText === '접기') {
+              textSpan.textContent = '더보기';
+            }
+          }
+        }
+        return;
+      }
+
+      // 2. FAQ 질문 버튼 및 자식 svg/span 클릭
+      var faqBtn = e.target.closest('.daangn-faq-question-btn');
+      if (faqBtn) {
+        e.preventDefault();
+        e.stopPropagation();
+        var faqItem = faqBtn.closest('.daangn-faq-item');
+        if (faqItem) {
+          faqItem.classList.toggle('is-open');
+        }
+        return;
+      }
+    }
+
+    document.addEventListener('click', handleGlobalInteractions, true);
+  })();
+  </script>
 </body>
 </html>
