@@ -59,7 +59,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         '/css/fonts.css',
         'https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css',
         '/css/daangn-theme.css',
-        '/css/builder-canvas.css'
+        '/css/builder-canvas.css',
+        '/css/floating-promo.css'
       ],
       scripts: []
     }

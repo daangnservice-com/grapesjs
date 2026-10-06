@@ -630,26 +630,13 @@ function getOfficialHtml() {
     </div>
   </footer>
 
-  <!-- FLOATING CAMPAIGN PROMO STICKER (하단 플로팅 스티커 배너) -->
-  <div class="daangn-floating-promo" id="daangnFloatingPromo" data-delay-seconds="5">
-    <aside data-campaign-promo="" class="daangn-promo-card" data-delay-seconds="5" aria-label="채용 캠페인 안내">
-      <div class="daangn-promo-delay-badge">⏱️ 접속 후 <span id="promoDelayDisplay">5</span>초 뒤 노출</div>
-      <div style="display: flex; flex-direction: column; gap: 8px;">
-        <div class="daangn-promo-header">
-          <p class="daangn-promo-title">함께 성장하며 신뢰를 만들어갈
-동료를 기다립니다.</p>
-          <button data-promo-close="" type="button" aria-label="닫기" class="daangn-promo-close" onclick="var p = document.getElementById('daangnFloatingPromo'); if (p) { p.style.transition = 'opacity 0.25s, transform 0.25s'; p.style.opacity = '0'; p.style.transform = 'scale(0.9) translateY(12px)'; setTimeout(function() { p.style.display = 'none'; }, 260); }">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" width="20" height="20" aria-hidden="true">
-              <path d="M20.7071 4.70711C21.0976 4.31658 21.0976 3.68342 20.7071 3.29289C20.3166 2.90237 19.6834 2.90237 19.2929 3.29289L12 10.5858L4.70711 3.29289C4.31658 2.90237 3.68342 2.90237 3.29289 3.29289C2.90237 3.68342 2.90237 4.31658 3.29289 4.70711L10.5858 12L3.29289 19.2929C2.90237 19.6834 2.90237 20.3166 3.29289 20.7071C3.68342 21.0976 4.31658 21.0976 4.70711 20.7071L12 13.4142L19.2929 20.7071C19.6834 21.0976 20.3166 21.0976 20.7071 20.7071C21.0976 20.3166 21.0976 19.6834 20.7071 19.2929L13.4142 12L20.7071 4.70711Z" fill="currentColor"></path>
-            </svg>
-          </button>
-        </div>
-        <p class="daangn-promo-desc">우리는 고객의 목소리에서 더 나은 방향을 찾고, 더 따뜻하고 안전한 연결을 만들어갑니다.</p>
+  <!-- FLOATING CAMPAIGN PROMO POPUP (우측 하단 채용 플로팅 팝업) -->
+  <div class="daangn-floating-promo" id="daangnFloatingPromo" data-delay-seconds="3">
+    <aside data-campaign-promo="" class="daangn-promo-card" aria-label="채용 공고 안내">
+      <div class="daangn-promo-content">
+        <p class="daangn-promo-title">함께 성장하며 신뢰를 만들어갈<br>동료를 기다려요.</p>
       </div>
-      <div class="daangn-promo-bottom">
-        <a data-promo-cta="" href="/apply" class="daangn-promo-cta">채용공고 바로가기</a>
-        <img src="https://brandnew.daangn.com/static/7-45374badce048137094b93c78a42b270.png" alt="당근 캐릭터" class="daangn-promo-img" />
-      </div>
+      <a data-promo-cta="" href="/apply" class="daangn-promo-cta">채용공고</a>
     </aside>
   </div>
 

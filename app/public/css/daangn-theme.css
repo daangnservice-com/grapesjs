@@ -1055,146 +1055,128 @@ body {
   }
 }
 
-/* ── Daangn Floating Campaign Promo Sticker ─────────────────── */
+/* ── Daangn Floating Campaign Promo Sticker (독립 격리 스타일) ──── */
 .daangn-promo-delay-badge {
   display: none !important;
 }
 
 .daangn-floating-promo {
-  position: fixed;
-  bottom: calc(1.5rem + env(safe-area-inset-bottom, 0px));
-  right: 24px;
-  z-index: 1200;
-  display: flex;
-  justify-content: flex-end;
+  position: fixed !important;
+  bottom: calc(var(--promo-bottom, 24px) + env(safe-area-inset-bottom, 0px)) !important;
+  right: var(--promo-right, 28px) !important;
+  z-index: var(--promo-z-index, 1200) !important;
+  display: flex !important;
+  justify-content: flex-end !important;
+  margin: 0 !important;
+  padding: 0 !important;
   pointer-events: none;
-  font-family: 'KarrotSans', 'Pretendard', sans-serif;
+  font-family: 'KarrotSans', 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif !important;
+  box-sizing: border-box !important;
   opacity: 0;
   visibility: hidden;
-  transform: translateY(24px) scale(0.96);
-  transition: opacity 0.45s cubic-bezier(0.16, 1, 0.3, 1), transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.45s;
+  transform: translateY(20px) scale(0.97);
+  transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1), transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.4s !important;
 }
 
 .daangn-floating-promo.is-visible {
-  opacity: 1;
-  visibility: visible;
-  pointer-events: auto;
-  transform: translateY(0) scale(1);
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+  transform: translateY(0) scale(1) !important;
+}
+
+.daangn-floating-promo .daangn-promo-card {
+  background: var(--promo-card-bg, #ffffff) !important;
+  color: var(--promo-title-color, #212124) !important;
+  width: var(--promo-width, 315px) !important;
+  max-width: calc(100vw - 32px) !important;
+  padding: var(--promo-card-padding, 22px 22px 20px 22px) !important;
+  border-radius: var(--promo-card-radius, 20px) !important;
+  box-shadow: var(--promo-card-shadow, 0 12px 36px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.04)) !important;
+  border: var(--promo-card-border, 1px solid rgba(0, 0, 0, 0.06)) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: var(--promo-card-gap, 16px) !important;
+  box-sizing: border-box !important;
+  margin: 0 !important;
+  height: auto !important;
+  min-height: auto !important;
+  transform-origin: bottom right !important;
+}
+
+.daangn-floating-promo .daangn-promo-content {
+  margin: 0 !important;
+  padding: 0 !important;
+  box-sizing: border-box !important;
+}
+
+.daangn-floating-promo .daangn-promo-title {
+  margin: 0 !important;
+  padding: 0 !important;
+  font-size: var(--promo-title-size, 15px) !important;
+  font-weight: var(--promo-title-weight, 700) !important;
+  line-height: var(--promo-title-line-height, 1.45) !important;
+  color: var(--promo-title-color, #212124) !important;
+  letter-spacing: var(--promo-title-letter-spacing, -0.3px) !important;
+  word-break: keep-all !important;
+  white-space: normal !important;
+  text-align: left !important;
+}
+
+.daangn-floating-promo .daangn-promo-cta {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 100% !important;
+  height: var(--promo-btn-height, 48px) !important;
+  padding: 0 16px !important;
+  background-color: var(--promo-btn-bg, #FF6F0F) !important;
+  color: var(--promo-btn-color, #ffffff) !important;
+  font-size: var(--promo-btn-size, 15px) !important;
+  font-weight: var(--promo-btn-weight, 700) !important;
+  border-radius: var(--promo-btn-radius, 12px) !important;
+  text-decoration: none !important;
+  cursor: pointer !important;
+  box-sizing: border-box !important;
+  border: none !important;
+  outline: none !important;
+  white-space: nowrap !important;
+  text-align: center !important;
+  transition: background-color 0.15s ease, transform 0.1s ease !important;
+}
+
+.daangn-floating-promo .daangn-promo-cta:hover {
+  background-color: var(--promo-btn-hover-bg, #E85A00) !important;
+}
+
+.daangn-floating-promo .daangn-promo-cta:active {
+  transform: scale(0.98) !important;
+}
+
+.daangn-floating-promo .daangn-promo-desc,
+.daangn-floating-promo .daangn-promo-img,
+.daangn-floating-promo .daangn-promo-close {
+  display: none !important;
 }
 
 @media (max-width: 640px) {
   .daangn-floating-promo {
-    right: auto;
-    left: 50%;
-    transform: translateX(-50%);
-    bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
-    width: calc(100% - 32px);
-    max-width: 380px;
+    right: 16px !important;
+    left: 16px !important;
+    bottom: calc(16px + env(safe-area-inset-bottom, 0px)) !important;
+    justify-content: center !important;
+    transform: translateY(20px) !important;
   }
-}
 
-.daangn-promo-card {
-  background: #ffffff;
-  color: #212124;
-  width: 360px;
-  max-width: calc(100vw - 32px);
-  border-radius: 20px;
-  padding: 20px 22px;
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.15), 0 4px 12px rgba(0, 0, 0, 0.08);
-  border: 1px solid #EAEBEE;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  box-sizing: border-box;
-  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
-  transform-origin: bottom right;
-  height: auto;
-  min-height: auto;
-}
+  .daangn-floating-promo.is-visible {
+    transform: translateY(0) !important;
+  }
 
-.daangn-promo-header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 12px;
-}
-
-.daangn-promo-title {
-  margin: 0;
-  font-size: 17px;
-  font-weight: 800;
-  line-height: 1.35;
-  color: #212124;
-  word-break: keep-all;
-  white-space: pre-line;
-  flex: 1;
-}
-
-.daangn-promo-close {
-  background: transparent;
-  border: none;
-  color: #868B94;
-  cursor: pointer;
-  padding: 4px;
-  margin: -4px -4px 0 0;
-  border-radius: 6px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: color 0.15s ease, background-color 0.15s ease;
-  flex-shrink: 0;
-}
-
-.daangn-promo-close:hover {
-  color: #212124;
-  background-color: rgba(0, 0, 0, 0.06);
-}
-
-.daangn-promo-desc {
-  margin: 0;
-  font-size: 13px;
-  font-weight: 500;
-  line-height: 1.5;
-  color: #71757E;
-  word-break: keep-all;
-  white-space: pre-line;
-}
-
-.daangn-promo-bottom {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  margin-top: 2px;
-}
-
-.daangn-promo-cta {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 38px;
-  padding: 0 16px;
-  background-color: #FF6F0F;
-  color: #ffffff;
-  font-size: 13.5px;
-  font-weight: 700;
-  border-radius: 10px;
-  text-decoration: none;
-  transition: background-color 0.15s ease, transform 0.15s ease;
-  white-space: nowrap;
-}
-
-.daangn-promo-cta:hover {
-  background-color: #E85A00;
-  transform: translateY(-1px);
-}
-
-.daangn-promo-img {
-  width: 60px;
-  height: 60px;
-  object-fit: contain;
-  flex-shrink: 0;
-  display: block;
+  .daangn-floating-promo .daangn-promo-card {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 18px 18px 16px 18px !important;
+  }
 }
 
 /* ── Team Introduction Carousel (팀 소개 - 3개 노출 슬라이딩 캐러셀) ────── */

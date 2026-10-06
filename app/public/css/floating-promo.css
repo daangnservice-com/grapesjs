@@ -1,0 +1,174 @@
+/**
+ * Daangn Careers - Floating Campaign Promo Popup (독립 컴포넌트 격리 CSS)
+ * 
+ * 💡 이 파일은 우측 하단 플로팅 팝업 전용 스타일입니다.
+ * 아래의 CSS 변수(--promo-*) 값만 변경하면 사이트 내 다른 어떤 화면이나 요소에도
+ * 전혀 영향을 주지 않고 안전하게 마진, 패딩, 크기, 위치 등을 독립적으로 조절할 수 있습니다.
+ */
+
+:root {
+  /* ── 📍 1. 팝업 위치 및 크기 조절 변수 ── */
+  --promo-bottom: 24px;              /* 브라우저 하단 여백 */
+  --promo-right: 28px;               /* 브라우저 우측 여백 */
+  --promo-width: 315px;              /* 팝업 전체 너비 */
+  --promo-z-index: 1200;             /* 레이어 순서 */
+
+  /* ── 📦 2. 카드 박스 디자인 및 패딩 변수 ── */
+  --promo-card-bg: #ffffff;          /* 카드 배경색 */
+  --promo-card-padding: 22px 22px 20px 22px; /* 카드 내부 패딩 (상 우 하 좌) */
+  --promo-card-radius: 20px;         /* 카드 모서리 둥글기 */
+  --promo-card-border: 1px solid rgba(0, 0, 0, 0.06); /* 카드 테두리선 */
+  --promo-card-shadow: 0 12px 36px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.04); /* 부드러운 그림자 */
+  --promo-card-gap: 16px;            /* 텍스트와 버튼 사이 간격 */
+
+  /* ── 📝 3. 문구 텍스트 디자인 변수 ── */
+  --promo-title-size: 15px;          /* 글자 크기 */
+  --promo-title-weight: 700;         /* 글자 두께 (볼드) */
+  --promo-title-color: #212124;      /* 글자 색상 */
+  --promo-title-line-height: 1.45;   /* 줄 간격 */
+  --promo-title-letter-spacing: -0.3px; /* 자간 */
+
+  /* ── 🔘 4. 하단 버튼 디자인 변수 ── */
+  --promo-btn-bg: #FF6F0F;           /* 버튼 배경색 (당근 오렌지) */
+  --promo-btn-hover-bg: #E85A00;     /* 버튼 호버 배경색 */
+  --promo-btn-color: #ffffff;        /* 버튼 글자색 */
+  --promo-btn-size: 15px;            /* 버튼 글자 크기 */
+  --promo-btn-weight: 700;           /* 버튼 글자 두께 */
+  --promo-btn-height: 48px;          /* 버튼 세로 높이 */
+  --promo-btn-radius: 12px;          /* 버튼 모서리 둥글기 */
+}
+
+/* ── 플로팅 팝업 컨테이너 (완전 격리) ── */
+.daangn-floating-promo {
+  position: fixed !important;
+  bottom: calc(var(--promo-bottom) + env(safe-area-inset-bottom, 0px)) !important;
+  right: var(--promo-right) !important;
+  z-index: var(--promo-z-index) !important;
+  display: flex !important;
+  justify-content: flex-end !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  pointer-events: none;
+  font-family: 'KarrotSans', 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif !important;
+  box-sizing: border-box !important;
+
+  /* 부드러운 페이드인 & 슬라이드업 애니메이션 */
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(20px) scale(0.97);
+  transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1), 
+              transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), 
+              visibility 0.4s !important;
+}
+
+/* 활성화 시 노출 상태 */
+.daangn-floating-promo.is-visible {
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+  transform: translateY(0) scale(1) !important;
+}
+
+/* ── 팝업 카드 자체 ── */
+.daangn-floating-promo .daangn-promo-card {
+  background: var(--promo-card-bg) !important;
+  color: var(--promo-title-color) !important;
+  width: var(--promo-width) !important;
+  max-width: calc(100vw - 32px) !important;
+  padding: var(--promo-card-padding) !important;
+  border-radius: var(--promo-card-radius) !important;
+  box-shadow: var(--promo-card-shadow) !important;
+  border: var(--promo-card-border) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: var(--promo-card-gap) !important;
+  box-sizing: border-box !important;
+  margin: 0 !important;
+  height: auto !important;
+  min-height: auto !important;
+  transform-origin: bottom right !important;
+}
+
+/* 지연시간 배지 숨김 */
+.daangn-floating-promo .daangn-promo-delay-badge {
+  display: none !important;
+}
+
+/* ── 텍스트 영역 ── */
+.daangn-floating-promo .daangn-promo-content {
+  margin: 0 !important;
+  padding: 0 !important;
+  box-sizing: border-box !important;
+}
+
+.daangn-floating-promo .daangn-promo-title {
+  margin: 0 !important;
+  padding: 0 !important;
+  font-size: var(--promo-title-size) !important;
+  font-weight: var(--promo-title-weight) !important;
+  line-height: var(--promo-title-line-height) !important;
+  color: var(--promo-title-color) !important;
+  letter-spacing: var(--promo-title-letter-spacing) !important;
+  word-break: keep-all !important;
+  white-space: normal !important;
+  text-align: left !important;
+}
+
+/* ── 하단 버튼 영역 ── */
+.daangn-floating-promo .daangn-promo-cta {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 100% !important;
+  height: var(--promo-btn-height) !important;
+  padding: 0 16px !important;
+  background-color: var(--promo-btn-bg) !important;
+  color: var(--promo-btn-color) !important;
+  font-size: var(--promo-btn-size) !important;
+  font-weight: var(--promo-btn-weight) !important;
+  border-radius: var(--promo-btn-radius) !important;
+  text-decoration: none !important;
+  cursor: pointer !important;
+  box-sizing: border-box !important;
+  border: none !important;
+  outline: none !important;
+  white-space: nowrap !important;
+  text-align: center !important;
+  transition: background-color 0.15s ease, transform 0.1s ease !important;
+}
+
+.daangn-floating-promo .daangn-promo-cta:hover {
+  background-color: var(--promo-btn-hover-bg) !important;
+}
+
+.daangn-floating-promo .daangn-promo-cta:active {
+  transform: scale(0.98) !important;
+}
+
+/* ── 불필요한 기존 요소 강제 숨김 (안전 처리) ── */
+.daangn-floating-promo .daangn-promo-desc,
+.daangn-floating-promo .daangn-promo-img,
+.daangn-floating-promo .daangn-promo-close {
+  display: none !important;
+}
+
+/* ── 📱 모바일 반응형 처리 ── */
+@media (max-width: 640px) {
+  .daangn-floating-promo {
+    right: 16px !important;
+    left: 16px !important;
+    bottom: calc(16px + env(safe-area-inset-bottom, 0px)) !important;
+    justify-content: center !important;
+    transform: translateY(20px) !important;
+  }
+
+  .daangn-floating-promo.is-visible {
+    transform: translateY(0) !important;
+  }
+
+  .daangn-floating-promo .daangn-promo-card {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 18px 18px 16px 18px !important;
+  }
+}

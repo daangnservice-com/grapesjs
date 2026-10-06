@@ -524,6 +524,21 @@ async function renderPublicPage(req, res, pagePath = '/') {
     // 과거 버전에서 생성되어 남아있던 문법 오류 인라인 스크립트 제거
     cleanHtml = cleanHtml.replace(/<script>\s*\(function\(\)\s*\{[\s\S]*?initFaqAccordions[\s\S]*?<\/script>/gi, '');
 
+    // 구버전 플로팅 프로모 배너 구조가 남아있을 경우 신규 컴팩트 카드 구조로 자동 교체
+    const oldPromoRegex = /<div class="daangn-floating-promo" id="daangnFloatingPromo"[\s\S]*?<\/aside>\s*<\/div>/i;
+    const newPromoHtml = `<!-- FLOATING CAMPAIGN PROMO POPUP (우측 하단 채용 플로팅 팝업) -->
+  <div class="daangn-floating-promo" id="daangnFloatingPromo" data-delay-seconds="3">
+    <aside data-campaign-promo="" class="daangn-promo-card" aria-label="채용 공고 안내">
+      <div class="daangn-promo-content">
+        <p class="daangn-promo-title">함께 성장하며 신뢰를 만들어갈<br>동료를 기다려요.</p>
+      </div>
+      <a data-promo-cta="" href="/apply" class="daangn-promo-cta">채용공고</a>
+    </aside>
+  </div>`;
+    if (oldPromoRegex.test(cleanHtml)) {
+      cleanHtml = cleanHtml.replace(oldPromoRegex, newPromoHtml);
+    }
+
     const rendered = template
       .replace(/<%= seoTitle %>/g, publishedPage.seo_title || '당근서비스 채용')
       .replace(/<%= seoDescription %>/g, publishedPage.seo_description || '당근서비스에서 새로운 동료를 찾습니다.')
