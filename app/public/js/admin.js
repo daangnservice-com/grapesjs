@@ -1586,16 +1586,43 @@ async function loadVersionHistory(targetPath = currentPath) {
 
 // Rollback version
 async function rollbackToVersion(id) {
-  if (!confirm(`버전 #${id} 로 롤백하고 퍼블릭 페이지에 반영하시겠습니까?`)) return;
+  if (!confirm(`버전 #${id} 로 롤백하고 퍼블릭 페이지에 즉시 배포하시겠습니까?`)) return;
 
   try {
     const res = await apiFetch(`/api/admin/rollback/${id}`, { method: 'POST' });
     const data = await res.json();
     if (data.success) {
-      alert(`✅ 버전 #${id} 로 롤백하여 퍼블릭 사이트에 배포되었습니다!`);
-      await loadCurrentPage(currentPath);
+      if (data.page) {
+        // 서버에서 전달받은 롤백된 버전 데이터를 빌더 캔버스 및 UI에 즉시 동기화 반영
+        currentPageData = data.page;
+        currentPath = data.page.page_path || currentPath;
+        currentPageName = data.page.page_name || currentPageName;
+        updatePageSelectorUI();
+        renderPagesDropdown();
+
+        editor.setComponents(data.page.html || '');
+        injectPageCssToCanvas(data.page.css || '');
+
+        if (document.getElementById('seoTitleInput')) document.getElementById('seoTitleInput').value = data.page.seo_title || '';
+        if (document.getElementById('seoDescInput')) document.getElementById('seoDescInput').value = data.page.seo_description || '';
+        const faviconUrl = data.page.favicon_url || '/images/favicon-192.png';
+        if (document.getElementById('seoFaviconInput')) document.getElementById('seoFaviconInput').value = faviconUrl;
+        updateFaviconPreview(faviconUrl);
+
+        updateStatusBadge(1, data.page.version_name);
+        setTimeout(() => {
+          initCultureSectionSync(editor);
+          bindStoryCardCanvasEvents(editor);
+          bindProcessPageCanvasEvents(editor);
+        }, 150);
+      } else {
+        await loadCurrentPage(currentPath);
+      }
+
       await loadVersionHistory(currentPath);
+      await loadPagesList();
       toggleHistoryDrawer();
+      alert(`✅ 버전 #${id} 로 롤백하여 빌더 캔버스와 퍼블릭 사이트에 모두 정상 반영되었습니다!`);
     }
   } catch (err) {
     if (err.message !== 'Unauthorized') {
@@ -2333,14 +2360,14 @@ window.applyCmsArticleToCard = applyCmsArticleToCard;
 window.filterArticlePickerModalList = filterArticlePickerModalList;
 window.changeArticlePickerPage = changeArticlePickerPage;
 
-// ── 채용 절차(합류 여정) 및 FAQ 빌더 캔버스 텍스트 편집 연동 엔진 ─────────────
+// ── 채용 절차(합류 여정) 및 FAQ 빌더 캔버스 텍스트 편집 및 토글 연동 엔진 ─────────────
 function bindProcessPageCanvasEvents(editorInstance) {
   if (!editorInstance) return;
   try {
     const canvasDoc = editorInstance.Canvas.getDocument();
     if (!canvasDoc) return;
 
-    // 1. 합류 여정 트랙 아이템 편집 지원
+    // 1. 합류 여정 트랙 아이템 편집 및 토글 지원
     const trackItems = canvasDoc.querySelectorAll('.daangn-process-track-item');
     trackItems.forEach(item => {
       // '더보기' 버튼 멘트 (span) 직접 편집 가능하도록 설정
@@ -2349,7 +2376,7 @@ function bindProcessPageCanvasEvents(editorInstance) {
         const span = toggleBtn.querySelector('span');
         if (span) {
           span.setAttribute('contenteditable', 'true');
-          span.setAttribute('title', '클릭하여 더보기 멘트를 직접 수정할 수 있습니다');
+          span.setAttribute('title', '클릭하여 더보기 멘트를 직접 수정하거나 더보기를 펼칠 수 있습니다');
         }
       }
 
@@ -2372,10 +2399,15 @@ function bindProcessPageCanvasEvents(editorInstance) {
     // 2. FAQ 질문 및 답변 영역 편집 지원
     const faqItems = canvasDoc.querySelectorAll('.daangn-faq-item');
     faqItems.forEach(item => {
-      const qText = item.querySelector('.faq-q-text');
+      const qText = item.querySelector('.daangn-faq-question-text') || item.querySelector('.faq-q-text');
       if (qText) {
         qText.setAttribute('contenteditable', 'true');
         qText.setAttribute('title', '클릭하여 질문 내용을 직접 수정할 수 있습니다');
+      }
+      const ansContent = item.querySelector('.daangn-faq-answer-content');
+      if (ansContent) {
+        ansContent.setAttribute('contenteditable', 'true');
+        ansContent.setAttribute('title', '클릭하여 답변 내용을 직접 수정할 수 있습니다');
       }
       const ansPs = item.querySelectorAll('.daangn-faq-answer-content p');
       ansPs.forEach(p => {
@@ -2384,7 +2416,46 @@ function bindProcessPageCanvasEvents(editorInstance) {
       });
     });
 
-    // 3. contenteditable 입력 시 GrapesJS 컴포넌트 모델 동기화
+    // 3. 캔버스 내부 클릭 시 더보기 및 FAQ 아코디언 토글 연동 (화살표/버튼 클릭 시 펼침/접힘 동작)
+    if (!canvasDoc.__processCanvasEventsBound) {
+      canvasDoc.__processCanvasEventsBound = true;
+      canvasDoc.addEventListener('click', function(e) {
+        // 더보기 버튼 또는 토글 아이콘 클릭
+        const procBtn = e.target.closest('.daangn-process-toggle-btn');
+        if (procBtn) {
+          // 텍스트를 더블클릭/포커스하여 편집 중일 때는 토글하지 않고 편집에 집중할 수 있도록
+          if (e.target.tagName === 'SPAN' && e.target.isContentEditable && document.activeElement === e.target) {
+            return;
+          }
+          const item = procBtn.closest('.daangn-process-track-item');
+          if (item) {
+            const isOpen = item.classList.toggle('is-open');
+            const span = procBtn.querySelector('span');
+            if (span && !span.getAttribute('data-custom-text')) {
+              const txt = span.textContent.trim();
+              if (isOpen && txt === '더보기') span.textContent = '접기';
+              else if (!isOpen && txt === '접기') span.textContent = '더보기';
+            }
+          }
+          return;
+        }
+
+        // FAQ 질문 버튼 클릭
+        const faqBtn = e.target.closest('.daangn-faq-question-btn');
+        if (faqBtn) {
+          if (e.target.classList.contains('daangn-faq-question-text') && e.target.isContentEditable && document.activeElement === e.target) {
+            return;
+          }
+          const faqItem = faqBtn.closest('.daangn-faq-item');
+          if (faqItem) {
+            faqItem.classList.toggle('is-open');
+          }
+          return;
+        }
+      });
+    }
+
+    // 4. contenteditable 입력 시 GrapesJS 컴포넌트 모델 동기화
     const handleCanvasTextInput = (e) => {
       const target = e.target;
       if (!target || !target.isContentEditable) return;

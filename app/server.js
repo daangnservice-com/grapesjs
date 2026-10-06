@@ -246,9 +246,10 @@ app.get('/api/admin/versions', requireAuth, async (req, res) => {
 app.post('/api/admin/rollback/:id', requireAuth, async (req, res) => {
   try {
     const { id } = req.params;
-    const result = await db.publishPage(id);
-    res.json({ success: true, pagePath: result.pagePath });
+    const result = await db.rollbackPage(id);
+    res.json({ success: true, pagePath: result.pagePath, page: result.page });
   } catch (err) {
+    console.error('Rollback error:', err);
     res.status(500).json({ error: '롤백 실패' });
   }
 });

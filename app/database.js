@@ -1172,8 +1172,53 @@ function publishPage(id) {
           if (err2) return reject(err2);
           db.run('UPDATE pages SET is_published = 1 WHERE id = ?', [id], (err3) => {
             if (err3) return reject(err3);
-            resolve({ success: true, pagePath: targetPath });
+            db.get('SELECT * FROM pages WHERE id = ?', [id], (err4, updatedPage) => {
+              if (err4) return reject(err4);
+              resolve({ success: true, pagePath: targetPath, page: updatedPage });
+            });
           });
+        });
+      });
+    });
+  });
+}
+
+function rollbackPage(id) {
+  return new Promise((resolve, reject) => {
+    db.get('SELECT * FROM pages WHERE id = ?', [id], (err, row) => {
+      if (err) return reject(err);
+      if (!row) return reject(new Error('해당 버전을 찾을 수 없습니다.'));
+
+      const targetPath = normalizePath(row.page_path || '/');
+      const rollbackVersionName = `[롤백 배포] #${row.id} 버전 복원 (${new Date().toLocaleDateString('ko-KR')} ${new Date().toLocaleTimeString('ko-KR')})`;
+
+      db.serialize(() => {
+        db.run('UPDATE pages SET is_published = 0 WHERE page_path = ?', [targetPath], (err2) => {
+          if (err2) return reject(err2);
+
+          const stmt = db.prepare(`
+            INSERT INTO pages (version_name, page_path, page_name, html, css, components_json, seo_title, seo_description, favicon_url, is_published)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 1)
+          `);
+          stmt.run(
+            rollbackVersionName,
+            targetPath,
+            row.page_name || (targetPath === '/' ? '메인 페이지' : targetPath),
+            row.html,
+            row.css,
+            row.components_json || '{}',
+            row.seo_title || '당근서비스 채용',
+            row.seo_description || '당근서비스에 합류하세요.',
+            row.favicon_url || '/images/favicon-192.png',
+            function (err3) {
+              if (err3) return reject(err3);
+              const newId = this.lastID;
+              db.get('SELECT * FROM pages WHERE id = ?', [newId], (err4, newRow) => {
+                if (err4) return reject(err4);
+                resolve({ success: true, pagePath: targetPath, page: newRow });
+              });
+            }
+          );
         });
       });
     });
@@ -1193,9 +1238,18 @@ function getPublishedPage(pagePath = '/') {
 function getLatestPage(pagePath = '/') {
   const normalizedPath = normalizePath(pagePath);
   return new Promise((resolve, reject) => {
-    db.get('SELECT * FROM pages WHERE page_path = ? ORDER BY id DESC LIMIT 1', [normalizedPath], (err, row) => {
-      if (err) reject(err);
-      else resolve(row);
+    db.get('SELECT * FROM pages WHERE page_path = ? AND is_published = 1 ORDER BY id DESC LIMIT 1', [normalizedPath], (err, pubRow) => {
+      if (err) return reject(err);
+      if (!pubRow) {
+        return db.get('SELECT * FROM pages WHERE page_path = ? ORDER BY id DESC LIMIT 1', [normalizedPath], (err2, row2) => {
+          if (err2) reject(err2);
+          else resolve(row2);
+        });
+      }
+      db.get('SELECT * FROM pages WHERE page_path = ? AND id > ? ORDER BY id DESC LIMIT 1', [normalizedPath, pubRow.id], (err3, draftRow) => {
+        if (err3) return reject(err3);
+        resolve(draftRow || pubRow);
+      });
     });
   });
 }
@@ -2017,38 +2071,40 @@ function getProcessTemplateHtml() {
 </div>
 <script>
 (function() {
-  function initProcessToggles() {
-    var btns = document.querySelectorAll('.daangn-process-toggle-btn');
-    btns.forEach(function(btn) {
-      btn.addEventListener('click', function(e) {
+  function initProcessAndFaq() {
+    document.addEventListener('click', function(e) {
+      var processBtn = e.target.closest('.daangn-process-toggle-btn');
+      if (processBtn) {
         e.preventDefault();
-        var item = this.closest('.daangn-process-track-item');
+        var item = processBtn.closest('.daangn-process-track-item');
         if (item) {
-          item.classList.toggle('is-open');
+          var isOpen = item.classList.toggle('is-open');
+          var textSpan = processBtn.querySelector('span');
+          if (textSpan) {
+            var currentText = textSpan.textContent.trim();
+            if (isOpen && currentText === '더보기') textSpan.textContent = '접기';
+            else if (!isOpen && currentText === '접기') textSpan.textContent = '더보기';
+          }
         }
-      });
-    });
-  }
-
-  function initFaqAccordions() {
-    var btns = document.querySelectorAll('.daangn-faq-question-btn');
-    btns.forEach(function(btn) {
-      btn.addEventListener('click', function(e) {
+        return;
+      }
+      var faqBtn = e.target.closest('.daangn-faq-question-btn');
+      if (faqBtn) {
         e.preventDefault();
-        var item = this.closest('.daangn-faq-item');
-        if (item) {
-          item.classList.toggle('is-open');
+        var faqItem = faqBtn.closest('.daangn-faq-item');
+        if (faqItem) {
+          faqItem.classList.toggle('is-open');
         }
-      });
+        return;
+      }
     });
   }
 
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', function() {
-      initHeaderDropdowns();
-      initProcessToggles();
-      initFaqAccordions();
-    });
+    document.addEventListener('DOMContentLoaded', initProcessAndFaq);
+  } else {
+    initProcessAndFaq();
+  }
 })();
 </script>`.trim();
 }
@@ -3346,6 +3402,7 @@ module.exports = {
   normalizePath,
   savePageDraft,
   publishPage,
+  rollbackPage,
   getPublishedPage,
   getLatestPage,
   getAllPages,

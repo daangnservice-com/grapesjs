@@ -704,3 +704,51 @@
 // CSS margin-bottom: 60vh on last card causes excessive whitespace at large viewports.
 // The minimum needed: viewport_height - sticky_top(340px) + 40px (post-stack buffer).
 // This JS calculates the exact value and overrides the CSS inline.
+
+// ── 10. Process Journey Toggles & FAQ Accordions Controller ──────────────────
+(function() {
+  if (typeof window === 'undefined') return;
+
+  function initProcessAndFaqInteractions() {
+    // 이벤트 위임을 사용하여 동적 렌더링 및 모든 뷰포트/디바이스에서 항상 안정적으로 동작
+    document.addEventListener('click', function(e) {
+      // 1. 채용 프로세스 (합류 여정) '더보기' / '접기' 토글
+      var processBtn = e.target.closest('.daangn-process-toggle-btn');
+      if (processBtn) {
+        e.preventDefault();
+        var item = processBtn.closest('.daangn-process-track-item');
+        if (item) {
+          var isOpen = item.classList.toggle('is-open');
+          var textSpan = processBtn.querySelector('span');
+          if (textSpan) {
+            var currentText = textSpan.textContent.trim();
+            if (isOpen && currentText === '더보기') {
+              textSpan.textContent = '접기';
+            } else if (!isOpen && currentText === '접기') {
+              textSpan.textContent = '더보기';
+            }
+          }
+        }
+        return;
+      }
+
+      // 2. 자주 묻는 질문 (FAQ) 아코디언 토글
+      var faqBtn = e.target.closest('.daangn-faq-question-btn');
+      if (faqBtn) {
+        e.preventDefault();
+        var faqItem = faqBtn.closest('.daangn-faq-item');
+        if (faqItem) {
+          faqItem.classList.toggle('is-open');
+        }
+        return;
+      }
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initProcessAndFaqInteractions);
+  } else {
+    initProcessAndFaqInteractions();
+  }
+})();
+
